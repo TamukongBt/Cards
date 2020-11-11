@@ -15,6 +15,7 @@
         "laravel/framework": "^7.29",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^2.5",
+        "nesbot/carbon": "^2.41",
         "spatie/laravel-permission": "^3.17"
     },
     "require-dev": {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 Use Illuminate\Pagination\LengthAwarePaginator;
 use App\Request;
+use Carbon\Carbon;
 
 
 class RequestController extends Controller
@@ -113,6 +114,50 @@ class RequestController extends Controller
         $req=Request::findorFail($id);
         $req->confirmed=$id;    
          return response()->json( 200, $headers);
+    }
+
+    public function week(){
+        $data=Request::get()->wherebetween('created_at',[
+            now()->locale('en')->startOfWeek(),
+            now()->locale('en')->endOfWeek(),]
+        );
+        // return $data;
+        return redirect()->route('export', [$data]);
+    }
+
+    public function fordate(Request $request){
+        $startdate=$request->startdate;
+        $enddate=$request->enddate;
+        $data=Request::get()->wherebetween('created_at',[$startdate,$enddate]);
+        return response()->json($data, 200, $headers);
+    }
+
+    public function sortbranch($branch){
+        $data=Request::select()->where('branch',$branch)->get();
+    }
+
+    public function export($data) {
+        $headers = array(
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=summary.csv",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        );
+        $columns = array('Period', 'RevenueArea', 'Subs');
+    
+        $callback = function() use ($data, $columns)
+        {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+    
+            foreach($data as $items) {
+                fputcsv($file, array($items->PERIOD, $items->REVENUE_AREA, $items->SUBS));
+    
+            }
+            fclose($file);
+        };
+    return Response::stream($callback, 200, $headers)->send();
     }
     
 }
