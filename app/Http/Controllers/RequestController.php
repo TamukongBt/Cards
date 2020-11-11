@@ -134,6 +134,7 @@ class RequestController extends Controller
 
     public function sortbranch($branch){
         $data=Request::select()->where('branch',$branch)->get();
+        return response()->json($data, 200, $headers);
     }
 
     public function export($data) {

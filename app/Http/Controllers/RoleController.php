@@ -22,8 +22,24 @@ class RoleController extends Controller
         $create=Permission::create(['name'=>'create']);
         $delete=Permission::create(['name'=>'delete']);
         $complete=Permission::create(['name'=>'validate']);
+        $download=Permission::create(['name'=>'download']);
+
+        $csa=Role::findByName('css');
+        $csa->givePermissionTo('create');
+        $csa->givePermissionTo('delete');
+        $csa->givePermissionTo('edit');
+
+        $cards=Role::findByName('cards');
+        $cards->givePermissionTo('download');
+        $cards->givePermissionTo('edit');
+
+        $it=Role::findByName('it');
+        $it->givePermissionTo('download');
         return view('home');
     }
+
+
+
 
   
 }

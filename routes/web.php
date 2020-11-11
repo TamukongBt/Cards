@@ -43,6 +43,8 @@ Route::get('request/data/week', 'RequestController@week');
 
 
 Route::get('roles', 'RoleController@sysrole');
+Route::get('permissions', 'RoleController@permissions');
+
 Route::get('export/{data}', 'RequestController@export')->name('export');
 
 

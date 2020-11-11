@@ -21,6 +21,7 @@ class CreateRequestsTable extends Migration
             $table->bigInteger('number');
             $table->string('cards');
             $table->boolean('confirmed');
+            $table->string('done_by');
             $table->bigInteger('account_number');
             $table->string('request_type');
             $table->unique(['branch_id','request_type','id',]);
