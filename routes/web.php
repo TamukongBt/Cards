@@ -31,23 +31,22 @@ Route::get('/', function () {
     
 });
 Route::group(['middleware' => ['auth']], function () {
+    Route::resource('cards','CardsController');
+    Route::resource('branch', 'BranchController');
+    Route::resource('request','RequestController');
+    Route::get('request/confirm/{id}', 'RequestController@fulfilled');
+    Route::get('request/data/week', 'RequestController@week');
     
+    Route::get('request/data/week', 'RequestController@week');
+    
+    
+    Route::get('roles', 'RoleController@sysrole');
+    Route::get('permissions', 'RoleController@permissions');
+    
+    Route::post('export', 'RequestController@export')->name('export');  
 });
-Route::resource('cards','CardsController');
-Route::resource('branch', 'BranchController');
-Route::resource('request','RequestController');
-Route::get('request/confirm/{id}', 'RequestController@fulfilled');
-Route::get('request/data/week', 'RequestController@week');
-
-Route::get('request/data/week', 'RequestController@week');
 
 
-Route::get('roles', 'RoleController@sysrole');
-Route::get('permissions', 'RoleController@permissions');
-
-Route::get('export/{data}', 'RequestController@export')->name('export');
-
-
-Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Auth::routes();

@@ -4,19 +4,29 @@ namespace App\Http\Controllers;
 
 Use Illuminate\Pagination\LengthAwarePaginator;
 use App\Request;
+use App\Downloads;
 use Carbon\Carbon;
 
 
 class RequestController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the request
      *
      * @return \Illuminate\Http\Response
      */
+
     public function index()
     {
+
         $request=Request::all();
+        return view('request.index')->with('request',$request);
+    }
+
+    // Display the list of validated request 
+    public function validated()
+    {
+        $request=Request::where('confirmed','1')->get();
         return view('request.index')->with('request',$request);
     }
 
@@ -47,7 +57,9 @@ class RequestController extends Controller
             'number' =>'required|max:10',
             'request_type'=>'required'
         ]);
+        $req->done_by=auth()->user()->name;
         $req = Request::create($data);
+
          return redirect()->route('request.index')->with('success','New Entry created succesfully');
     }
 
@@ -110,11 +122,14 @@ class RequestController extends Controller
         return redirect('/request')->with('success', 'Request has been deleted!!');  
     }
 
+    // this function validates if the request has been confirmeed by cards and checks 
     public function fulfilled($id){
         $req=Request::findorFail($id);
         $req->confirmed=$id;    
          return response()->json( 200, $headers);
     }
+
+    // these are the sorting functions that sort the data by date branch and by week 
 
     public function week(){
         $data=Request::get()->wherebetween('created_at',[
@@ -137,14 +152,25 @@ class RequestController extends Controller
         return response()->json($data, 200, $headers);
     }
 
-    public function export($data) {
+
+
+    public function export( Request $request) {
+        // Save details on the user who dowloaded 
+        $download=new Downloads();
+        $download->user=auth()->user()->name;
+        $download->employee_id=auth()->user()->employee_id;
+        $download->save();
+       
         $headers = array(
             "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=summary.csv",
+            "Content-Disposition" => "attachment; filename='.'$request->startdate'.'to'.'$request->startdate'",
             "Pragma" => "no-cache",
             "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
             "Expires" => "0"
         );
+         $startdate=$request->startdate;
+        $enddate=$request->enddate;
+        $data=Request::get()->wherebetween('created_at',[$startdate,$enddate])->where('confirmed','1');
         $columns = array('Period', 'RevenueArea', 'Subs');
     
         $callback = function() use ($data, $columns)
