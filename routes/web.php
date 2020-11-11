@@ -34,19 +34,22 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('cards','CardsController');
     Route::resource('branch', 'BranchController');
     Route::resource('request','RequestController');
+    Route::resource('batch', 'BatchController');
     Route::get('request/confirm/{id}', 'RequestController@fulfilled');
     Route::get('request/data/week', 'RequestController@week');
     
     Route::get('request/data/week', 'RequestController@week');
     
     
-    Route::get('roles', 'RoleController@sysrole');
-    Route::get('permissions', 'RoleController@permissions');
+    
     
     Route::post('export', 'RequestController@export')->name('export');  
+
+   
 });
 
-
+Route::get('roles', 'RoleController@sysrole');
+Route::get('permissions', 'RoleController@permissions');
 
 Route::get('/home', 'HomeController@index')->name('home');
 Auth::routes();

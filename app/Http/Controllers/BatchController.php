@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Batch;
+use App\User;
+
 
 use Illuminate\Http\Request;
 
@@ -13,7 +16,8 @@ class BatchController extends Controller
      */
     public function index()
     {
-        //
+        $batch=Batch::all();
+        return view('batch.index')->with('batch',$batch);
     }
 
     /**
@@ -23,7 +27,7 @@ class BatchController extends Controller
      */
     public function create()
     {
-        //
+        return view('batch.create');
     }
 
     /**
@@ -34,7 +38,18 @@ class BatchController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $batch= new Batch();
+        $data = $this->validate ($request, [
+            'start_acct' => 'required|string|max:50',
+            'end_acct' => 'required|string|max:50',
+            'batch_number' => 'required|string|max:50', 
+        ]);
+        $batch->batch_number=$request->batch_number;
+        $batch->done_by=auth()->user()->name;
+        $batch->start_acct=$request->start_acct;
+        $batch->end_acct=$request->end_acct;
+        $batch->save();
+         return redirect()->route('batch.index')->with('success','New Entry created succesfully');
     }
 
     /**
@@ -45,7 +60,8 @@ class BatchController extends Controller
      */
     public function show($id)
     {
-        //
+        $batch= Batch::find($id);
+        return view('pages.reqview')->with('batch', $batch);
     }
 
     /**
@@ -56,7 +72,8 @@ class BatchController extends Controller
      */
     public function edit($id)
     {
-        //
+        $batch= Batch::find($id);
+        return view('batch.edit', compact('batch','id'));
     }
 
     /**
@@ -68,7 +85,19 @@ class BatchController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $batch= new Batch();
+        $data = $this->validate ($request, [
+            'start_acct' => 'required|string|max:50',
+            'end_acct' => 'required|string|max:50',
+            'batch_number' => 'required|string|max:50', 
+        ]);
+        $batch->batch_number=$request->batch_number;
+        $batch->done_by=auth()->user()->name;
+        $batch->start_acct=$request->start_acct;
+        $batch->end_acct=$request->end_acct;
+        Batch::whereId($id)->update($data);
+        $batch->save();
+         return redirect()->route('batch.index')->with('success','New Entry created succesfully');
     }
 
     /**
@@ -79,6 +108,8 @@ class BatchController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $batch = Batch::findorFail($id);
+        Batch::whereId($batch['id'])->delete();
+        return redirect('batch.index')->with('success', 'Batch Number has been deleted!!'); 
     }
 }

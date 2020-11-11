@@ -156,10 +156,7 @@ class RequestController extends Controller
 
     public function export( Request $request) {
         // Save details on the user who dowloaded 
-        $download=new Downloads();
-        $download->user=auth()->user()->name;
-        $download->employee_id=auth()->user()->employee_id;
-        $download->save();
+         
        
         $headers = array(
             "Content-type" => "text/csv",

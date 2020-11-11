@@ -90,7 +90,7 @@ class BranchController extends Controller
             
         ]);
         Branch::whereId($id)->update($data);
-        return redirect('pages.reqview')->with('success', 'Updated!!');
+        return redirect('request.home')->with('success', 'Updated!!');
     }
 
     /**
