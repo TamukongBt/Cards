@@ -16,7 +16,7 @@ class BranchController extends Controller
     public function index()
     {
         $branch=Branch::all();
-        return view('pages.branch')->with('branch',$branch);
+        return view('pages.branch')->with('branch',$branch)->paginate();
     }
 
     /**
@@ -35,15 +35,15 @@ class BranchController extends Controller
      * @param  \Illuminate\Http\Branch  $Branch
      * @return \Illuminate\Http\Response
      */
-    public function store(request $request)
+    public function store(Branch $branch)
     {
         $req= new Branch();
-        $data = $this->validate ($request, [
-        
-            
+        $data = $this->validate ($branch, [
+
+
             'name' => 'required|string|max:50',
-          
-            
+
+
         ]);
         $req = Branch::create($data);
          return redirect()->route('branch.index')->with('success','New Entry created succesfully');
@@ -82,12 +82,9 @@ class BranchController extends Controller
      */
     public function update(Branch $request, $id)
     {
-       
+
         $data = $this->validate ($request, [
-        
-            
             'branch' => 'required|string|max:50',
-            
         ]);
         Branch::whereId($id)->update($data);
         return redirect('request.home')->with('success', 'Updated!!');
@@ -103,6 +100,8 @@ class BranchController extends Controller
     {
         $branch = Branch::findorFail($id);
         Branch::whereId($branch['id'])->delete();
-        return redirect('pages.branch')->with('success', 'Branch has been deleted!!');  
+        return redirect('pages.branch')->with('success', 'Branch has been deleted!!');
     }
 }
++
+

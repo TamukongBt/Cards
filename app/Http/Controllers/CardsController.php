@@ -35,15 +35,15 @@ class CardsController extends Controller
      * @param  \Illuminate\Http\Cards  $Cards
      * @return \Illuminate\Http\Response
      */
-    public function store(request $request)
+    public function store(Cards $request)
     {
         $req= new Cards();
         $data = $this->validate ($request, [
-        
-            
+
+
             'name' => 'required|string|max:50',
-          
-            
+
+
         ]);
         $req = Cards::create($data);
          return redirect()->route('cards.index')->with('success','New Entry created succesfully');
@@ -82,12 +82,12 @@ class CardsController extends Controller
      */
     public function update(Request $request, $id)
     {
-       
+
         $data = $this->validate ($request, [
-        
-            
+
+
             'cards' => 'required|string|max:50',
-            
+
         ]);
         Cards::whereId($id)->update($data);
         return redirect('pages.reqview')->with('success', 'Updated!!');
@@ -103,6 +103,6 @@ class CardsController extends Controller
     {
         $cards = Cards::findorFail($id);
         Cards::whereId($cards['id'])->delete();
-        return redirect('pages.cards')->with('success', 'Cards has been deleted!!');  
+        return redirect('pages.cards')->with('success', 'Cards has been deleted!!');
     }
 }

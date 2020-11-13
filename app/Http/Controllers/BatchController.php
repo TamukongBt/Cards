@@ -42,13 +42,15 @@ class BatchController extends Controller
         $data = $this->validate ($request, [
             'start_acct' => 'required|string|max:50',
             'end_acct' => 'required|string|max:50',
-            'batch_number' => 'required|string|max:50', 
+            'batch_number' => 'required|string|max:50',
         ]);
         $batch->batch_number=$request->batch_number;
         $batch->done_by=auth()->user()->name;
         $batch->start_acct=$request->start_acct;
         $batch->end_acct=$request->end_acct;
+        Batch::create($data);
         $batch->save();
+
          return redirect()->route('batch.index')->with('success','New Entry created succesfully');
     }
 
@@ -89,7 +91,7 @@ class BatchController extends Controller
         $data = $this->validate ($request, [
             'start_acct' => 'required|string|max:50',
             'end_acct' => 'required|string|max:50',
-            'batch_number' => 'required|string|max:50', 
+            'batch_number' => 'required|string|max:50',
         ]);
         $batch->batch_number=$request->batch_number;
         $batch->done_by=auth()->user()->name;
@@ -110,6 +112,7 @@ class BatchController extends Controller
     {
         $batch = Batch::findorFail($id);
         Batch::whereId($batch['id'])->delete();
-        return redirect('batch.index')->with('success', 'Batch Number has been deleted!!'); 
+        return redirect('batch.index')->with('success', 'Batch Number has been deleted!!');
     }
 }
++
