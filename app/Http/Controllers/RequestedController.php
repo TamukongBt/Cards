@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-Use Illuminate\Pagination\LengthAwarePaginator;
-use App\Request;
+use App\Requested;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Validator;
 use App\Downloads;
 use Carbon\Carbon;
 
-
-class RequestController extends Controller
+class RequestedController extends Controller
 {
     /**
      * Display a listing of the request
@@ -19,13 +20,13 @@ class RequestController extends Controller
     public function index()
     {
 
-        $request=Request::all();
+        $request=Requested::all();
         return view('request.index')->with('request',$request);
     }
 
     public function validated()
     {
-        $request=Request::where('confirmed','1')->get();
+        $request=Requested::where('confirmed','1')->get();
         return view('request.index')->with('request',$request);
     }
 
@@ -47,19 +48,22 @@ class RequestController extends Controller
      */
     public function store(Request $request)
     {
-        $req= new Request();
-        $data = $this->validate ($request, [
+
+        $data= $request->validate( [
 
             'account_type' => 'required|string',
-            'employee_id' => 'required|string|max:50',
             'branch_id' => 'required',
-            'number' =>'required|max:10',
-            'request_type'=>'required'
-        ]);
-        $req->done_by=auth()->user()->name;
-        $req = Request::create($data);
+            'cards'=>'required',
+            'account_number' =>'required|max:15',
+            'account_name' =>'required|string',
+            'request_type'=>'required|string',
+            'requested_by'=>'required',
+            'done_by'=>'required'
 
-         return redirect()->route('request.index')->with('success','New Entry created succesfully');
+        ]);
+
+        Requested::create($data);
+        return redirect()->route('request.index')->with('success','New Entry created succesfully');
     }
 
     /**
@@ -70,7 +74,7 @@ class RequestController extends Controller
      */
     public function show($id)
     {
-        $request= Request::find($id);
+        $request= Requested::find($id);
         return view('request.view')->with('request', $request);
     }
 
@@ -82,7 +86,7 @@ class RequestController extends Controller
      */
     public function edit($id)
     {
-        $request= Request::find($id);
+        $request= Requested::find($id);
         return view('request.edit', compact('request','id'));
     }
 
@@ -96,15 +100,25 @@ class RequestController extends Controller
     public function update(Request $request, $id)
     {
 
-        $data = $this->validate ($request, [
+        $data= $request->validate( [
 
             'account_type' => 'required|string',
-            'employee_id' => 'required|string|max:50',
             'branch_id' => 'required',
-            'number' =>'required|max:10',
-            'request_type'=>'required'
+            'cards'=>'required',
+            'account_number' =>'required|max:15',
+            'account_name' =>'required|string',
+            'request_type'=>'required|string',
+            'requested_by'=>'required',
+            'done_by'=>'required'
+
         ]);
-        Request::whereId($id)->update($data);
+        try {
+            Requested::whereId($id)->update($data);
+        } catch (\Throwable $th) {
+            return redirect('/create');
+
+        }
+
         return redirect('/request')->with('success', 'Updated!!');
     }
 
@@ -116,14 +130,14 @@ class RequestController extends Controller
      */
     public function destroy($id)
     {
-        $req = Request::findorFail($id);
-        Request::whereId($req['id'])->delete();
+        $req = Requested::findorFail($id);
+        Requested::whereId($req['id'])->delete();
         return redirect('/request')->with('success', 'Request has been deleted!!');
     }
 
-    // this function validates if the request has been confirmeed by cards and checks
+    // this function validates when the request has been confirmed by cards and checks
     public function fulfilled($id){
-        $req=Request::findorFail($id);
+        $req=Requested::findorFail($id);
         $req->confirmed=$id;
          return response()->json( 200);
     }
@@ -131,7 +145,7 @@ class RequestController extends Controller
     // these are the sorting functions that sort the data by date branch and by week
 
     public function week(){
-        $data=Request::get()->wherebetween('created_at',[
+        $data=Requested::get()->wherebetween('created_at',[
             now()->locale('en')->startOfWeek(),
             now()->locale('en')->endOfWeek(),]
         );
@@ -142,12 +156,12 @@ class RequestController extends Controller
     public function fordate(Request $request){
         $startdate=$request->startdate;
         $enddate=$request->enddate;
-        $data=Request::get()->wherebetween('created_at',[$startdate,$enddate]);
+        $data=Requested::get()->wherebetween('created_at',[$startdate,$enddate]);
         return response()->json($data, 200);
     }
 
     public function sortbranch($branch){
-        $data=Request::select()->where('branch',$branch)->get();
+        $data=Requested::select()->where('branch',$branch)->get();
         return response()->json($data, 200);
     }
 
@@ -170,7 +184,7 @@ class RequestController extends Controller
         );
          $startdate=$request->startdate;
         $enddate=$request->enddate;
-        $data=Request::get()->wherebetween('created_at',[$startdate,$enddate])->where('confirmed','1');
+        $data=Requested::get()->wherebetween('created_at',[$startdate,$enddate])->where('confirmed','1');
         $columns = array('Period', 'RevenueArea', 'Subs');
 
         $callback = function() use ($data, $columns)
@@ -188,4 +202,3 @@ class RequestController extends Controller
     }
 
 }
-

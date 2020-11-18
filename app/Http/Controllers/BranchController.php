@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 Use Illuminate\Pagination\LengthAwarePaginator;
 use App\Branch;
-
+use Illuminate\Http\Request;
 
 class BranchController extends Controller
 {
@@ -35,15 +35,11 @@ class BranchController extends Controller
      * @param  \Illuminate\Http\Branch  $Branch
      * @return \Illuminate\Http\Response
      */
-    public function store(Branch $branch)
+    public function store(Request $request)
     {
         $req= new Branch();
-        $data = $this->validate ($branch, [
-
-
+        $data = $this->validate ($request, [
             'name' => 'required|string|max:50',
-
-
         ]);
         $req = Branch::create($data);
          return redirect()->route('branch.index')->with('success','New Entry created succesfully');
@@ -80,7 +76,7 @@ class BranchController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Branch $request, $id)
+    public function update(Request $request, $id)
     {
 
         $data = $this->validate ($request, [
@@ -103,5 +99,3 @@ class BranchController extends Controller
         return redirect('pages.branch')->with('success', 'Branch has been deleted!!');
     }
 }
-+
-

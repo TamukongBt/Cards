@@ -23,11 +23,11 @@
                                         <i class="nc-icon nc-single-02"></i>
                                     </span>
                                 </div>
-                                <input class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" placeholder="{{ __('Email') }}" type="email" name="email" value="{{ old('email') }}" required autofocus>
-                                
-                                @if ($errors->has('email'))
+                                <input class="form-control{{ $errors->has('employee_id') ? ' is-invalid' : '' }}" placeholder="{{ __('employee_id') }}" type="text" name="employee_id" value="{{ old('employee_id') }}" required autofocus>
+
+                                @if ($errors->has('employee_id'))
                                     <span class="invalid-feedback" style="display: block;" role="alert">
-                                        <strong>{{ $errors->first('email') }}</strong>
+                                        <strong>{{ $errors->first('employee_id') }}</strong>
                                     </span>
                                 @endif
                             </div>
@@ -35,11 +35,11 @@
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">
-                                        <i class="nc-icon nc-single-02"></i>
+                                        <i class="nc-icon nc-key-25"></i>
                                     </span>
                                 </div>
                                 <input class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" placeholder="{{ __('Password') }}" type="password" required>
-                                
+
                                 @if ($errors->has('password'))
                                     <span class="invalid-feedback" style="display: block;" role="alert">
                                         <strong>{{ $errors->first('password') }}</strong>

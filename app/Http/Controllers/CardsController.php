@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 Use Illuminate\Pagination\LengthAwarePaginator;
 use App\Cards;
-
+use Illuminate\Http\Request;
 
 class CardsController extends Controller
 {
@@ -35,7 +35,7 @@ class CardsController extends Controller
      * @param  \Illuminate\Http\Cards  $Cards
      * @return \Illuminate\Http\Response
      */
-    public function store(Cards $request)
+    public function store(Request $request)
     {
         $req= new Cards();
         $data = $this->validate ($request, [

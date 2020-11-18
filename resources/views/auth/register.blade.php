@@ -7,37 +7,15 @@
     <div class="content">
         <div class="container">
             <div class="row">
-                <div class="col-lg-5 col-md-5 ml-auto">
+                     <div class="col-lg-5 col-md-5 ml-auto">
                     <div class="info-area info-horizontal mt-5">
                         <div class="icon icon-primary">
                             <i class="nc-icon nc-tv-2"></i>
                         </div>
                         <div class="description">
-                            <h5 class="info-title">{{ __('Marketing') }}</h5>
+                            <h5 class="info-title">{{ __('Card Request') }}</h5>
                             <p class="description">
-                                {{ __('We\'ve created the marketing campaign of the website. It was a very interesting collaboration.') }}
-                            </p>
-                        </div>
-                    </div>
-                    <div class="info-area info-horizontal">
-                        <div class="icon icon-primary">
-                            <i class="nc-icon nc-html5"></i>
-                        </div>
-                        <div class="description">
-                            <h5 class="info-title">{{ __('Fully Coded in HTML5') }}</h5>
-                            <p class="description">
-                                {{ __('We\'ve developed the website with HTML5 and CSS3. The client has access to the code using GitHub.') }}
-                            </p>
-                        </div>
-                    </div>
-                    <div class="info-area info-horizontal">
-                        <div class="icon icon-info">
-                            <i class="nc-icon nc-atom"></i>
-                        </div>
-                        <div class="description">
-                            <h5 class="info-title">{{ __('Built Audience') }}</h5>
-                            <p class="description">
-                                {{ __('There is also a Fully Customizable CMS Admin Dashboard for this product.') }}
+                                {{ __('Welcome to our site You can make the request for bank cards here ') }}
                             </p>
                         </div>
                     </div>
@@ -46,35 +24,85 @@
                     <div class="card card-signup text-center">
                         <div class="card-header ">
                             <h4 class="card-title">{{ __('Register') }}</h4>
-                            <div class="social">
-                                <button class="btn btn-icon btn-round btn-twitter">
-                                    <i class="fa fa-twitter"></i>
-                                </button>
-                                <button class="btn btn-icon btn-round btn-dribbble">
-                                    <i class="fa fa-dribbble"></i>
-                                </button>
-                                <button class="btn btn-icon btn-round btn-facebook">
-                                    <i class="fa fa-facebook-f"></i>
-                                </button>
-                                <p class="card-description">{{ __('or be classical') }}</p>
-                            </div>
                         </div>
                         <div class="card-body ">
                             <form class="form" method="POST" action="{{ route('register') }}">
                                 @csrf
+
+
+
+
+                                    <div class="input-group{{ $errors->has('department') ? ' has-danger' : '' }}">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="nc-icon nc-bank"></i>
+                                            </span>
+                                        </div>
+                                        <select  name="department" id="department" class="form-control @error('department') is-invalid @enderror" required autofocus>
+                                            <option>Choose Your Department</option>
+                                            <option value="cards">Cards And Checks</option>
+                                            <option value="css">Customer Service</option>
+                                            <option value="it">IT Department</option>
+                                        </select>
+                                        @if ($errors->has('department'))
+                                            <span class="invalid-feedback" style="display: block;" role="alert">
+                                                <strong>{{ $errors->first('department') }}</strong>
+                                            </span>
+                                        @endif
+                                    </div>
+
+                                    <div class="input-group{{ $errors->has('branch_id') ? ' has-danger' : '' }}">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="nc-icon nc-bank"></i>
+                                            </span>
+                                        </div>
+                                        <select name="branch_id" id="branch_id" class="form-control @error('branch_id') is-invalid @enderror" required autofocus>
+                                            <option >Choose Your Branch</option>
+                                            <option value="01">Bamenda</option>
+                                            <option value="02">Akwa</option>
+                                            <option value="03">Limbe</option>
+                                            <option value="04">Yaounde</option>
+                                            <option value="05">Kumba</option>
+                                            <option value="07">Bafoussam</option>
+                                            <option value="11">Bonamoussadi</option>
+                                            <option value="12">Mboppi</option>
+                                        </select>
+                                        @if ($errors->has('branch_id'))
+                                        <span class="invalid-feedback" style="display: block;" role="alert">
+                                            <strong>{{ $errors->first('branch_id') }}</strong>
+                                        </span>
+                                        @endif
+                                    </div>
+
                                 <div class="input-group{{ $errors->has('name') ? ' has-danger' : '' }}">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">
                                             <i class="nc-icon nc-single-02"></i>
                                         </span>
                                     </div>
-                                    <input name="name" type="text" class="form-control" placeholder="Name" value="{{ old('name') }}" required autofocus>
+                                    <input name="name" type="text" class="form-control @error('name') is-invalid @enderror" placeholder="Name" value="{{ old('name') }}" required autofocus>
                                     @if ($errors->has('name'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
                                             <strong>{{ $errors->first('name') }}</strong>
                                         </span>
                                     @endif
                                 </div>
+
+                                <div class="input-group{{ $errors->has('employee_id') ? ' has-danger' : '' }}">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="nc-icon nc-single-02"></i>
+                                        </span>
+                                    </div>
+                                    <input name="employee_id" type="text" class="form-control @error('employee_id') is-invalid @enderror" placeholder="Employee id" value="{{ old('employee_id') }}" required
+                                    @if ($errors->has('employee_id'))
+                                        <span class="invalid-feedback" style="display: block;" role="alert">
+                                            <strong>{{ $errors->first('employee_id') }}</strong>
+                                        </span>
+                                    @endif
+                                </div>
+
                                 <div class="input-group{{ $errors->has('email') ? ' has-danger' : '' }}">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">
@@ -136,7 +164,7 @@
                 </div>
              </div>
         </div>
-     </div> 
+     </div>
 @endsection
 
 @push('scripts')

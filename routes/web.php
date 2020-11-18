@@ -14,33 +14,18 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-   if(isset($_SESSION)){
-    if(session()->has('department')){
-        $department=session()->get('department');
-        $user->assignRole($department);
-        return view('welcome');
-    }
-    else{
-        return view('welcome');
-    };
-   }
-   else {
-    return view('welcome');
-   }
-
-
+    return view('dashboard');
 });
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('cards','CardsController');
     Route::resource('branch', 'BranchController');
-    Route::resource('request','RequestController');
+    Route::resource('request','RequestedController');
     Route::resource('batch', 'BatchController');
-    Route::get('request/confirm/{id}', 'RequestController@fulfilled');
-    Route::get('request/data/week', 'RequestController@week');
+    Route::get('request/confirm/{id}', 'RequestedController@fulfilled');
+    Route::get('request/data/week', 'RequestedController@week');
 
-    Route::get('request/data/', 'RequestController@sortbranch');
-    Route::get('request/data/', 'RequestController@sortbranch');
-    Route::post('export', 'RequestController@export')->name('export');
+    Route::get('request/data/', 'RequestedController@sortbranch');
+    Route::post('export', 'RequestedController@export')->name('export');
 
 
 });
@@ -50,7 +35,7 @@ Route::get('permissions', 'RoleController@permissions');
 
 Route::get('/home', 'HomeController@index')->name('home');
 Auth::routes();
-Auth::routes();
+
 
 Route::get('/home', 'HomeController@index')->name('home');
 

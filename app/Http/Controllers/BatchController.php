@@ -115,4 +115,3 @@ class BatchController extends Controller
         return redirect('batch.index')->with('success', 'Batch Number has been deleted!!');
     }
 }
-+

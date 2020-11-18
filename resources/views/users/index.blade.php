@@ -291,9 +291,7 @@ The above copyright notice and this permission notice shall be included in all c
                                 <div class="col-8">
                                     <h3 class="mb-0">Users</h3>
                                 </div>
-                                <div class="col-4 text-right">
-                                    <a href="#" class="btn btn-sm btn-primary">Add user</a>
-                                </div>
+                               
                             </div>
                         </div>
                         

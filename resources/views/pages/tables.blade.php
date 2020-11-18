@@ -13,7 +13,7 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table">
+                            <table class="table" id="myTable">
                                 <thead class=" text-primary">
                                     <th>
                                         Name
@@ -152,12 +152,24 @@
                                     <th>
                                         City
                                     </th>
+                                    <th>
+                                        City Code
+                                    </th>
                                     <th class="text-right">
                                         Salary
+                                    </th>
+                                    <th class="text-right">
+                                        Salary Code
                                     </th>
                                 </thead>
                                 <tbody>
                                     <tr>
+                                        <td>
+                                            Dakota Rice
+                                        </td>
+                                        <td>
+                                            Niger
+                                        </td>
                                         <td>
                                             Dakota Rice
                                         </td>
