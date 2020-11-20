@@ -21,6 +21,7 @@ class CreateRequestedsTable extends Migration
             $table->string('branch_id');
             $table->string('cards');
             $table->boolean('confirmed')->default(0);
+            $table->boolean('rejected')->default(0);
             $table->string('done_by');
             $table->string('requested_by');
             $table->string('request_type');

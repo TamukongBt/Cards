@@ -48,7 +48,7 @@
                                     <div class="form-group">
                                     <select name="cards" id="cards" class="form-control @error('cards') is-invalid @enderror" required autofocus>
                                         <option >Choose Your Card Type</option>
-                                        <option value="saphire">Saphire</option>
+                                        <option value="saphire">Sapphire</option>
                                         <option value="silver">Silver</option>
                                         <option value="gold">Gold</option>
                                     </select>

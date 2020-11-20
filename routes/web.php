@@ -19,8 +19,11 @@ Route::get('/', function () {
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('cards','CardsController');
     Route::resource('branch', 'BranchController');
+    Route::post('request/delete/{id}','RequestedController@destroy');
     Route::resource('request','RequestedController');
     Route::resource('batch', 'BatchController');
+    Route::get('/ajax', 'RequestedController@index1');
+
     Route::get('request/confirm/{id}', 'RequestedController@fulfilled');
     Route::get('request/data/week', 'RequestedController@week');
 
