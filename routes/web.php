@@ -25,6 +25,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/ajax', 'RequestedController@index1');
 
     Route::get('request/confirm/{id}', 'RequestedController@fulfilled');
+    Route::get('request/reject/{id}', 'RequestedController@denied');
     Route::get('request/data/week', 'RequestedController@week');
 
     Route::get('request/data/', 'RequestedController@sortbranch');

@@ -27,7 +27,7 @@ class RequestedController extends Controller
     }
     public function index1()
     {
-        if (auth()->user()->department == 'css') {
+        // if (auth()->user()->department == 'css') {
             $data = Requested::all();
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -44,12 +44,17 @@ class RequestedController extends Controller
                     return $data->requesttype->name;
                 })
                 ->addColumn('action', function ($row) {
+
                     $actionBtn =
+                        
                         '<a href="/request/' . $row->id . '/edit" class="edit btn btn-info btn-sm "><i class="nc-icon nc-alert-circle-i"></i></a>
 
              <td><a class="btn btn-outline-primary btn-sm"
                      href="/request/confirm/' . $row->id . '"><i class="nc-icon nc-check-2"
                          aria-hidden="true" style="color: black"></i></a></td>
+            <td><a class="btn btn-outline-danger btn-sm"
+                    href="/request/reject/' . $row->id . '"><i class="nc-icon nc-simple-remove"
+                        aria-hidden="true" style="color: black"></i></a></td>
 
                  <button id="deletebutton" type="button" class="btn btn-outline-dark btn-sm"
                      data-toggle="modal" data-target="#delete" style="cursor:pointer;">
@@ -77,16 +82,16 @@ class RequestedController extends Controller
 
                              </div>
                              <div class="modal-footer float-right">
-                                 <button type="button" class="btn btn-outline-dark btn-sm"
+                                 <button type="button" class="btn btn-outline-info btn-sm"
                                      data-dismiss="modal" style="cursor:pointer;">
                                      No
                                  </button>
-                                 <form id="deletelink" method="post" href="request/delete/' . $row->id . '" >
-                                     ' . csrf_field() .
-                        ' <input name="_method" type="hidden" value=">
-                                     <button class="btn btn-outline-danger btn-sm"
-                                         type="submit">Yes</button>
-                                 </form>
+                                 <form action="'.route('request.destroy',$row->id).'" method="post">
+                                 <input name="_token" value="'.csrf_token().'" type="hidden">
+
+                                 <input name="_method" type="hidden" value="DELETE">
+                                 <button class="btn btn-outline-primary btn-sm" type="submit">Yes</button>
+                             </form>
                              </div>
                          </div>
                      </div>
@@ -97,13 +102,13 @@ class RequestedController extends Controller
                 ->rawColumns(['action'])
                 ->editColumn('id', 'ID: {{$id}}')
                 ->make(true);
-        }
-        elseif (auth()->user()->department == 'cards') {
+        // }
+        // elseif (auth()->user()->department == 'cards') {
 
-        }
-        elseif (auth()->user()->department == 'cards') {
+        // }
+        // elseif (auth()->user()->department == 'cards') {
 
-        }
+        // }
 
     }
 
@@ -212,10 +217,10 @@ class RequestedController extends Controller
      */
     public function destroy($id)
     {
-        return $id;
-        // $req = Requested::findorFail($id);
-        // Requested::whereId($req['id'])->delete();
-        // return redirect('/request')->with('success', 'Request has been deleted!!');
+
+        $req = Requested::findorFail($id);
+        Requested::whereId($req['id'])->delete();
+        return redirect('/request')->with('success', 'Request has been deleted!!');
     }
 
     // this function validates when the request has been confirmed by cards and checks
@@ -227,6 +232,16 @@ class RequestedController extends Controller
         $req->save();
         return response()->json(200);
     }
+
+     // this function validates when the request has been rejected by cards and checks
+     public function denied($id)
+     {
+         $req = Requested::findorFail($id);
+         $req->rejected= 1;
+         $req->updated_at=now();
+         $req->save();
+         return response()->json(200);
+     }
 
     // these are the sorting functions that sort the data by date branch and by week
 
