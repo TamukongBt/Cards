@@ -59,14 +59,14 @@
                                         </div>
                                         <select name="branch_id" id="branch_id" class="form-control @error('branch_id') is-invalid @enderror" required autofocus>
                                             <option >Choose Your Branch</option>
-                                            <option value="01">Bamenda</option>
-                                            <option value="02">Akwa</option>
-                                            <option value="03">Limbe</option>
-                                            <option value="04">Yaounde</option>
-                                            <option value="05">Kumba</option>
-                                            <option value="07">Bafoussam</option>
-                                            <option value="11">Bonamoussadi</option>
-                                            <option value="12">Mboppi</option>
+                                            <option value="001">Bamenda</option>
+                                            <option value="002">Akwa</option>
+                                            <option value="003">Limbe</option>
+                                            <option value="004">Yaounde</option>
+                                            <option value="005">Kumba</option>
+                                            <option value="007">Bafoussam</option>
+                                            <option value="011">Bonamoussadi</option>
+                                            <option value="012">Mboppi</option>
                                         </select>
                                         @if ($errors->has('branch_id'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">

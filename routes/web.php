@@ -19,7 +19,6 @@ Route::get('/', function () {
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('cards','CardsController');
     Route::resource('branch', 'BranchController');
-    Route::post('request/delete/{id}','RequestedController@destroy');
     Route::resource('request','RequestedController');
     Route::resource('batch', 'BatchController');
     Route::get('/ajax', 'RequestedController@index1');

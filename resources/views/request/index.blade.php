@@ -11,7 +11,11 @@
                 <div class="card-header">
                     <h4 class="card-title"> Request Tables</h4>
                     <div class="text-right" style='float:right;'>
-                        <a href="request/create" class="btn btn-sm btn-primary">New Request</a>
+                        <a href="request/create" class="btn  btn-primary">New Request</a>
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#modelId">
+                            Download the data
+                        </button>
                     </div>
                     <div class="card-body">
                     </div>
@@ -122,7 +126,7 @@
                             </tbody>
                             @endforeach
                         </table> --}}
-                        <table id="table1" class="table table-striped">
+                        <table id="table1" class="table ">
                             <thead>
 
                                 <th>
@@ -146,15 +150,73 @@
                                 <th>
                                     Branch
                                 </th>
+                                @role('it')
+                                <th>
+                                    Status
+                                </th>
+                                @else
                                 <th>
                                     Actions
                                 </th>
+                                @endrole
 
                             </thead>
                         </table>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal for data download -->
+<div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Choose The date Range for Downloads</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+            </div>
+        <form action="{{route('export')}}" method="post">
+            @csrf
+            <div class="modal-body">
+                <div class="row">
+                    <label class="col-md-3 col-form-label">{{ __('Start Date') }}</label>
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <input type="date" name="start_date" class="form-control" placeholder="Start Date"  required>
+                        </div>
+                        @if ($errors->has('start_date'))
+                            <span class="invalid-feedback" style="display: block;" role="alert">
+                                <strong>{{ $errors->first('start_date') }}</strong>
+                            </span>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label class="col-md-3 col-form-label">{{ __('End Date') }}</label>
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <input type="date" name="end_date" class="form-control" placeholder="End Date"  required>
+                        </div>
+                        @if ($errors->has('end_date'))
+                            <span class="invalid-feedback" style="display: block;" role="alert">
+                                <strong>{{ $errors->first('end_date') }}</strong>
+                            </span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Download</button>
+            </div>
+            </form>
         </div>
     </div>
 </div>
@@ -239,6 +301,9 @@
             "processing": true,
             "serverSide": true,
             "ajax": "/ajax",
+            "dom": 'Bfrtip',
+            "buttons": [ 'copy', 'excel', 'pdf' ],
+
 
             "columns": [
                 { "data": "account_number", name: 'Account Number' },
@@ -254,28 +319,10 @@
 
 
             ]
+
         });
     });
 
-    $('#deleted').on('click', '.deleted[data-remote]', function (e) {
-        var url = $(this).data('remote');
-    console.log(url);
-    e.preventDefault();
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-
-    // confirm then
-    $.ajax({
-        url: url,
-        type: 'DELETE',
-        data: {method: '_DELETE', submit: true}
-    }).always(function (data) {
-        $('#delete').DataTable().draw(false);
-    });
-});
 
 
     //Start Edit Record

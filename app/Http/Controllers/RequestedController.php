@@ -27,7 +27,7 @@ class RequestedController extends Controller
     }
     public function index1()
     {
-        // if (auth()->user()->department == 'css') {
+        if (auth()->user()->department == 'css') {
             $data = Requested::all();
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -45,16 +45,9 @@ class RequestedController extends Controller
                 })
                 ->addColumn('action', function ($row) {
 
-                    $actionBtn =
-                        
-                        '<a href="/request/' . $row->id . '/edit" class="edit btn btn-info btn-sm "><i class="nc-icon nc-alert-circle-i"></i></a>
+                $actionBtn =
 
-             <td><a class="btn btn-outline-primary btn-sm"
-                     href="/request/confirm/' . $row->id . '"><i class="nc-icon nc-check-2"
-                         aria-hidden="true" style="color: black"></i></a></td>
-            <td><a class="btn btn-outline-danger btn-sm"
-                    href="/request/reject/' . $row->id . '"><i class="nc-icon nc-simple-remove"
-                        aria-hidden="true" style="color: black"></i></a></td>
+                '<a href="/request/' . $row->id . '/edit" class="edit btn btn-info btn-sm "><i class="nc-icon nc-alert-circle-i"></i></a>
 
                  <button id="deletebutton" type="button" class="btn btn-outline-dark btn-sm"
                      data-toggle="modal" data-target="#delete" style="cursor:pointer;">
@@ -102,13 +95,67 @@ class RequestedController extends Controller
                 ->rawColumns(['action'])
                 ->editColumn('id', 'ID: {{$id}}')
                 ->make(true);
-        // }
-        // elseif (auth()->user()->department == 'cards') {
+        }
+        elseif (auth()->user()->department == 'cards') {
+            $data = Requested::all();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->editColumn('branch_id', function ($data) {
+                    return $data->branch->name;
+                })
+                ->editColumn('cards', function ($data) {
+                    return $data->cardtype->name;
+                })
+                ->editColumn('request_type', function ($data) {
+                    return $data->requesttype->name;
+                })
+                ->addColumn('action', function ($row) {
 
-        // }
-        // elseif (auth()->user()->department == 'cards') {
+                 $actionBtn =
+                '<td><a class="btn btn-outline-primary btn-sm"
+                     href="/request/confirm/' . $row->id . '"><i class="nc-icon nc-check-2"
+                         aria-hidden="true" style="color: black"></i></a></td>
+                <td><a class="btn btn-outline-danger btn-sm"
+                    href="/request/reject/' . $row->id . '"><i class="nc-icon nc-simple-remove"
+                        aria-hidden="true" style="color: black"></i></a></td>  ';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->editColumn('id', 'ID: {{$id}}')
+                ->make(true);
 
-        // }
+        }
+        elseif (auth()->user()->department == 'it') {
+            $data = Requested::where('confirmed',1)->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->editColumn('branch_id', function ($data) {
+
+                    return $data->branch->name;
+                })
+                ->editColumn('cards', function ($data) {
+                    return $data->cardtype->name;
+                })
+                ->editColumn('request_type', function ($data) {
+                    return $data->requesttype->name;
+                })
+                ->addColumn('action', function ($row) {
+
+                    $actionBtn =
+                   '<td class=" "><i class="nc-icon nc-check-2 alert-success btn-outline-success" aria-hidden="true" style="color: limegreen;" ></i></td>  ';
+                       return $actionBtn;
+                   })
+                ->rawColumns(['action'])
+                ->editColumn('id', 'ID: {{$id}}')
+                ->make(true);
+
+        }
 
     }
 
@@ -287,20 +334,25 @@ class RequestedController extends Controller
             "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
             "Expires" => "0"
         );
-        $startdate = $request->startdate;
-        $enddate = $request->enddate;
-        $data = Requested::get()->wherebetween('created_at', [$startdate, $enddate])->where('confirmed', '1');
-        $columns = array('Period', 'RevenueArea', 'Subs');
+
+        $startdate = $request->start_date;
+        $enddate = $request->end_date;
+        $title="New Cards from ". $startdate." - ".$enddate;
+        $data = Requested::get()->wherebetween('created_at', [$startdate, $enddate])->where('confirmed', '1')->where('request_type','new_card');
+        $columns = array('Account Number', 'Account Name', 'Branch Number','Branch', 'Card Requested','Date Requested');
 
         $callback = function () use ($data, $columns) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns);
 
             foreach ($data as $items) {
-                fputcsv($file, array($items->PERIOD, $items->REVENUE_AREA, $items->SUBS));
+
+                fputcsv($file, array($items->account_number,$items->account_name, $items->branch_id, $items->branch->name, $items->cardtype->name,date_format($items,"m/d/Y")));
             }
             fclose($file);
+
         };
-        return Response::stream($callback, 200, $headers)->send();
+
+        return response()->streamDownload($callback, $title ,$headers);
     }
 }
