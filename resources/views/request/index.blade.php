@@ -4,12 +4,13 @@
 ])
 
 @section('content')
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="content">
     <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title"> Request Tables</h4>
+                    <h4 class="card-title"> @role('cards')Pending @endrole Request Tables</h4>
                     <div class="text-right" style='float:right;'>
                         <a href="request/create" class="btn  btn-primary">New Request</a>
                         <!-- Button trigger modal -->
@@ -301,8 +302,6 @@
             "processing": true,
             "serverSide": true,
             "ajax": "/ajax",
-            "dom": 'Bfrtip',
-            "buttons": [ 'copy', 'excel', 'pdf' ],
 
 
             "columns": [
@@ -327,38 +326,70 @@
 
     //Start Edit Record
 
-    $('#table1 tbody').on('click', '#view', function () {
-
-
-        var currow = $(this).closest('tr');
-        var col1 = currow.find('td:eq(0)').text();
-        var col2 = currow.find('td:eq(1)').text();
-        var col3 = currow.find('td:eq(2)').text();
-        var col4 = currow.find('td:eq(3)').text();
-        var col5 = currow.find('td:eq(4)').text();
-        var col6 = currow.find('td:eq(5)').text();
-        var col7 = currow.find('td:eq(6)').text();
-        var data = col1 + '\n' + col2 + '\n' + col3 + '\n' + col4 + '\n' + col5 + '\n' + col6;
-        console.log(data);
-
-        $('#account_number').text(col1);
-        $('#account_name').text(col2);
-        $('#accountname_title').text(col2);
-        $('#card_type').text(col3);
-        $('#request_type').text(col4);
-        $('#account_type').text(col5);
-        $('#requested_date').text(col6);
-        $('#requested_by').text(col7);
-
-
+    $('#table1').on('click', '.btn-delete[data-remote]', function (e) {
+    e.preventDefault();
+     $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
     });
+    var url = $(this).data('remote');
 
-    $("#deletebutton").click(function () {
-        var currow = $(this).closest('tr');
-        var col1 = currow.find('td:eq(0)').text();
+    // confirm then
 
-        $("#deletelink").attr("action", "{{  route('request.destroy'," + col1 + ")}}");
+    if (confirm('Are you sure you want to delete this?')) {
+        $.ajax({
+            url: url,
+            type: 'DELETE',
+            dataType: 'json',
+            data:{'_method':'DELETE'},
+        }).always(function (data) {
+            $('#table1').DataTable().draw(false);
+        });
+    }else
+        alert("You have cancelled!");
+});
+
+$('#table1').on('click', '.validates[data-remote]', function (e) {
+    e.preventDefault();
+     $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
     });
+    var url = $(this).data('remote');
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            dataType: 'json',
+            data:{'_method':'GET'},
+        }).always(function (data) {
+            $('#table1').DataTable().draw(false);
+        });
+
+});
+
+$('#table1').on('click', '.denies[data-remote]', function (e) {
+    e.preventDefault();
+     $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    var url = $(this).data('remote');
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            dataType: 'json',
+            data:{'_method':'GET'},
+        }).always(function (data) {
+            $('#table1').DataTable().draw(false);
+        });
+
+});
+
 
 
 </script>

@@ -19,7 +19,10 @@
         "nesbot/carbon": "^2.41",
         "nunomaduro/laravel-desktop-notifier": "^2.5",
         "spatie/laravel-permission": "^3.17",
-        "yajra/laravel-datatables-oracle": "^8.0"
+        "yajra/laravel-datatables-oracle": "^8.0|^9.0",
+        "yajra/laravel-datatables-buttons": "^4.0"
+
+
     },
     "require-dev": {
         "facade/ignition": "^2.0",

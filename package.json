@@ -26,6 +26,6 @@
     },
     "dependencies": {
         "gulp": "^4.0.2",
-        "sweetalert2": "^10.10.0"
+        "sweetalert2": "^10.10.1"
     }
 }

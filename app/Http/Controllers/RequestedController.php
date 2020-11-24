@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Requested;
 use Illuminate\Http\Request;
+use App\Exports\RequestExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\Services\DataTable;
 use App\Downloads;
+use App\Exports\RequestExports;
 use DataTables;
 use Carbon\Carbon;
 use Spatie\Permission\Traits\HasRoles;
@@ -47,48 +50,15 @@ class RequestedController extends Controller
 
                 $actionBtn =
 
-                '<a href="/request/' . $row->id . '/edit" class="edit btn btn-info btn-sm "><i class="nc-icon nc-alert-circle-i"></i></a>
+                '<td>
+                <a href="'.route('request.edit',$row->id).'" class="edit btn btn-info btn-sm "><i class="nc-icon nc-alert-circle-i"></i></a>
 
-                 <button id="deletebutton" type="button" class="btn btn-outline-dark btn-sm"
-                     data-toggle="modal" data-target="#delete" style="cursor:pointer;">
-                     <i class="nc-icon nc-simple-remove" aria-hidden="true"
-                         style="color: black"></i>
-                 </button>
 
-                 <div class="modal fade" id="delete" tabindex="-1" role="dialog"
-                     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                     <div class="modal-dialog modal-dialog-centered " role="document">
-                         <div class="modal-content">
-                             <div class="card-header">
-                                 <h5 class="modal-title" id="exampleModalLongTitle">Confirm
-                                     Delete</h5>
-                                 <button href="#" type="button" class="close"
-                                     data-dismiss="modal" aria-label="Close"
-                                     style="margin-top:-25px;cursor:pointer">
-                                     <span aria-hidden="true">&times;</span>
-                                 </button>
-                             </div>
-                             <div class="modal-body">
-                                 <div class="container">
-                                     Are you sure you want to delete this entry
-                                 </div>
+                <button id="deletebutton" class="btn btn-sm btn-danger btn-delete" data-remote="'.route('request.destroy',$row->id). '">
+                <i class="nc-icon nc-simple-remove" aria-hidden="true"
+                         style="color: black"></i></button>
 
-                             </div>
-                             <div class="modal-footer float-right">
-                                 <button type="button" class="btn btn-outline-info btn-sm"
-                                     data-dismiss="modal" style="cursor:pointer;">
-                                     No
-                                 </button>
-                                 <form action="'.route('request.destroy',$row->id).'" method="post">
-                                 <input name="_token" value="'.csrf_token().'" type="hidden">
-
-                                 <input name="_method" type="hidden" value="DELETE">
-                                 <button class="btn btn-outline-primary btn-sm" type="submit">Yes</button>
-                             </form>
-                             </div>
-                         </div>
-                     </div>
-                 </div>
+                 </td>
              ';
                     return $actionBtn;
                 })
@@ -97,7 +67,7 @@ class RequestedController extends Controller
                 ->make(true);
         }
         elseif (auth()->user()->department == 'cards') {
-            $data = Requested::all();
+            $data = Requested::where('confirmed',0)->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($data) {
@@ -115,11 +85,12 @@ class RequestedController extends Controller
                 ->addColumn('action', function ($row) {
 
                  $actionBtn =
-                '<td><a class="btn btn-outline-primary btn-sm"
-                     href="/request/confirm/' . $row->id . '"><i class="nc-icon nc-check-2"
+                '
+                <td><a class="validates btn btn-outline-primary btn-sm"
+                     data-remote="/request/confirm/' . $row->id . '"><i class="nc-icon nc-check-2"
                          aria-hidden="true" style="color: black"></i></a></td>
-                <td><a class="btn btn-outline-danger btn-sm"
-                    href="/request/reject/' . $row->id . '"><i class="nc-icon nc-simple-remove"
+                <td><a class="denies btn btn-outline-danger btn-sm"
+                    data-remote="/request/reject/' . $row->id . '"><i class="nc-icon nc-simple-remove"
                         aria-hidden="true" style="color: black"></i></a></td>  ';
                     return $actionBtn;
                 })
@@ -159,10 +130,64 @@ class RequestedController extends Controller
 
     }
 
+
+
     public function validated()
     {
-        $request = Requested::where('confirmed', '1')->get();
-        return view('request.index')->with('request', $request);
+        $data = Requested::where('confirmed', '1')->get();
+        return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->editColumn('branch_id', function ($data) {
+
+                    return $data->branch->name;
+                })
+                ->editColumn('cards', function ($data) {
+                    return $data->cardtype->name;
+                })
+                ->editColumn('request_type', function ($data) {
+                    return $data->requesttype->name;
+                })
+                ->addColumn('action', function ($row) {
+
+                    $actionBtn =
+                   '<td class=" "><i class="nc-icon nc-check-2 alert-success btn-outline-success" aria-hidden="true" style="color: limegreen;" ></i></td>  ';
+                       return $actionBtn;
+                   })
+                ->rawColumns(['action'])
+                ->editColumn('id', 'ID: {{$id}}')
+                ->make(true);
+    }
+
+    public function rejected()
+    {
+        $data = Requested::where('rejected', '1')->get();
+        return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->editColumn('branch_id', function ($data) {
+
+                    return $data->branch->name;
+                })
+                ->editColumn('cards', function ($data) {
+                    return $data->cardtype->name;
+                })
+                ->editColumn('request_type', function ($data) {
+                    return $data->requesttype->name;
+                })
+                ->addColumn('action', function ($row) {
+
+                    $actionBtn =
+                   '<td class=" "><i class="nc-icon nc-remove-2 alert-success btn-outline-danger" aria-hidden="true" style="color: red;" ></i></td>  ';
+                       return $actionBtn;
+                   })
+                ->rawColumns(['action'])
+                ->editColumn('id', 'ID: {{$id}}')
+                ->make(true);
     }
 
     /**
@@ -207,11 +232,11 @@ class RequestedController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        $request = Requested::find($id);
-        return view('request.view')->with('request', $request);
-    }
+    // public function show($id)
+    // {
+    //     $request = Requested::find($id);
+    //     return view('request.view')->with('request', $request);
+    // }
 
     /**
      * Show the form for editing the specified resource.
@@ -267,7 +292,7 @@ class RequestedController extends Controller
 
         $req = Requested::findorFail($id);
         Requested::whereId($req['id'])->delete();
-        return redirect('/request')->with('success', 'Request has been deleted!!');
+        return response(200);
     }
 
     // this function validates when the request has been confirmed by cards and checks
@@ -302,19 +327,6 @@ class RequestedController extends Controller
         return redirect()->route('export', [$data]);
     }
 
-    public function fordate(Request $request)
-    {
-        $startdate = $request->startdate;
-        $enddate = $request->enddate;
-        $data = Requested::get()->wherebetween('created_at', [$startdate, $enddate]);
-        return response()->json($data, 200);
-    }
-
-    public function sortbranch($branch)
-    {
-        $data = Requested::select()->where('branch', $branch)->get();
-        return response()->json($data, 200);
-    }
 
 
 
@@ -326,33 +338,9 @@ class RequestedController extends Controller
         $doneby->employee_id = auth()->user()->employee_id;
         $doneby->save();
 
-
-        $headers = array(
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename='.'$request->startdate'.'to'.'$request->startdate'",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
-        );
-
         $startdate = $request->start_date;
         $enddate = $request->end_date;
         $title="New Cards from ". $startdate." - ".$enddate;
-        $data = Requested::get()->wherebetween('created_at', [$startdate, $enddate])->where('confirmed', '1')->where('request_type','new_card');
-        $columns = array('Account Number', 'Account Name', 'Branch Number','Branch', 'Card Requested','Date Requested');
-
-        $callback = function () use ($data, $columns) {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, $columns);
-
-            foreach ($data as $items) {
-
-                fputcsv($file, array($items->account_number,$items->account_name, $items->branch_id, $items->branch->name, $items->cardtype->name,date_format($items,"m/d/Y")));
-            }
-            fclose($file);
-
-        };
-
-        return response()->streamDownload($callback, $title ,$headers);
+        return (new RequestExports($startdate,$enddate))->download($title.'.xls');
     }
 }
