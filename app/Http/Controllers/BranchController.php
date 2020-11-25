@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 Use Illuminate\Pagination\LengthAwarePaginator;
+use DataTables;
+use Carbon\Carbon;
 use App\Branch;
 use Illuminate\Http\Request;
 
@@ -15,8 +17,33 @@ class BranchController extends Controller
      */
     public function index()
     {
-        $branch=Branch::all();
-        return view('pages.branch')->with('branch',$branch)->paginate();
+        return view('branch.index');
+    }
+
+    public function index1()
+    {
+        $data=Branch::all();
+        return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->addColumn('action', function ($row) {
+
+                $actionBtn =
+
+                '<td>
+
+                <button id="deletebutton" class="btn btn-sm btn-danger btn-delete" data-remote="'.route('branch.destroy',$row->id). '">
+                <i class="nc-icon nc-simple-remove" aria-hidden="true"
+                         style="color: black"></i></button>
+
+                 </td>
+             ';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
     }
 
     /**
@@ -37,11 +64,13 @@ class BranchController extends Controller
      */
     public function store(Request $request)
     {
-        $req= new Branch();
-        $data = $this->validate ($request, [
-            'name' => 'required|string|max:50',
+
+        $data = $request->validate ([
+            'name' => 'required',
+            'branch_code' => 'required',
         ]);
-        $req = Branch::create($data);
+       
+        Branch::create($data);
          return redirect()->route('branch.index')->with('success','New Entry created succesfully');
     }
 
@@ -51,23 +80,7 @@ class BranchController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        $branch= Branch::findbyId($id);
-        return view('pages.reqview')->with('branch', $branch);
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $branch= Branch::find($id);
-        return view('branch.edit', compact('branch','id'));
-    }
 
     /**
      * Update the specified resource in storage.
@@ -79,11 +92,12 @@ class BranchController extends Controller
     public function update(Request $request, $id)
     {
 
-        $data = $this->validate ($request, [
-            'branch' => 'required|string|max:50',
+        $data = $request->validate( [
+            'name' => 'required',
+            'branch_code' => 'required',
         ]);
         Branch::whereId($id)->update($data);
-        return redirect('request.home')->with('success', 'Updated!!');
+        return redirect('branch.index')->with('success', 'Updated!!');
     }
 
     /**
@@ -96,6 +110,6 @@ class BranchController extends Controller
     {
         $branch = Branch::findorFail($id);
         Branch::whereId($branch['id'])->delete();
-        return redirect('pages.branch')->with('success', 'Branch has been deleted!!');
+        return response(200);
     }
 }

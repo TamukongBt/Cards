@@ -1,5 +1,7 @@
 <?php
 
+use App\Slots;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,19 +16,41 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('dashboard');
+    return view('pages.dashboard');
 });
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('cards','CardsController');
     Route::resource('branch', 'BranchController');
     Route::resource('request','RequestedController');
     Route::resource('batch', 'BatchController');
-    Route::get('/ajax', 'RequestedController@index1');
+    Route::resource('slots', 'SlotsController');
 
+// Custom Views
+Route::get('/validated', 'RequestedController@validated')->name('request.approved');
+Route::get('/rejected', 'RequestedController@rejected')->name('request.rejected');
+
+
+// Ajax request for index
+
+    Route::get('/cards_ajax','CardsController@index1');
+    Route::get('/branch_ajax', 'BranchController@index1');
+    Route::get('/slots_ajax', 'SlotsController@index1');
+    Route::get('/batch_ajax', 'BatchController@index1');
+    Route::get('/ajax', 'RequestedController@index1');
+    Route::get('/validated_ajax', 'RequestedController@validated1');
+    Route::get('/rejected_ajax', 'RequestedController@rejected1');
+
+
+// validate actions
+    // Request
     Route::get('request/confirm/{id}', 'RequestedController@fulfilled');
     Route::get('request/reject/{id}', 'RequestedController@denied');
-    Route::get('request/data/week', 'RequestedController@week');
+    // Slots
+    Route::get('slots/confirm/{id}', 'SlotsController@fulfilled');
+    Route::get('slots/reject/{id}', 'SlotsController@denied');
 
+    // Custom Sorts
+    Route::get('request/data/week', 'RequestedController@week');
     Route::get('request/data/', 'RequestedController@sortbranch');
     Route::post('export', 'RequestedController@export')->name('export');
 
@@ -38,9 +62,6 @@ Route::get('permissions', 'RoleController@permissions');
 
 Route::get('/home', 'HomeController@index')->name('home');
 Auth::routes();
-
-
-Route::get('/home', 'HomeController@index')->name('home');
 
 Route::group(['middleware' => 'auth'], function () {
 	Route::resource('user', 'UserController', ['except' => ['show']]);

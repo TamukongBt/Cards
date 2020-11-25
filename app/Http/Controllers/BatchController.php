@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 use App\Batch;
-use App\User;
+use App\Requested;
+use DataTables;
+use Carbon\Carbon;
 
 
 use Illuminate\Http\Request;
@@ -14,10 +16,38 @@ class BatchController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function index()
     {
-        $batch=Batch::all();
-        return view('batch.index')->with('batch',$batch);
+        return view('batch.index');
+    }
+
+    public function index1()
+    {
+        $data=Batch::all();
+        return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->addColumn('action', function ($row) {
+
+                $actionBtn =
+
+                '<td>
+                <a href="'.route('batch.edit',$row->id).'" class="edit btn btn-info btn-sm "><i class="nc-icon nc-alert-circle-i"></i></a>
+
+
+                <button id="deletebutton" class="btn btn-sm btn-danger btn-delete" data-remote="'.route('batch.destroy',$row->id). '">
+                <i class="nc-icon nc-simple-remove" aria-hidden="true"
+                         style="color: black"></i></button>
+
+                 </td>
+             ';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
     }
 
     /**
@@ -38,17 +68,24 @@ class BatchController extends Controller
      */
     public function store(Request $request)
     {
-        $batch= new Batch();
+       $batch= new Batch();
         $data = $this->validate ($request, [
-            'start_acct' => 'required|string|max:50',
-            'end_acct' => 'required|string|max:50',
-            'batch_number' => 'required|string|max:50',
+            'start_acct' => 'required|exists:requesteds|string|max:50',
+            'end_acct' => 'required|exists:requesteds|string|max:50',
         ]);
-        $batch->batch_number=$request->batch_number;
+
+        $start=Requested::where('account_number',$request->start_acct)->where('cards',$request->start_cards)->where('confirmed',0)->where('rejected',0)->latest()->first();
+        $end=Requested::where('account_number',$request->end_acct)->where('cards',$request->end_cards)->where('confirmed',0)->where('rejected',0)->latest()->first();
+        $reqstart=$start->account_number;
+        $reqend=$end->account_number;
+        $batchnumber = 'N'.substr($reqstart, 0, 2).substr($reqend, 0, 2).now()->format('mdY');
+        $description= $request->gold.' Gold.'.$request->silver.' Silver.'.$request->sapphire.' Sapphire';
+        $batch->batch_number=$batchnumber;
         $batch->done_by=auth()->user()->name;
         $batch->start_acct=$request->start_acct;
         $batch->end_acct=$request->end_acct;
-        Batch::create($data);
+        $batch->description=$description;
+        
         $batch->save();
 
          return redirect()->route('batch.index')->with('success','New Entry created succesfully');
@@ -89,14 +126,20 @@ class BatchController extends Controller
     {
         $batch= new Batch();
         $data = $this->validate ($request, [
-            'start_acct' => 'required|string|max:50',
-            'end_acct' => 'required|string|max:50',
-            'batch_number' => 'required|string|max:50',
+            'start_acct' => 'required|exists:requesteds|string|max:50',
+            'end_acct' => 'required|exists:requesteds|string|max:50',
         ]);
-        $batch->batch_number=$request->batch_number;
+        $start=Requested::where('account_number',$request->start_acct)->where('cards',$request->start_cards)->where('confirmed',0)->where('rejected',0)->latest()->first();
+        $end=Requested::where('account_number',$request->end_acct)->where('cards',$request->end_cards)->where('confirmed',0)->where('rejected',0)->latest()->first();
+        $reqstart=$start->account_number;
+        $reqend=$end->account_number;
+        $batchnumber = 'N'.substr($reqstart, 0, 2).substr($reqend, 0, 2).now()->format('mdY');
+        $description= $request->gold.' Gold.'.$request->silver.' Silver.'.$request->sapphire.' Sapphire';
+        $batch->batch_number=$batchnumber;
         $batch->done_by=auth()->user()->name;
         $batch->start_acct=$request->start_acct;
         $batch->end_acct=$request->end_acct;
+        $batch->description=$description;
         Batch::whereId($id)->update($data);
         $batch->save();
          return redirect()->route('batch.index')->with('success','New Entry created succesfully');
@@ -112,6 +155,6 @@ class BatchController extends Controller
     {
         $batch = Batch::findorFail($id);
         Batch::whereId($batch['id'])->delete();
-        return redirect('batch.index')->with('success', 'Batch Number has been deleted!!');
+        return response(200);
     }
 }

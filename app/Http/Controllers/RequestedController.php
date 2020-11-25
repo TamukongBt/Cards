@@ -119,7 +119,7 @@ class RequestedController extends Controller
                 ->addColumn('action', function ($row) {
 
                     $actionBtn =
-                   '<td class=" "><i class="nc-icon nc-check-2 alert-success btn-outline-success" aria-hidden="true" style="color: limegreen;" ></i></td>  ';
+                   '<td class=" "><i class="nc-icon nc-check-2 alert-success btn-outline-success" aria-hidden="true" style="color: red;" ></i></td>  ';
                        return $actionBtn;
                    })
                 ->rawColumns(['action'])
@@ -131,8 +131,11 @@ class RequestedController extends Controller
     }
 
 
+    public function validated(){
+        return view('request.validated');
+    }
 
-    public function validated()
+    public function validated1()
     {
         $data = Requested::where('confirmed', '1')->get();
         return DataTables::of($data)
@@ -161,7 +164,11 @@ class RequestedController extends Controller
                 ->make(true);
     }
 
-    public function rejected()
+    public function rejected(){
+        return view('request.rejected');
+    }
+
+    public function rejected1()
     {
         $data = Requested::where('rejected', '1')->get();
         return DataTables::of($data)

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 Use Illuminate\Pagination\LengthAwarePaginator;
+use DataTables;
+use Carbon\Carbon;
 use App\Cards;
 use Illuminate\Http\Request;
 
@@ -16,8 +18,35 @@ class CardsController extends Controller
     public function index()
     {
         $cards=Cards::all();
-        return view('pages.cards')->with('cards',$cards);
+        return view('cards.index')->with('cards',$cards);
     }
+
+    public function index1()
+    {
+        $data=Cards::all();
+        return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->addColumn('action', function ($row) {
+
+                $actionBtn =
+
+                '<td>
+
+                <button id="deletebutton" class="btn btn-sm btn-danger btn-delete" data-remote="'.route('cards.destroy',$row->id). '">
+                <i class="nc-icon nc-simple-remove" aria-hidden="true"
+                         style="color: black"></i></button>
+
+                 </td>
+             ';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -37,15 +66,11 @@ class CardsController extends Controller
      */
     public function store(Request $request)
     {
-        $req= new Cards();
-        $data = $this->validate ($request, [
-
-
-            'name' => 'required|string|max:50',
-
-
+        $data = $request->validate ( [
+            'name' => 'required',
+            'card_type'=>'required'
         ]);
-        $req = Cards::create($data);
+       Cards::create($data);
          return redirect()->route('cards.index')->with('success','New Entry created succesfully');
     }
 
@@ -58,7 +83,7 @@ class CardsController extends Controller
     public function show($id)
     {
         $cards= Cards::findbyId($id);
-        return view('pages.reqview')->with('cards', $cards);
+        return view('cards.show')->with('cards', $cards);
     }
 
     /**
@@ -90,8 +115,9 @@ class CardsController extends Controller
 
         ]);
         Cards::whereId($id)->update($data);
-        return redirect('pages.reqview')->with('success', 'Updated!!');
+        return redirect('cards.index')->with('success', 'Updated!!');
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -103,6 +129,6 @@ class CardsController extends Controller
     {
         $cards = Cards::findorFail($id);
         Cards::whereId($cards['id'])->delete();
-        return redirect('pages.cards')->with('success', 'Cards has been deleted!!');
+        return response(200);
     }
 }

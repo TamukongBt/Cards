@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Branch extends Model
 {
-    protected $fillable = ['name','id'];
+    protected $fillable = ['name','branch_code'];
 
   public function requests(){
 
