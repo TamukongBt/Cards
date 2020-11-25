@@ -12,9 +12,9 @@
                 <div class="card-header">
                     <h4 class="card-title"> Rejected Request Tables</h4>
                     <div class="text-right" style='float:right;'>
-                        <a href="request/create" class="btn  btn-primary">New Request</a>
+                        <a href="request/create" class="btn  btn-primary" style="background-color: #15224c">New Request</a>
                         <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#modelId">
+                        <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#modelId" style="background-color: #15224c">
                             Download the data
                         </button>
                     </div>

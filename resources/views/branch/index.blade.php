@@ -13,7 +13,7 @@
                     <h4 class="card-title">Branches</h4>
                     <div class="text-right" style='float:right;'>
                         <!-- Button trigger modal -->
-                        <a href=# class="btn  btn-primary" type="button" data-toggle="modal" data-target="#modelId">Add A Branch</a>
+                        <a href=# class="btn  btn-primary" type="button" data-toggle="modal" data-target="#modelId" style="background-color: #15224c">Add A Branch</a>
                     </div>
                     <div class="card-body">
                     </div>

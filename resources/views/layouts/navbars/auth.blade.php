@@ -1,4 +1,4 @@
-<div class="sidebar" data-color="white" data-active-color="danger">
+<div class="sidebar" data-color="dark" data-active-color="#15224c">
     <div class="logo">
         <a href="/" class="simple-text  logo-normal">
             <div class="">
@@ -82,8 +82,8 @@
             </li>
             @endrole
             @hasanyrole('cards|it')
-            <li class="{{ $elementActive == 'tables' ? 'active' : '' }}">
-                <a href="{{ route('slots.index') }}">
+            <li class="{{ $elementActive == 'slots' ? 'active' : '' }}">
+                <a href="{{ route('slots.index','slots') }}">
                     <i class="nc-icon nc-tile-56"></i>
                     <p>{{ __('Card Slots') }}</p>
                 </a>

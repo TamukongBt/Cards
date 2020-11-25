@@ -105,7 +105,7 @@
 
 
                             <div class="row">
-                                <label class="col-md-3 col-form-label">{{ __('Requested By') }}</label>
+                                <label class="col-md-3 col-form-label" >{{ __('Requested By') }}</label>
                                 <div class="col-md-9">
                                     <div class="form-group">
                                         <input type="text" name="requested_by" class="form-control" value='{{$request->requested_by}}' required>
@@ -124,7 +124,7 @@
                                     <a class="btn btn-info btn-round text-white" href="{{ url()->previous() }}">{{ __('Go Back') }}</a>
                                     </div>
                                 <div class="col-sm-4 text-center">
-                                    <button type="submit" class="btn btn-info btn-round">{{ __('Update Request') }}</button>
+                                    <button type="submit" class="btn btn-info btn-round" style="background-color: #15224c">{{ __('Update Request') }}</button>
                                 </div>
 
                             </div>

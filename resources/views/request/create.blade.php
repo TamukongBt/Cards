@@ -6,10 +6,15 @@
 @section('content')
     <div class="content">
         <div class="row">
+
             <div class="col-md-8 text-center">
+
                 <form class="col-md-12" action="{{ route('request.store') }}" method="POST" >
                     @csrf
                     <div class="card">
+                        <button type="button" class="text-left close" data-dismiss="modal" aria-label="Close" style="margin: 0.3rem;" >
+                            <span aria-hidden="true"><a  style=" background-color: #15224c;" class="btn btn-sm" href="{{ url()->previous() }}"> <i class="nc-icon nc-minimal-left"></i></a></span>
+                        </button>
                         <div class="card-header">
                             <h5 class="title">{{ __('Make a new Request') }}</h5>
                         </div>
@@ -118,12 +123,9 @@
                             </div>
                         </div>
                         <div class="card-footer ">
-                            <div class="row">
-                                <div  class="col-sm-4  text-center">
-                                    <a class="btn btn-info btn-round text-white" href="{{ url()->previous() }}">{{ __('Go Back') }}</a>
-                                    </div>
-                                <div class="col-sm-4 text-center">
-                                    <button type="submit" class="btn btn-info btn-round">{{ __('Create Request') }}</button>
+                            <div class="form-row">
+                                <div class="col">
+                                    <button type="submit" class="btn btn-info btn-round" style="background-color: #15224c">{{ __('Create Request') }}</button>
                                 </div>
 
                             </div>

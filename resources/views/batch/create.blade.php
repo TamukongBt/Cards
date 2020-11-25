@@ -10,7 +10,8 @@
             <form class="col-md-12" action="{{ route('batch.store') }}" method="POST">
                 @csrf
                 <div class="card">
-                    <div class="card-header">
+
+                    <div class="card-header">   
                         <h5 class="title">{{ __('New Batch of Cards') }}</h5>
                     </div>
 
