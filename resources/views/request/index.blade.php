@@ -178,7 +178,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Choose The date Range for Downloads</h5>
-                    
+
             </div>
         <form action="{{route('export')}}" method="post">
             @csrf
@@ -213,81 +213,47 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Download</button>
+                <button id="download" type="submit" class="btn btn-primary">Download</button>
             </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- Modal to view -->
-{{-- <div class="modal fade" id="viewmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered " role="document">
+<!-- Modal to get reason for delete -->
+<div class="modal fade" id="modelreject" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="card-header">
-                <h5 class="modal-title" id="exampleModalLongTitle"><span id="accountname_title"></span> <a
-                        href="{{ route('request.edit',$entry->id)}}"><i class="fa fa-pencil text-dark"
-                            aria-hidden="true"></i></a></h5>
-
-                <button href="#" type="button" class="close" data-dismiss="modal" aria-label="Close"
-                    style="margin-top:-25px;cursor:pointer">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+            <div class="modal-header">
+                <h5 class="modal-title">{{ __('Reason') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
             </div>
             <div class="modal-body">
-                <div class="container">
-                    <div class="content">
-                        <div class="row">
-                            <div class="col-md-9 text-center">
-                                <div class="row">
-                                    <label class="col-md-6 col-form-label">{{ __('Account Number:') }}</label>
-                                    <div class="form-group">
-                                        <span id="account_number"></span>
-                                    </div>
-                                </div>
+                <form class="col-md-12" action="{{ route('request.store') }}" method="POST" id="denied">
+                    @csrf
 
-                                <div class="row">
-                                    <label class="col-md-6 col-form-label">{{ __('Account Name') }}</label>
-                                    <div class="form-group">
-                                        <span id="account_name"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <label class="col-md-6 col-form-label">{{ __('Card Type Requested') }}</label>
-                                    <div class="form-group">
-                                        <span id="card_type"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <label class="col-md-6 col-form-label">{{ __('Request Type') }}</label>
-                                    <div class="form-group">
-                                        <span id="request_type"></span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <label class="col-md-6 col-form-label">{{ __('Date Requested') }}</label>
-                                    <div class="form-group">
-                                        <span id="requested_date"></span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <label class="col-md-6 col-form-label">{{ __('Requested by:') }}</label>
-                                    <div class="form-group">
-                                        <span id="requested_by"></span>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="form-row">
+                                    <div class="col">
+                                        <label class=" col-form-label">{{ __('Reason For Rejection') }}</label>
+                                        <input type="textarea" name="reason" class="form-control"
+                                            placeholder="reason" required>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                        <div class="modal-footer">
+                            <button type="button" style="background-color: #15224c; hover:background-color: gold;" class="btn btn-secondary btn-round" data-dismiss="modal">Close</button>
+                            <button id="send" type="button" style="background-color: #15224c; hover:background-color: gold;" class="btn btn-info btn-round">{{ __('Reject') }}</button>
+                        </div>
+                </form>
             </div>
         </div>
     </div>
-</div> --}}
+</div>
 
 @push('scripts')
 
@@ -320,8 +286,6 @@
         });
     });
 
-
-
     //Start Edit Record
 
     $('#table1').on('click', '.btn-delete[data-remote]', function (e) {
@@ -347,6 +311,9 @@
     }else
         alert("You have cancelled!");
 });
+
+
+
 
 $('#table1').on('click', '.validates[data-remote]', function (e) {
     e.preventDefault();
@@ -376,15 +343,31 @@ $('#table1').on('click', '.denies[data-remote]', function (e) {
         }
     });
     var url = $(this).data('remote');
+    var form = $('#denied');
+    var send = $('#send');
+    console.log(url);
+
+    send.click(function (e){
+        console.log(form.serialize());
 
         $.ajax({
             url: url,
-            type: 'GET',
+            type:"POST",
             dataType: 'json',
-            data:{'_method':'GET'},
+            data:form.serialize(),
+            success: function (data) {
+                $('#modelreject').modal('hide');
+            },
+            error: function (data) {
+                console.log('An error occurred.');
+                console.log(data);
+            },
         }).always(function (data) {
             $('#table1').DataTable().draw(false);
         });
+    });
+
+
 
 });
 

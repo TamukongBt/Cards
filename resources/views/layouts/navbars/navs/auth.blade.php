@@ -17,16 +17,6 @@
             <span class="navbar-toggler-bar navbar-kebab"></span>
         </button>
         <div class="collapse navbar-collapse justify-content-end" id="navigation">
-            <form>
-                <div class="input-group no-border">
-                    <input type="text" value="" class="form-control" placeholder="Search...">
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <i class="nc-icon nc-zoom-split"></i>
-                        </div>
-                    </div>
-                </div>
-            </form>
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link btn-magnify" href="#pablo">
@@ -44,10 +34,15 @@
                             <span class="d-lg-none d-md-block">{{ __('Some Actions') }}</span>
                         </p>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="#">{{ __('Action') }}</a>
-                        <a class="dropdown-item" href="#">{{ __('Another action') }}</a>
-                        <a class="dropdown-item" href="#">{{ __('Something else here') }}</a>
+                    <div class="card dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                       <div class="">
+                           <div class="card-body">
+                            @foreach (auth()->user()->notifications as $notification)
+                               <span class="dropdown-item">{{$notification}}</span>
+                            @endforeach
+                            <span class="dropdown-item" href="#">{{ __('Another action') }}</span>
+                           </div>
+                       </div>
                     </div>
                 </li>
                 <li class="nav-item btn-rotate dropdown">

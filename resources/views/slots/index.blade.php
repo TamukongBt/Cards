@@ -77,14 +77,16 @@
                                 <input name="done_by" id="done_by" value='{{ auth()->user()->employee_id }}' required hidden>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary btn-round" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-info btn-round">{{ __('Make Request') }}</button>
+                                <button type="button" style="background-color: #15224c; hover:background-color: gold;" class="btn btn-secondary btn-round" data-dismiss="modal">Close</button>
+                                <button type="submit" style="background-color: #15224c; hover:background-color: gold;" class="btn btn-info btn-round">{{ __('Make Request') }}</button>
                             </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
+
 </div>
 
 

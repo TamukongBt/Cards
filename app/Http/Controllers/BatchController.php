@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 use App\Batch;
+use App\Notifications\BatchNotify;
+use App\User;
 use App\Requested;
 use DataTables;
 use Carbon\Carbon;
+
 
 
 use Illuminate\Http\Request;
@@ -85,11 +88,16 @@ class BatchController extends Controller
         $batch->start_acct=$request->start_acct;
         $batch->end_acct=$request->end_acct;
         $batch->description=$description;
-        
         $batch->save();
+        $user= User::where('department','cards')->get();
+        foreach ($user as $card) {
+            $card->notify(new BatchNotify($batch));
+        }
 
          return redirect()->route('batch.index')->with('success','New Entry created succesfully');
     }
+
+
 
     /**
      * Display the specified resource.

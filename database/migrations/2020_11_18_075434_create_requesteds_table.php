@@ -24,6 +24,7 @@ class CreateRequestedsTable extends Migration
             $table->boolean('rejected')->default(0);
             $table->string('done_by');
             $table->string('requested_by');
+            $table->string('reason_rejected')->nullable();
             $table->string('request_type');
             $table->unique(['account_number','request_type','cards',]);
             $table->timestamps();

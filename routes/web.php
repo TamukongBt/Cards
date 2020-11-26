@@ -44,7 +44,7 @@ Route::get('/rejected', 'RequestedController@rejected')->name('request.rejected'
 // validate actions
     // Request
     Route::get('request/confirm/{id}', 'RequestedController@fulfilled');
-    Route::get('request/reject/{id}', 'RequestedController@denied');
+    Route::post('request/reject/{id}', 'RequestedController@denied');
     // Slots
     Route::get('slots/confirm/{id}', 'SlotsController@fulfilled');
     Route::get('slots/reject/{id}', 'SlotsController@denied');
@@ -53,6 +53,10 @@ Route::get('/rejected', 'RequestedController@rejected')->name('request.rejected'
     Route::get('request/data/week', 'RequestedController@week');
     Route::get('request/data/', 'RequestedController@sortbranch');
     Route::post('export', 'RequestedController@export')->name('export');
+    Route::post('export', 'RequestedController@export')->name('export');
+    Route::post('exportrejects', 'RequestedController@exportrejected')->name('export.rejects');
+    Route::post('exportapproved', 'RequestedController@exportapproved')->name('export.approved');
+
 
 
 });

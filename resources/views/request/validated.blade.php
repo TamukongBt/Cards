@@ -12,7 +12,6 @@
                 <div class="card-header">
                     <h4 class="card-title"> Approved Request Tables</h4>
                     <div class="text-right" style='float:right;'>
-                        <a href="request/create" class="btn  btn-primary" style="background-color: #15224c">New Request</a>
                         <!-- Button trigger modal -->
                         <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#modelId" style="background-color: #15224c">
                             Download the data
@@ -76,7 +75,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
             </div>
-        <form action="{{route('export')}}" method="post">
+        <form action="{{route('export.approved')}}" method="post">
             @csrf
             <div class="modal-body">
                 <div class="row">
@@ -108,8 +107,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Download</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="background-color: #15224c">Close</button>
+                <button type="submit" id="download" class="btn btn-primary" style="background-color: #15224c">Download</button>
             </div>
             </form>
         </div>
@@ -147,6 +146,10 @@
         });
     });
 
+    // close modal
+    $('#download').click(function(){
+    $('#modelId').modal('hide');
+    });
 
 
     //Start Edit Record

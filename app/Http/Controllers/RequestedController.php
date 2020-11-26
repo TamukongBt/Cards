@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Requested;
+use App\User;
 use Illuminate\Http\Request;
-use App\Exports\RequestExport;
-use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Http\Response;
-use Yajra\DataTables\Services\DataTable;
+use App\Notifications\RejectRequest;
 use App\Downloads;
 use App\Exports\RequestExports;
+use App\Exports\RejectedExports;
+use App\Exports\ApprovedExports;
 use DataTables;
 use Carbon\Carbon;
 use Spatie\Permission\Traits\HasRoles;
@@ -31,7 +31,7 @@ class RequestedController extends Controller
     public function index1()
     {
         if (auth()->user()->department == 'css') {
-            $data = Requested::all();
+            $data = Requested::where('confirmed',0)->where('rejected',0)->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($data) {
@@ -67,7 +67,7 @@ class RequestedController extends Controller
                 ->make(true);
         }
         elseif (auth()->user()->department == 'cards') {
-            $data = Requested::where('confirmed',0)->get();
+            $data = Requested::where('confirmed',0)->where('rejected',0)->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($data) {
@@ -89,8 +89,8 @@ class RequestedController extends Controller
                 <td><a class="validates btn btn-outline-primary btn-sm"
                      data-remote="/request/confirm/' . $row->id . '"><i class="nc-icon nc-check-2"
                          aria-hidden="true" style="color: black"></i></a></td>
-                <td><a class="denies btn btn-outline-danger btn-sm"
-                    data-remote="/request/reject/' . $row->id . '"><i class="nc-icon nc-simple-remove"
+                <a class="denies btn btn-outline-danger btn-sm"
+                    data-remote="/request/reject/' . $row->id . '" data-toggle="modal" data-target="#modelreject"><i class="nc-icon nc-simple-remove"
                         aria-hidden="true" style="color: black"></i></a></td>  ';
                     return $actionBtn;
                 })
@@ -186,14 +186,6 @@ class RequestedController extends Controller
                 ->editColumn('request_type', function ($data) {
                     return $data->requesttype->name;
                 })
-                ->addColumn('action', function ($row) {
-
-                    $actionBtn =
-                   '<td class=" "><i class="nc-icon nc-remove-2 alert-success btn-outline-danger" aria-hidden="true" style="color: red;" ></i></td>  ';
-                       return $actionBtn;
-                   })
-                ->rawColumns(['action'])
-                ->editColumn('id', 'ID: {{$id}}')
                 ->make(true);
     }
 
@@ -280,6 +272,9 @@ class RequestedController extends Controller
 
         ]);
         try {
+            $req = Requested::findorFail($id);
+            $req->rejected= 0;
+            $req->save();
             Requested::whereId($id)->update($data);
         } catch (\Throwable $th) {
             return redirect('/create');
@@ -313,10 +308,14 @@ class RequestedController extends Controller
     }
 
      // this function validates when the request has been rejected by cards and checks
-     public function denied($id)
+     public function denied(Request $request, $id)
      {
+
          $req = Requested::findorFail($id);
+         $user= User::where('employee_id',$req->doneby)->first();
+         $user->notify(new RejectRequest($req));
          $req->rejected= 1;
+         $req->reason_rejected=$request->reason;
          $req->updated_at=now();
          $req->save();
          return response()->json(200);
@@ -348,6 +347,38 @@ class RequestedController extends Controller
         $startdate = $request->start_date;
         $enddate = $request->end_date;
         $title="New Cards from ". $startdate." - ".$enddate;
-        return (new RequestExports($startdate,$enddate))->download($title.'.xls');
+        return (new RequestExports($startdate,$enddate))->download($title.'.csv');
+    }
+
+    public function exportrejected(Request $request)
+    {
+        // Save details on the user who dowloaded
+        $doneby = new Downloads();
+        $doneby->user = auth()->user()->name;
+        $doneby->employee_id = auth()->user()->employee_id;
+        $doneby->save();
+
+
+        $startdate = $request->start_date;
+        $enddate = $request->end_date;
+        $title="Rejected Request from ". $startdate." to ".$enddate;
+
+        return (new RejectedExports($startdate,$enddate))->download($title.'.csv');
+    }
+
+    public function exportapproved(Request $request)
+    {
+        // Save details on the user who dowloaded
+        $doneby = new Downloads();
+        $doneby->user = auth()->user()->name;
+        $doneby->employee_id = auth()->user()->employee_id;
+        $doneby->save();
+
+
+        $startdate = $request->start_date;
+        $enddate = $request->end_date;
+        $title="Approved Request from ". $startdate." to ".$enddate;
+
+        return (new ApprovedExports($startdate,$enddate))->download($title.'.csv');
     }
 }
