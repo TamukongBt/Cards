@@ -26,6 +26,8 @@ class CreateRequestedsTable extends Migration
             $table->string('requested_by');
             $table->string('reason_rejected')->nullable();
             $table->string('request_type');
+            $table->string('email');
+            $table->string('tel');
             $table->unique(['account_number','request_type','cards',]);
             $table->timestamps();
         });

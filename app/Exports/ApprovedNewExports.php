@@ -8,7 +8,7 @@ use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class ApprovedExports implements FromQuery
+class ApprovedNewExports implements FromQuery
 {
     use Exportable;
 
@@ -23,8 +23,6 @@ class ApprovedExports implements FromQuery
 
         public function query()
         {
-            ob_end_clean();
-             ob_start();
-            return Requested::query()->select('branch_id','account_number','account_name','cards','request_type','account_type','done_by','requested_by','created_at')->wherebetween('created_at', [$this->startdate, $this->enddate])->where('confirmed',1);
+            return Requested::query()->select('branch_id','account_number','account_name','cards','request_type','account_type','created_at')->wherebetween('created_at', [$this->startdate, $this->enddate])->where('confirmed',1)->where('request_type','new_card');
         }
 }

@@ -92,7 +92,8 @@
     $(document).ready(function () {
         $('#tables1').DataTable({
             "processing": true,
-            "serverSide": true,
+            "serverSide": false,
+            "searchable": true,
             "ajax": "/branch_ajax",
 
 

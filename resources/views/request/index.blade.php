@@ -220,7 +220,7 @@
     </div>
 </div>
 
-<!-- Modal to get reason for delete -->
+<!-- Modal to get reason for rejecting -->
 <div class="modal fade" id="modelreject" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -239,8 +239,8 @@
                                 <div class="form-row">
                                     <div class="col">
                                         <label class=" col-form-label">{{ __('Reason For Rejection') }}</label>
-                                        <input type="textarea" name="reason" class="form-control"
-                                            placeholder="reason" required>
+
+                                        <textarea class="form-control" name="reason" cols="40" rows="10" required placeholder="You must give a reason to proceed"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -264,7 +264,8 @@
     $(document).ready(function () {
         $('#table1').DataTable({
             "processing": true,
-            "serverSide": true,
+            "serverSide": false,
+            "searchable": true,
             "ajax": "/ajax",
 
 

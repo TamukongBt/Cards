@@ -1,7 +1,6 @@
 <?php
-
 namespace App\Http\Controllers;
-
+ob_start();
 use App\Requested;
 use App\User;
 use Illuminate\Http\Request;
@@ -9,8 +8,10 @@ use App\Notifications\RejectRequest;
 use App\Downloads;
 use App\Exports\RequestExports;
 use App\Exports\RejectedExports;
+use App\Exports\ApprovedNewExports;
 use App\Exports\ApprovedExports;
 use DataTables;
+use RealRashid\SweetAlert\Facades\Alert;
 use Carbon\Carbon;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -26,12 +27,13 @@ class RequestedController extends Controller
     {
 
         $request = Requested::all();
+
         return view('request.index')->with('request', $request);
     }
     public function index1()
     {
         if (auth()->user()->department == 'css') {
-            $data = Requested::where('confirmed',0)->where('rejected',0)->get();
+            $data = Requested::where('confirmed', 0)->where('rejected', 0)->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($data) {
@@ -48,13 +50,13 @@ class RequestedController extends Controller
                 })
                 ->addColumn('action', function ($row) {
 
-                $actionBtn =
+                    $actionBtn =
 
-                '<td>
-                <a href="'.route('request.edit',$row->id).'" class="edit btn btn-info btn-sm "><i class="nc-icon nc-alert-circle-i"></i></a>
+                        '<td>
+                <a href="' . route('request.edit', $row->id) . '" class="edit btn btn-info btn-sm "><i class="nc-icon nc-alert-circle-i"></i></a>
 
 
-                <button id="deletebutton" class="btn btn-sm btn-danger btn-delete" data-remote="'.route('request.destroy',$row->id). '">
+                <button id="deletebutton" class="btn btn-sm btn-danger btn-delete" data-remote="' . route('request.destroy', $row->id) . '">
                 <i class="nc-icon nc-simple-remove" aria-hidden="true"
                          style="color: black"></i></button>
 
@@ -65,9 +67,8 @@ class RequestedController extends Controller
                 ->rawColumns(['action'])
                 ->editColumn('id', 'ID: {{$id}}')
                 ->make(true);
-        }
-        elseif (auth()->user()->department == 'cards') {
-            $data = Requested::where('confirmed',0)->where('rejected',0)->get();
+        } elseif (auth()->user()->department == 'cards') {
+            $data = Requested::where('confirmed', 0)->where('rejected', 0)->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($data) {
@@ -84,8 +85,8 @@ class RequestedController extends Controller
                 })
                 ->addColumn('action', function ($row) {
 
-                 $actionBtn =
-                '
+                    $actionBtn =
+                        '
                 <td><a class="validates btn btn-outline-primary btn-sm"
                      data-remote="/request/confirm/' . $row->id . '"><i class="nc-icon nc-check-2"
                          aria-hidden="true" style="color: black"></i></a></td>
@@ -97,10 +98,8 @@ class RequestedController extends Controller
                 ->rawColumns(['action'])
                 ->editColumn('id', 'ID: {{$id}}')
                 ->make(true);
-
-        }
-        elseif (auth()->user()->department == 'it') {
-            $data = Requested::where('confirmed',1)->get();
+        } elseif (auth()->user()->department == 'it') {
+            $data = Requested::where('confirmed', 1)->where('request_type', 'new_card')->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($data) {
@@ -119,33 +118,33 @@ class RequestedController extends Controller
                 ->addColumn('action', function ($row) {
 
                     $actionBtn =
-                   '<td class=" "><i class="nc-icon nc-check-2 alert-success btn-outline-success" aria-hidden="true" style="color: red;" ></i></td>  ';
-                       return $actionBtn;
-                   })
+                        '<td class=" "><i class="nc-icon nc-check-2 alert-success btn-outline-success" aria-hidden="true" style="color: limegreen;" ></i></td>  ';
+                    return $actionBtn;
+                })
                 ->rawColumns(['action'])
                 ->editColumn('id', 'ID: {{$id}}')
                 ->make(true);
-
         }
-
     }
 
 
-    public function validated(){
+    public function validated()
+    {
         return view('request.validated');
     }
 
     public function validated1()
     {
-        $data = Requested::where('confirmed', '1')->get();
-        return DataTables::of($data)
-                ->addIndexColumn()
-                ->editColumn('created_at', function ($data) {
-                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
-                })
-                ->editColumn('branch_id', function ($data) {
+        if (auth()->user()->department == 'it') {
+            $data = Requested::where('confirmed', '1')->where('request_type','new_card')->get();
+            return DataTables::of($data)
+            ->addIndexColumn()
+            ->editColumn('created_at', function ($data) {
+                return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+            })
+            ->editColumn('branch_id', function ($data) {
 
-                    return $data->branch->name;
+                return $data->branch->name;
                 })
                 ->editColumn('cards', function ($data) {
                     return $data->cardtype->name;
@@ -156,15 +155,44 @@ class RequestedController extends Controller
                 ->addColumn('action', function ($row) {
 
                     $actionBtn =
-                   '<td class=" "><i class="nc-icon nc-check-2 alert-success btn-outline-success" aria-hidden="true" style="color: limegreen;" ></i></td>  ';
-                       return $actionBtn;
-                   })
+                    '<td class=" "><i class="nc-icon nc-check-2 alert-success btn-outline-success" aria-hidden="true" style="color: limegreen;" ></i></td>  ';
+                    return $actionBtn;
+                })
                 ->rawColumns(['action'])
                 ->editColumn('id', 'ID: {{$id}}')
                 ->make(true);
-    }
+            }
+        else{
+            $data = Requested::where('confirmed', '1')->get();
+            return DataTables::of($data)
+            ->addIndexColumn()
+            ->editColumn('created_at', function ($data) {
+                return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+            })
+                    ->editColumn('branch_id', function ($data) {
 
-    public function rejected(){
+                        return $data->branch->name;
+                    })
+                    ->editColumn('cards', function ($data) {
+                        return $data->cardtype->name;
+                    })
+                    ->editColumn('request_type', function ($data) {
+                        return $data->requesttype->name;
+                    })
+                    ->addColumn('action', function ($row) {
+
+                        $actionBtn =
+                    '<td class=" "><i class="nc-icon nc-check-2 alert-success btn-outline-success" aria-hidden="true" style="color: limegreen;" ></i></td>  ';
+                    return $actionBtn;
+                })
+                    ->rawColumns(['action'])
+                    ->editColumn('id', 'ID: {{$id}}')
+                    ->make(true);
+                }
+            }
+
+            public function rejected()
+    {
         return view('request.rejected');
     }
 
@@ -172,26 +200,26 @@ class RequestedController extends Controller
     {
         $data = Requested::where('rejected', '1')->get();
         return DataTables::of($data)
-                ->addIndexColumn()
-                ->editColumn('created_at', function ($data) {
-                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
-                })
-                ->editColumn('branch_id', function ($data) {
+            ->addIndexColumn()
+            ->editColumn('created_at', function ($data) {
+                return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+            })
+            ->editColumn('branch_id', function ($data) {
 
-                    return $data->branch->name;
-                })
-                ->editColumn('cards', function ($data) {
-                    return $data->cardtype->name;
-                })
-                ->editColumn('request_type', function ($data) {
-                    return $data->requesttype->name;
-                })
-                ->make(true);
-    }
+                return $data->branch->name;
+            })
+            ->editColumn('cards', function ($data) {
+                return $data->cardtype->name;
+            })
+            ->editColumn('request_type', function ($data) {
+                return $data->requesttype->name;
+            })
+            ->make(true);
+        }
 
-    /**
-     * Show the form for creating a new resource.
-     *
+        /**
+         * Show the form for creating a new resource.
+         *
      * @return \Illuminate\Http\Response
      */
     public function create()
@@ -217,12 +245,17 @@ class RequestedController extends Controller
             'account_name' => 'required|string',
             'request_type' => 'required|string',
             'requested_by' => 'required',
-            'done_by' => 'required'
+            'done_by' => 'required',
+            'email' => 'required',
+            'tel' => 'required'
 
-        ]);
-
-        Requested::create($data);
-        return redirect()->route('request.index')->with('success', 'New Entry created succesfully');
+            ]);
+        try {
+            Requested::create($data);
+        } catch (\Throwable $th) {
+            return redirect()->route('request.create')->withErrors('errors');
+        }
+        return redirect()->route('request.index')->with( 'success','New Entry created succesfully');
     }
 
     /**
@@ -233,7 +266,7 @@ class RequestedController extends Controller
      */
     // public function show($id)
     // {
-    //     $request = Requested::find($id);
+        //     $request = Requested::find($id);
     //     return view('request.view')->with('request', $request);
     // }
 
@@ -268,19 +301,22 @@ class RequestedController extends Controller
             'account_name' => 'required|string',
             'request_type' => 'required|string',
             'requested_by' => 'required',
-            'done_by' => 'required'
+            'done_by' => 'required',
+            'email' => 'required',
+            'tel' => 'required'
 
-        ]);
-        try {
-            $req = Requested::findorFail($id);
-            $req->rejected= 0;
+
+            ]);
+            try {
+                $req = Requested::findorFail($id);
+                $req->rejected = 0;
             $req->save();
             Requested::whereId($id)->update($data);
         } catch (\Throwable $th) {
             return redirect('/create');
         }
 
-        return redirect('/request')->with('success', 'Updated!!');
+        return redirect('/request')->with(  'success','Request Updated!!');
     }
 
     /**
@@ -302,83 +338,158 @@ class RequestedController extends Controller
     {
         $req = Requested::findorFail($id);
         $req->confirmed = 1;
-        $req->updated_at=now();
+        $req->updated_at = now();
         $req->save();
         return response()->json(200);
     }
 
-     // this function validates when the request has been rejected by cards and checks
-     public function denied(Request $request, $id)
-     {
-
-         $req = Requested::findorFail($id);
-         $user= User::where('employee_id',$req->doneby)->first();
-         $user->notify(new RejectRequest($req));
-         $req->rejected= 1;
-         $req->reason_rejected=$request->reason;
-         $req->updated_at=now();
-         $req->save();
-         return response()->json(200);
-     }
-
-    // these are the sorting functions that sort the data by date branch and by week
-
-    public function week()
+    // this function validates when the request has been rejected by cards and checks
+    public function denied(Request $request, $id)
     {
-        $data = Requested::get()->wherebetween('created_at', [
-            now()->locale('en')->startOfWeek(),
-            now()->locale('en')->endOfWeek(),
-        ]);
+        $req = Requested::findorFail($id);
+        $user = User::where('employee_id', $req->done_by)->first();
+        $user->notify(new RejectRequest($req));
+        $req->rejected = 1;
+        $req->reason_rejected = $request->reason;
+        $req->updated_at = now();
+        $req->save();
+        return response()->json(200);
+    }
+
+    // these are the count functions that display the count of the dataon the dashboard for request
+
+        public function newcardcount()
+        {
+        $data = Requested::get()->where('request_type','new_card')->where('confirmed',0)->where('rejected',0)->count();
         // return $data;
-        return redirect()->route('export', [$data]);
+        return response($data,200);
+    }
+    public function newcardbranch()
+    {
+    $data = Requested::get()->where('request_type','new_card')->where('branch_id',auth()->user()->branch_id)->where('confirmed',1)->where('rejected',0)->count();
+    // return $data;
+    return response($data,200);
+   }
+
+        public function validatedcount()
+    {
+        $data = Requested::get()->where('branch_id',auth()->user()->branch_id)->where('confirmed',1)->where('rejected',0)->count();
+        return response($data,200);
+    }
+
+    public function validatedcountit()
+    {
+        $start=new Carbon('first day of this month');
+        $end=new Carbon('last day of this month');
+        $data = Requested::get()->wherebetween('created_at', [$start, $end])->where('confirmed',1)->where('rejected',0)->count();
+        return response($data,200);
+    }
+
+    public function groupvalidated()
+    {
+        $start=new Carbon('first day of this month');
+        $end=new Carbon('last day of this month');
+        $data = Requested::get()->wherebetween('created_at', [$start, $end])->where('confirmed',0)->where('rejected',0)->groupBy(function($date) {
+            return Carbon::parse($date->created_at)->format('d-m-Y'); // grouping by months
+        })->map->count();
+        $result = $data->ToArray();;
+        return response($result,200);
+    }
+
+
+
+    public function rejectedcount()
+    {
+        $data = Requested::get()->where('branch_id',auth()->user()->branch_id)->where('confirmed',0)->where('rejected',1)->count();
+        return response($data,200);
+    }
+
+    public function pendingcount()
+    {
+        $data = Requested::get()->where('branch_id',auth()->user()->branch_id)->where('confirmed',0)->where('rejected',0)->count();
+        return response($data,200);
+    }
+
+
+    public function other()
+    {
+        $data = Requested::get()->where('request_type','!=','new_card')->where('confirmed',0)->where('rejected',0)->count();
+        // return $data;
+        return response($data,200);
     }
 
 
 
 
+    public function markread(){
+        auth()->user()->unreadNotifications->markAsRead();
+        return response(200);
+    }
+
     public function export(Request $request)
     {
-        // Save details on the user who dowloaded
-        $doneby = new Downloads();
-        $doneby->user = auth()->user()->name;
-        $doneby->employee_id = auth()->user()->employee_id;
-        $doneby->save();
 
         $startdate = $request->start_date;
         $enddate = $request->end_date;
-        $title="New Cards from ". $startdate." - ".$enddate;
-        return (new RequestExports($startdate,$enddate))->download($title.'.csv');
+        $title = "New Cards from " . $startdate . " - " . $enddate;
+        ob_end_clean();
+        ob_start();
+
+        // Save details on the user who dowloaded
+        $doneby = new Downloads();
+        $doneby->user = auth()->user()->name;
+        $doneby->title=$title;
+        $doneby->employee_id = auth()->user()->employee_id;
+        $doneby->save();
+        return (new RequestExports($startdate, $enddate))->download($title . '.csv');
+
     }
 
     public function exportrejected(Request $request)
     {
-        // Save details on the user who dowloaded
-        $doneby = new Downloads();
-        $doneby->user = auth()->user()->name;
-        $doneby->employee_id = auth()->user()->employee_id;
-        $doneby->save();
-
 
         $startdate = $request->start_date;
         $enddate = $request->end_date;
-        $title="Rejected Request from ". $startdate." to ".$enddate;
+        $title = "Rejected Request from " . $startdate . " to " . $enddate;
 
-        return (new RejectedExports($startdate,$enddate))->download($title.'.csv');
+         // Save details on the user who dowloaded
+         $doneby = new Downloads();
+         $doneby->user = auth()->user()->name;
+         $doneby->title=$title;
+         $doneby->employee_id = auth()->user()->employee_id;
+         $doneby->save();
+
+         ob_end_clean();
+         ob_start();
+
+
+        return (new RejectedExports($startdate, $enddate))->download($title . '.csv');
     }
 
     public function exportapproved(Request $request)
     {
-        // Save details on the user who dowloaded
-        $doneby = new Downloads();
-        $doneby->user = auth()->user()->name;
-        $doneby->employee_id = auth()->user()->employee_id;
-        $doneby->save();
-
 
         $startdate = $request->start_date;
         $enddate = $request->end_date;
-        $title="Approved Request from ". $startdate." to ".$enddate;
+        $title = "Approved Request from " . $startdate . " to " . $enddate;
+        $ittitle=  "New Card Request from " . $startdate . " to " . $enddate;
 
-        return (new ApprovedExports($startdate,$enddate))->download($title.'.csv');
+         // Save details on the user who dowloaded
+         $doneby = new Downloads();
+         $doneby->user = auth()->user()->name;
+         $doneby->title=$title;
+         $doneby->employee_id = auth()->user()->employee_id;
+         $doneby->save();
+
+         ob_end_clean();
+         ob_start();
+
+         if(auth()->user()->department == 'it'){
+            return (new ApprovedNewExports($startdate, $enddate))->download($ittitle . '.csv');
+         }
+         else{
+            return (new ApprovedExports($startdate, $enddate))->download($title . '.csv');
+         }
+
     }
 }

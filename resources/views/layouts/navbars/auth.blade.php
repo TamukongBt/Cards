@@ -81,9 +81,16 @@
                 </a>
             </li>
             @endrole
-            @hasanyrole('cards|it')
+            @role('it')
             <li class="{{ $elementActive == 'slots' ? 'active' : '' }}">
                 <a href="{{ route('slots.index','slots') }}">
+                    <i class="nc-icon nc-tile-56"></i>
+                    <p>{{ __('Card Slots') }}</p>
+                </a>
+            </li>
+            @elserole('cards')
+            <li class="{{ $elementActive == 'slots' ? 'active' : '' }}">
+                <a href="{{ route('slots.create') }}">
                     <i class="nc-icon nc-tile-56"></i>
                     <p>{{ __('Card Slots') }}</p>
                 </a>

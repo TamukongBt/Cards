@@ -107,7 +107,6 @@
                             <input name="branch_id" id="branch_id"   value='{{ auth()->user()->branch_id }}'required hidden>
                             <input name="done_by" id="done_by" value='{{ auth()->user()->employee_id }}'required hidden>
 
-
                             <div class="row">
                                 <label class="col-md-3 col-form-label">{{ __('Requested By') }}</label>
                                 <div class="col-md-9">
@@ -117,6 +116,34 @@
                                     @if ($errors->has('requested_by'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
                                             <strong>{{ $errors->first('requested_by') }}</strong>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <label class="col-md-3 col-form-label">{{ __('Email') }}</label>
+                                <div class="col-md-9">
+                                    <div class="form-group">
+                                        <input type="email" name="email" class="form-control" placeholder="Email Address"  required>
+                                    </div>
+                                    @if ($errors->has('email'))
+                                        <span class="invalid-feedback" style="display: block;" role="alert">
+                                            <strong>{{ $errors->first('email') }}</strong>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <label class="col-md-3 col-form-label">{{ __('Telephone Number') }}</label>
+                                <div class="col-md-9">
+                                    <div class="form-group">
+                                        <input type="tel" name="tel" class="form-control" placeholder="Telephone Number"  required>
+                                    </div>
+                                    @if ($errors->has('requested_by'))
+                                        <span class="invalid-feedback" style="display: block;" role="alert">
+                                            <strong>{{ $errors->first('tel') }}</strong>
                                         </span>
                                     @endif
                                 </div>

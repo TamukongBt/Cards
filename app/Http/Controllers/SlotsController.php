@@ -90,13 +90,14 @@ class SlotsController extends Controller
             'silver' => 'required|string|max:50',
             'sapphire' => 'required|string|max:50',
         ]);
-        $description = $request->gold . '   Gold  ' . $request->silver . ' Silver  ' . $request->sapphire . '       Sapphire';
         $slots->done_by = auth()->user()->name;
-        $slots->description = $description;
+        $slots->gold = $request->gold;
+        $slots->silver = $request->gold;
+        $slots->sapphire = $request->sapphire;
         $slots->validated = 0;
         $slots->rejected = 0;
         $slots->save();
-        return redirect()->route('slots.index')->with('success', 'New Entry created succesfully');
+        return redirect()->route('slots.index')->with('success','New Entry created succesfully');
     }
 
     /**
@@ -110,6 +111,29 @@ class SlotsController extends Controller
         $slots = Slots::find($id);
         return view('pages.reqview')->with('slots', $slots);
     }
+
+    // dashboard Count display for slots data
+    public function slotso()
+    {
+        $data = Slots::where('validated',1)->latest();
+        $gold=$data->gold;
+        $silver=$data->silver;
+        $sapphire=$data->sapphire;
+        $count=$gold+$sapphire+$silver;
+        // return $data;
+        return response($count,200);
+    }
+    public function slotsed()
+    {
+        $data = Slots::get()->last();
+        $gold=$data->gold;
+        $silver=$data->silver;
+        $sapphire=$data->sapphire;
+        $count=$gold+$sapphire+$silver;
+        // return $data;
+        return response($count,200);
+    }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -163,7 +187,7 @@ class SlotsController extends Controller
         $slots->description = $description;
         slots::whereId($id)->update($data);
         $slots->save();
-        return redirect()->route('slots.index')->with('success', 'New Entry created succesfully');
+        return redirect()->route('slots.index')->with('success','New Entry created succesfully');
     }
 
     /**

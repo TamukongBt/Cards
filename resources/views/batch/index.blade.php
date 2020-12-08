@@ -59,7 +59,8 @@
     $(document).ready(function () {
         $('#tables').DataTable({
             "processing": true,
-            "serverSide": true,
+            "serverSide": false,
+            "searchable": true,
             "ajax": "/batch_ajax",
 
 

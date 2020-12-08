@@ -7,6 +7,7 @@ use App\User;
 use App\Requested;
 use DataTables;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 
 
 
@@ -72,13 +73,11 @@ class BatchController extends Controller
     public function store(Request $request)
     {
        $batch= new Batch();
-        $data = $this->validate ($request, [
-            'start_acct' => 'required|exists:requesteds|string|max:50',
-            'end_acct' => 'required|exists:requesteds|string|max:50',
-        ]);
+        try {
 
         $start=Requested::where('account_number',$request->start_acct)->where('cards',$request->start_cards)->where('confirmed',0)->where('rejected',0)->latest()->first();
         $end=Requested::where('account_number',$request->end_acct)->where('cards',$request->end_cards)->where('confirmed',0)->where('rejected',0)->latest()->first();
+
         $reqstart=$start->account_number;
         $reqend=$end->account_number;
         $batchnumber = 'N'.substr($reqstart, 0, 2).substr($reqend, 0, 2).now()->format('mdY');
@@ -95,6 +94,12 @@ class BatchController extends Controller
         }
 
          return redirect()->route('batch.index')->with('success','New Entry created succesfully');
+
+
+    } catch (\Throwable $th) {
+
+           return  view('batch.create')->with('success','The account doesnt exist in the system');
+        };
     }
 
 
@@ -122,6 +127,22 @@ class BatchController extends Controller
         $batch= Batch::find($id);
         return view('batch.edit', compact('batch','id'));
     }
+
+     // dashboard Count display for slots data
+     public function batch1()
+     {
+         try {
+            $data = Batch::get()->last()->value('batch_number');
+         } catch (\Throwable $th) {
+            return response("None Available",200);}
+
+         return response($data,200);
+         // return $data;
+
+     }
+
+
+
 
     /**
      * Update the specified resource in storage.

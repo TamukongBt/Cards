@@ -27,20 +27,31 @@
                     </a>
                 </li>
                 <li class="nav-item btn-rotate dropdown">
-                    <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink"
+                    <a class="nav-link dropdown-toggle"  id="navbarDropdownMenuLink"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="nc-icon nc-bell-55"></i>
+                        @if (count(auth()->user()->unreadNotifications)>0)
+                         <span id="badge" class="badge alert-danger">{{count(auth()->user()->notifications)}}</span>
+                        @endif
+                        <i class="nc-icon nc-bell-55" id="read"> </i>
                         <p>
                             <span class="d-lg-none d-md-block">{{ __('Some Actions') }}</span>
                         </p>
                     </a>
-                    <div class="card dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
                        <div class="">
-                           <div class="card-body">
+                           <div class="card-body list-group-item">
                             @foreach (auth()->user()->notifications as $notification)
-                               <span class="dropdown-item">{{$notification}}</span>
+                            @if ($notification->type='App\Notifications\RejectRequest')
+                            @foreach($notification->data as $data_item)
+                           <a href="/rejected"></a>
                             @endforeach
-                            <span class="dropdown-item" href="#">{{ __('Another action') }}</span>
+                            @else
+                            @foreach($notification->data as $data_item)
+                            <span class="dropdown-item list-group">New Batch of cards has been created with number{{ $data_item['batch_number']  }} </span>
+                            @endforeach
+                            @endif
+                            @endforeach
+
                            </div>
                        </div>
                     </div>
@@ -67,3 +78,38 @@
         </div>
     </div>
 </nav>
+@push('scripts')
+
+<script type="text/javascript">
+
+
+// Mark as Read
+
+    $('#read').click(function (e) {
+    e.preventDefault();
+     $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+
+    $.ajax({
+            url: '/read_ajax',
+            type:"GET",
+            dataType: 'json',
+            success: function (data) {
+                console.log('na me dis ');
+            },
+
+        })
+
+});
+
+
+
+
+
+</script>
+@endpush
+

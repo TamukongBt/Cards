@@ -124,17 +124,18 @@
     $(document).ready(function () {
         $('#table1').DataTable({
             "processing": true,
-            "serverSide": true,
+            "serverSide": false,
+            "searchable": true,
             "ajax": "/validated_ajax",
 
 
             "columns": [
-                { "data": "account_number", name: 'Account Number' },
-                { "data": "account_name", name: 'Account Name' },
-                { "data": "request_type", name: 'Request Type' },
-                { "data": "cards", name: 'Cards Requested' },
-                { "data": "created_at", name: 'Requested Date' },
-                { "data": "requested_by", name: 'Requested By' },
+                { "data": "account_number", name: 'Account Number', orderable: true, searchable: true },
+                { "data": "account_name", name: 'Account Name', orderable: true, searchable: true },
+                { "data": "request_type", name: 'Request Type' , orderable: true, searchable: true},
+                { "data": "cards", name: 'Cards Requested', orderable: true, searchable: true },
+                { "data": "created_at", name: 'Requested Date', orderable: true, searchable: true },
+                { "data": "requested_by", name: 'Requested By' , orderable: true, searchable: true},
                 { "data": "branch_id", name: 'Branch' },
                 {
                     data: 'action', name: 'action', orderable: true, searchable: true

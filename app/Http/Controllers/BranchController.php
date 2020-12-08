@@ -69,7 +69,7 @@ class BranchController extends Controller
             'name' => 'required',
             'branch_code' => 'required',
         ]);
-       
+
         Branch::create($data);
          return redirect()->route('branch.index')->with('success','New Entry created succesfully');
     }
@@ -97,7 +97,7 @@ class BranchController extends Controller
             'branch_code' => 'required',
         ]);
         Branch::whereId($id)->update($data);
-        return redirect('branch.index')->with('success', 'Updated!!');
+        return redirect('branch.index')->with('success','Updated!!');
     }
 
     /**

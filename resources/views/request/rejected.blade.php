@@ -114,7 +114,8 @@
     $(document).ready(function () {
         $('#table1').DataTable({
             "processing": true,
-            "serverSide": true,
+            "serverSide": false,
+            "searchable": true,
             "ajax": "/rejected_ajax",
 
 

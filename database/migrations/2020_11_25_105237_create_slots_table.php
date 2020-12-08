@@ -15,7 +15,9 @@ class CreateSlotsTable extends Migration
     {
         Schema::create('slots', function (Blueprint $table) {
             $table->id();
-            $table->string('description');
+            $table->string('gold');
+            $table->string('silver');
+            $table->string('sapphire');
             $table->boolean('validated');
             $table->boolean('rejected');
             $table->string('done_by');

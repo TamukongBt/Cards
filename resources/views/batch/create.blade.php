@@ -11,7 +11,7 @@
                 @csrf
                 <div class="card">
 
-                    <div class="card-header">   
+                    <div class="card-header">
                         <h5 class="title">{{ __('New Batch of Cards') }}</h5>
                     </div>
 
@@ -110,8 +110,6 @@
                         </div>
 
                         <input name="done_by" id="done_by" value='{{ auth()->user()->employee_id }}' required hidden>
-
-                        b4
 
                     </div>
 

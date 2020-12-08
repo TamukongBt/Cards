@@ -22,8 +22,14 @@
                             <thead>
 
                                 <th>
-                                  Slot Request
+                                  Gold
                                 </th>
+                                <th>
+                                   Silver
+                                </th>
+                                <th>
+                                    Sapphire
+                                  </th>
                                 <th>
                                     Date Created
                                 </th>
@@ -99,12 +105,15 @@
     $(document).ready(function () {
         $('#tables').DataTable({
             "processing": true,
-            "serverSide": true,
+            "serverSide": false,
+            "searchable": true,
             "ajax": "/slots_ajax",
 
 
             "columns": [
-                { "data": "description", name: 'Slot Details' },
+                { "data": "sapphire", name: 'Sapphire' },
+                { "data": "silver", name: 'Silver' },
+                { "data": "gold", name: 'Gold' },
                 { "data": "created_at", name: ' Date Created' },
                 {
                     data: 'action', name: 'action', orderable: true, searchable: true

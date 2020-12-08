@@ -115,7 +115,7 @@ class CardsController extends Controller
 
         ]);
         Cards::whereId($id)->update($data);
-        return redirect('cards.index')->with('success', 'Updated!!');
+        return redirect('cards.index')->with( 'success','Updated!!');
     }
 
 

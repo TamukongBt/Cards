@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Events\Newuser;
 use Illuminate\Notifications\Notifiable;
@@ -42,10 +43,21 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-    ];
+        'data' => 'array',
 
-    public function user()
+    ];
+    // public function branch()
+    // {
+    //     return $this->belongsTo('App\Branch', 'branch_id', 'branch_code');
+    // }
+
+    public function branch()
     {
-        return $this->belongsTo('App\Branch', 'branch_id', 'id');
+        return $this->belongsTo('App\Branch', 'branch_id', 'branch_code');
     }
+    public function doneby()
+    {
+        return $this->hasMany('App\Request', 'done_by', 'employee_id');
+    }
+
 }

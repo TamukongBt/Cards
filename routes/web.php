@@ -39,6 +39,7 @@ Route::get('/rejected', 'RequestedController@rejected')->name('request.rejected'
     Route::get('/ajax', 'RequestedController@index1');
     Route::get('/validated_ajax', 'RequestedController@validated1');
     Route::get('/rejected_ajax', 'RequestedController@rejected1');
+    Route::get('/read_ajax', 'RequestedController@markread');
 
 
 // validate actions
@@ -49,8 +50,21 @@ Route::get('/rejected', 'RequestedController@rejected')->name('request.rejected'
     Route::get('slots/confirm/{id}', 'SlotsController@fulfilled');
     Route::get('slots/reject/{id}', 'SlotsController@denied');
 
+    // dashboard ajax data
+    Route::get('/week', 'RequestedController@newcardcount');
+    Route::get('/newcardbranch', 'RequestedController@newcardbranch');
+    Route::get('/other_ajax', 'RequestedController@other');
+    Route::get('/slotso', 'SlotsController@slotso');
+    Route::get('/slotsed', 'SlotsController@slotsed');
+    Route::get('/batch1', 'BatchController@batch1');
+    Route::get('/validatedcount', 'RequestedController@validatedcount');
+    Route::get('/validatedcountit', 'RequestedController@validatedcountit');
+    Route::get('/groupcount', 'RequestedController@groupvalidated');
+    Route::get('/rejectedcount', 'RequestedController@rejectedcount');
+    Route::get('/pendingcount', 'RequestedController@pendingcount');
+
+
     // Custom Sorts
-    Route::get('request/data/week', 'RequestedController@week');
     Route::get('request/data/', 'RequestedController@sortbranch');
     Route::post('export', 'RequestedController@export')->name('export');
     Route::post('export', 'RequestedController@export')->name('export');

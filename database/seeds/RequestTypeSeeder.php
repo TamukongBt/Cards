@@ -30,6 +30,16 @@ class RequestTypeSeeder extends Seeder
                 'name' => 'Renew Card',
                 'request_code' => 'renew_card',
                 'created_at' => now(),
+                'updated_at' => now()],
+            [
+                'name' => 'Check 25',
+                'request_code' => 'check_25',
+                'created_at' => now(),
+                'updated_at' => now()],
+            [
+                'name' => 'Check 50',
+                'request_code' => 'check_50',
+                'created_at' => now(),
                 'updated_at' => now()]
         ]);
 
