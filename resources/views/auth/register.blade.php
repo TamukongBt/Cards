@@ -59,6 +59,7 @@
                                         </div>
                                         <select name="branch_id" id="branch_id" class="form-control @error('branch_id') is-invalid @enderror" required autofocus>
                                             <option >Choose Your Branch</option>
+                                            <option value="000">Head Office</option>
                                             <option value="001">Bamenda</option>
                                             <option value="002">Akwa</option>
                                             <option value="003">Limbe</option>
@@ -171,7 +172,7 @@
     <script>
         $(document).ready(function() {
             demo.checkFullPageBackgroundImage();
-            
+
 
         });
     </script>

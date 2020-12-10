@@ -10,7 +10,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title"> Approved Request Tables</h4>
+                    <h4 class="card-title"> Collected Cards</h4>
                     <div class="text-right" style='float:right;'>
                         <!-- Button trigger modal -->
                         <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#modelId" style="background-color: #15224c">
@@ -24,36 +24,26 @@
                             <thead>
 
                                 <th>
-                                    Account Number
+                                    Card Holder
                                 </th>
                                 <th>
-                                    Account Name
-                                </th>
-                                <th>
-                                    Request Type
-                                </th>
-                                <th>
-                                    Card Type
-                                </th>
-                                <th>
-                                    Date Requested
-                                </th>
-                                <th>
-                                    Requested By
+                                    Type Of Card
                                 </th>
                                 <th>
                                     Branch
                                 </th>
-                                @role('it')
                                 <th>
-                                    Status
+                                   Card Number
                                 </th>
-                                @else
                                 <th>
-                                    Actions
+                                    Remarks
                                 </th>
-                                @endrole
-
+                                <th>
+                                   Collected By
+                                </th>
+                                <th>
+                                    Collected On
+                                </th>
                             </thead>
                         </table>
                     </div>
@@ -75,7 +65,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
             </div>
-        <form action="{{route('export.approved')}}" method="post">
+        <form action="{{route('export.collected')}}" method="post">
             @csrf
             <div class="modal-body">
                 <div class="row">
@@ -126,20 +116,17 @@
             "processing": true,
             "serverSide": false,
             "searchable": true,
-            "ajax": "/validated_ajax",
+            "ajax": "/collect_ajax",
 
 
             "columns": [
-                { "data": "account_number", name: 'Account Number', orderable: true, searchable: true },
-                { "data": "account_name", name: 'Account Name', orderable: true, searchable: true },
-                { "data": "request_type", name: 'Request Type' , orderable: true, searchable: true},
-                { "data": "cards", name: 'Cards Requested', orderable: true, searchable: true },
-                { "data": "created_at", name: 'Requested Date', orderable: true, searchable: true },
-                { "data": "requested_by", name: 'Requested By' , orderable: true, searchable: true},
-                { "data": "branch_id", name: 'Branch' },
-                {
-                    data: 'action', name: 'action', orderable: true, searchable: true
-                },
+                { "data": "cardholder", name: 'Card Holder' },
+                { "data": "card_type", name: 'Type Of Card' },
+                { "data": "branchcode", name: 'Branch' },
+                { "data": "card_number", name: 'Cards Number' },
+                { "data": "remarks", name: 'Remarks' },
+                { "data": "collected_by", name: 'Collected By' },
+                { "data": "collected_at", name: 'Collected On', orderable: true, searchable: true },
 
 
             ]

@@ -1,0 +1,12 @@
+,Card Holder,Type of Card,Branch ordering,Card Number,Remarks
+1,NAKOUNOU AWOUMA LAURENT II,Trust Saphir,Mboppi,502886XXXXXX0700,card requests Oct 2020
+2,NGUEMO KENFACK BERNOULLI,Trust Saphir,Mboppi,502886XXXXXX4840,card requests Oct 2020
+3,MR ARREY JOHNSON NDIP,Trust Silver,Mboppi,502886XXXXXX2043,card requests Oct 2020
+4,MR LAMBI CEDRIC NSUNGEH ,Trust Silver,Mboppi,502886XXXXXX6766,card requests Oct 2020
+5,MME FANGHA MIRANDA BIH EPS,Trust Silver,Mboppi,502886XXXXXX9211,card requests Oct 2020
+6,WIRSHY JULLETTE GHAKANYUY ,Trust Silver,Mboppi,502886XXXXXX8548,card requests Oct 2020
+7,TCHOKOUADEU NGAKO LAURIE S,Trust Silver,Mboppi,502886XXXXXX8482,card requests Oct 2020
+8,KAKEU TCHINDA GISLAIN MERL,Trust Silver,Mboppi,502886XXXXXX9896,card requests Oct 2020
+9,MR FENLAI CLOVIS KERNYUY,Trust Silver,Mboppi,502886XXXXXX0208,card requests Oct 2020
+10,MR LOBE MOME JOSUE,Trust Silver,Mboppi,502886XXXXXX9166,card requests Oct 2020
+11,MME MAJOH NKONHOKE BERTILL,Trust Silver,Mboppi,502886XXXXXX0094,card requests Oct 2020

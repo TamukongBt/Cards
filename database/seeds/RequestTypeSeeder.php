@@ -32,15 +32,11 @@ class RequestTypeSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now()],
             [
-                'name' => 'Check 25',
-                'request_code' => 'check_25',
+                'name' => 'New Check Request',
+                'request_code' => 'cheque',
                 'created_at' => now(),
                 'updated_at' => now()],
-            [
-                'name' => 'Check 50',
-                'request_code' => 'check_50',
-                'created_at' => now(),
-                'updated_at' => now()]
+
         ]);
 
     }

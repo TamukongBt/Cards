@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTransmissionsTable extends Migration
+class CreateChequeTransmissionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,14 @@ class CreateTransmissionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('transmissions', function (Blueprint $table) {
+        Schema::create('cheque_transmissions', function (Blueprint $table) {
             $table->id();
-            $table->string('cardholder');
-            $table->string('card_type');
+            $table->string('chequeholder');
             $table->string('branchcode');
-            $table->string('card_number');
             $table->string('remarks');
             $table->string('collected_by')->nullable();
             $table->boolean('collected')->nullable();
-            $table->timestamp('collected_at')->nullable();
+            $table->timestamp('collected_at')->nullable();;
             $table->timestamps();
         });
     }
@@ -34,6 +32,6 @@ class CreateTransmissionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('transmissions');
+        Schema::dropIfExists('cheque_transmissions');
     }
 }

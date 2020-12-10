@@ -47,44 +47,69 @@
                                 </div>
                             </div>
 
-                             <div class="row">
-                                <label class="col-md-3 col-form-label">{{ __('Card Type Requested') }}</label>
-                                <div class="col-md-9">
-                                    <div class="form-group">
-                                    <select name="cards" id="cards" class="form-control @error('cards') is-invalid @enderror" required autofocus>
-                                        <option >Choose Your Card Type</option>
-                                        <option value="saphire">Sapphire</option>
-                                        <option value="silver">Silver</option>
-                                        <option value="gold">Gold</option>
-                                    </select>
-                                    </div>
-                                    @if ($errors->has('cards'))
-                                        <span class="invalid-feedback" style="display: block;" role="alert">
-                                            <strong>{{ $errors->first('cards') }}</strong>
-                                        </span>
-                                    @endif
-                                </div>
-                            </div>
 
                             <div class="row">
                                 <label class="col-md-3 col-form-label">{{ __('Request Type') }}</label>
                                 <div class="col-md-9">
                                     <div class="form-group">
-                                    <select name="request_type" id="request_type" class="form-control @error('request_type') is-invalid @enderror" required autofocus>
-                                    <option >Choose Your Request Type</option>
-                                    <option value="pin_change">Change Your Pin</option>
-                                    <option value="new_card">New Card Request</option>
-                                    <option value="block_card">Block Card</option>
-                                    <option value="renew_card">Renew Card</option>
-                                    </select>
+                                        <select name="request_type" id="request_type" class="form-control @error('request_type') is-invalid @enderror" required autofocus>
+                                            <option >Choose Your Request Type</option>
+                                            {{-- <option value="cheque_25">New </option> --}}
+                                            <option value="cheque">New Cheque Request</option>
+                                            <option value="new_card">New Card Request</option>
+                                            <option value="pin_change">Change Your Pin</option>
+                                            <option value="block_card">Block Card</option>
+                                            <option value="renew_card">Renew Card</option>
+                                        </select>
                                     </div>
                                     @if ($errors->has('request_type'))
-                                        <span class="invalid-feedback" style="display: block;" role="alert">
-                                            <strong>{{ $errors->first('request_type ') }}</strong>
-                                        </span>
+                                    <span class="invalid-feedback" style="display: block;" role="alert">
+                                        <strong>{{ $errors->first('request_type ') }}</strong>
+                                    </span>
                                     @endif
                                 </div>
                             </div>
+
+                           
+
+                            <div class="row" id="cards">
+                               <label class="col-md-3 col-form-label">{{ __('Card Type Requested') }}</label>
+                               <div class="col-md-9">
+                                   <div class="form-group">
+                                   <select name="cards" id="cards" class="form-control @error('cards') is-invalid @enderror" required autofocus>
+                                       <option >Choose Your Card Type</option>
+                                       <option value="saphire">Sapphire</option>
+                                       <option value="silver">Silver</option>
+                                       <option value="gold">Gold</option>
+                                   </select>
+                                   </div>
+                                   @if ($errors->has('cards'))
+                                       <span class="invalid-feedback" style="display: block;" role="alert">
+                                           <strong>{{ $errors->first('cards') }}</strong>
+                                       </span>
+                                   @endif
+                               </div>
+                           </div>
+
+                           <div class="row" id="cheques">
+                            <label class="col-md-3 col-form-label">{{ __('Cheque Type Requested') }}</label>
+                            <div class="col-md-9">
+                                <div class="form-group">
+                                <select name="cards" id="cards" class="form-control @error('cheque') is-invalid @enderror" required autofocus>
+                                    <option >Choose Your Cheque Type</option>
+                                    <option value="certified">Certified Cheque</option>
+                                    <option value="cheque_50">Cheque 50</option>
+                                    <option value="cheque_25">Cheque 25</option>
+                                </select>
+                                </div>
+                                @if ($errors->has('cards'))
+                                    <span class="invalid-feedback" style="display: block;" role="alert">
+                                        <strong>{{ $errors->first('cards') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
 
                              <div class="row">
                                 <label class="col-md-3 col-form-label">{{ __('Is this a New Account') }}</label>
@@ -163,4 +188,34 @@
             </div>
         </div>
     </div>
+    @push('scripts')
+
+    <script type="text/javascript">
+
+$(document).ready(function () {
+    $('#cheques').hide()
+        $('#cards').hide()
+    });
+
+        $('#request_type').on('change',function(){
+        var selection = $(this).val();
+        console.log(selection);
+        switch(selection){
+        case 'cheque':
+        $('#cheques').show(),
+        $('#cards').hide()
+        break;
+        case 'new_card':
+        $('#cheques').hide()
+        $('#cards').show()
+        break;
+        default:
+        $('#cards').show()
+
+        }
+    });
+
+    </script>
+    @endpush
 @endsection
+

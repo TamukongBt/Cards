@@ -10,8 +10,9 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title"> Approved Request Tables</h4>
+                    <h4 class="card-title"> @role('css')Pending @endrole Transmissions </h4>
                     <div class="text-right" style='float:right;'>
+                        <a href="transmissions/create" class="btn  btn-primary" style="background-color: #15224c">New Request</a>
                         <!-- Button trigger modal -->
                         <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#modelId" style="background-color: #15224c">
                             Download the data
@@ -24,36 +25,26 @@
                             <thead>
 
                                 <th>
-                                    Account Number
+                                    Card Holder
                                 </th>
                                 <th>
-                                    Account Name
-                                </th>
-                                <th>
-                                    Request Type
-                                </th>
-                                <th>
-                                    Card Type
-                                </th>
-                                <th>
-                                    Date Requested
-                                </th>
-                                <th>
-                                    Requested By
+                                    Type Of Card
                                 </th>
                                 <th>
                                     Branch
-                                </th>
-                                @role('it')
+                                </th>.
                                 <th>
-                                    Status
+                                   Card Number
                                 </th>
-                                @else
                                 <th>
-                                    Actions
+                                    Remarks
                                 </th>
-                                @endrole
-
+                                <th>
+                                   Collected_On
+                                </th>
+                                <th>
+                                    Action
+                                </th>
                             </thead>
                         </table>
                     </div>
@@ -71,11 +62,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Choose The date Range for Downloads</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+
             </div>
-        <form action="{{route('export.approved')}}" method="post">
+        <form action="{{route('export.collected')}}" method="post">
             @csrf
             <div class="modal-body">
                 <div class="row">
@@ -107,10 +96,49 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="background-color: #15224c">Close</button>
-                <button type="submit" id="download" class="btn btn-primary" style="background-color: #15224c">Download</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button id="download" type="submit" class="btn btn-primary">Download</button>
             </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal to get reason for rejecting -->
+<div class="modal fade" id="modelreject" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ __('Collected By') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+            </div>
+            <div class="modal-body">
+                <form class="col-md-12"  method="POST" id="denied">
+                    @csrf
+
+                        <div class="card-body">
+                            <div class="row">
+                                <label class="col-md-3 col-form-label">{{ __('Collected By') }}</label>
+                                <div class="col-md-9">
+                                    <div class="form-group">
+                                        <input type="text" name="collected_by" class="form-control" placeholder="Collected By"  required>
+                                    </div>
+                                    @if ($errors->has('collected_by'))
+                                        <span class="invalid-feedback" style="display: block;" role="alert">
+                                            <strong>{{ $errors->first('collected_by') }}</strong>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" style="background-color: #15224c; hover:background-color: gold;" class="btn btn-secondary btn-round" data-dismiss="modal">Close</button>
+                            <button id="send" type="button" style="background-color: #15224c; hover:background-color: gold;" class="btn btn-info btn-round">{{ __('Reject') }}</button>
+                        </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -126,17 +154,16 @@
             "processing": true,
             "serverSide": false,
             "searchable": true,
-            "ajax": "/validated_ajax",
+            "ajax": "/transmissions_ajax",
 
 
             "columns": [
-                { "data": "account_number", name: 'Account Number', orderable: true, searchable: true },
-                { "data": "account_name", name: 'Account Name', orderable: true, searchable: true },
-                { "data": "request_type", name: 'Request Type' , orderable: true, searchable: true},
-                { "data": "cards", name: 'Cards Requested', orderable: true, searchable: true },
-                { "data": "created_at", name: 'Requested Date', orderable: true, searchable: true },
-                { "data": "requested_by", name: 'Requested By' , orderable: true, searchable: true},
-                { "data": "branch_id", name: 'Branch' },
+                { "data": "cardholder", name: 'Card Holder' },
+                { "data": "card_type", name: 'Type Of Card' },
+                { "data": "branchcode", name: 'Branch' },
+                { "data": "card_number", name: 'Cards Number' },
+                { "data": "remarks", name: 'Remarks' },
+                { "data": "created_at", name: 'Collected On', orderable: true, searchable: true },
                 {
                     data: 'action', name: 'action', orderable: true, searchable: true
                 },
@@ -146,12 +173,6 @@
 
         });
     });
-
-    // close modal
-    $('#download').click(function(){
-    $('#modelId').modal('hide');
-    });
-
 
     //Start Edit Record
 
@@ -173,12 +194,16 @@
             dataType: 'json',
             data:{'_method':'DELETE'},
         }).always(function (data) {
-            $('#table1').DataTable().draw(false);
+            console.log(data);
+            // $('#table1').DataTable().draw(true);
             $('#table1').DataTable().ajax.reload();
         });
     }else
         alert("You have cancelled!");
 });
+
+
+
 
 $('#table1').on('click', '.validates[data-remote]', function (e) {
     e.preventDefault();
@@ -195,7 +220,7 @@ $('#table1').on('click', '.validates[data-remote]', function (e) {
             dataType: 'json',
             data:{'_method':'GET'},
         }).always(function (data) {
-            $('#table1').DataTable().draw(false);
+            // $('#table1').DataTable().draw(false);
             $('#table1').DataTable().ajax.reload();
         });
 
@@ -209,16 +234,32 @@ $('#table1').on('click', '.denies[data-remote]', function (e) {
         }
     });
     var url = $(this).data('remote');
+    var form = $('#denied');
+    var send = $('#send');
+    console.log(url);
+
+    send.click(function (e){
+        console.log(form.serialize());
 
         $.ajax({
             url: url,
-            type: 'GET',
+            type:"POST",
             dataType: 'json',
-            data:{'_method':'GET'},
+            data:form.serialize(),
+            success: function (data) {
+                $('#modelreject').modal('hide');
+            },
+            error: function (data) {
+                console.log('An error occurred.');
+                console.log(data);
+            },
         }).always(function (data) {
-            $('#table1').DataTable().draw(false);
             $('#table1').DataTable().ajax.reload();
+            $('#table1').DataTable().draw(false);
         });
+    });
+
+
 
 });
 

@@ -162,6 +162,7 @@
             data:{'_method':'DELETE'},
         }).always(function (data) {
             $('#table1').DataTable().draw(false);
+            $('#table1').DataTable().ajax.reload();
         });
     }else
         alert("You have cancelled!");
@@ -183,6 +184,7 @@ $('#table1').on('click', '.validates[data-remote]', function (e) {
             data:{'_method':'GET'},
         }).always(function (data) {
             $('#table1').DataTable().draw(false);
+            $('#table1').DataTable().ajax.reload();
         });
 
 });
@@ -203,6 +205,7 @@ $('#table1').on('click', '.denies[data-remote]', function (e) {
             data:{'_method':'GET'},
         }).always(function (data) {
             $('#table1').DataTable().draw(false);
+            $('#table1').DataTable().ajax.reload();
         });
 
 });

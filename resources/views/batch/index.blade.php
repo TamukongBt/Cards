@@ -103,6 +103,7 @@
             data:{'_method':'DELETE'},
         }).always(function (data) {
             $('#table1').DataTable().draw(false);
+            $('#table1').DataTable().ajax.reload();
         });
     }else
         alert("You have cancelled!");

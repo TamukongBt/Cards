@@ -10,7 +10,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title"> Approved Request Tables</h4>
+                    <h4 class="card-title"> Collected Cheques</h4>
                     <div class="text-right" style='float:right;'>
                         <!-- Button trigger modal -->
                         <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#modelId" style="background-color: #15224c">
@@ -24,36 +24,20 @@
                             <thead>
 
                                 <th>
-                                    Account Number
-                                </th>
-                                <th>
-                                    Account Name
-                                </th>
-                                <th>
-                                    Request Type
-                                </th>
-                                <th>
-                                    Card Type
-                                </th>
-                                <th>
-                                    Date Requested
-                                </th>
-                                <th>
-                                    Requested By
+                                    Cheque Holder
                                 </th>
                                 <th>
                                     Branch
                                 </th>
-                                @role('it')
                                 <th>
-                                    Status
+                                    Remarks
                                 </th>
-                                @else
                                 <th>
-                                    Actions
+                                   Collected By
                                 </th>
-                                @endrole
-
+                                <th>
+                                    Collected On
+                                </th>
                             </thead>
                         </table>
                     </div>
@@ -75,7 +59,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
             </div>
-        <form action="{{route('export.approved')}}" method="post">
+        <form action="{{route('export.ccollected')}}" method="post">
             @csrf
             <div class="modal-body">
                 <div class="row">
@@ -126,20 +110,15 @@
             "processing": true,
             "serverSide": false,
             "searchable": true,
-            "ajax": "/validated_ajax",
+            "ajax": "/ccollect_ajax",
 
 
             "columns": [
-                { "data": "account_number", name: 'Account Number', orderable: true, searchable: true },
-                { "data": "account_name", name: 'Account Name', orderable: true, searchable: true },
-                { "data": "request_type", name: 'Request Type' , orderable: true, searchable: true},
-                { "data": "cards", name: 'Cards Requested', orderable: true, searchable: true },
-                { "data": "created_at", name: 'Requested Date', orderable: true, searchable: true },
-                { "data": "requested_by", name: 'Requested By' , orderable: true, searchable: true},
-                { "data": "branch_id", name: 'Branch' },
-                {
-                    data: 'action', name: 'action', orderable: true, searchable: true
-                },
+                { "data": "chequeholder", name: 'Cheque Holder' },
+                { "data": "branchcode", name: 'Branch' },
+                { "data": "remarks", name: 'Remarks' },
+                { "data": "collected_by", name: 'Collected By' },
+                { "data": "collected_at", name: 'Collected On', orderable: true, searchable: true },
 
 
             ]

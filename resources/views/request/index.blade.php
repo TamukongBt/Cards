@@ -224,26 +224,18 @@
 <div class="modal fade" id="modelreject" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header text-light" style="background-color: #15224c; hover:background-color: gold;">
                 <h5 class="modal-title">{{ __('Reason') }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                        <span  class="text-light" aria-hidden="true">&times;</span>
                     </button>
             </div>
             <div class="modal-body">
                 <form class="col-md-12" action="{{ route('request.store') }}" method="POST" id="denied">
-                    @csrf
-
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="form-row">
-                                    <div class="col">
-                                        <label class=" col-form-label">{{ __('Reason For Rejection') }}</label>
-
-                                        <textarea class="form-control" name="reason" cols="40" rows="10" required placeholder="You must give a reason to proceed"></textarea>
-                                    </div>
-                                </div>
-                            </div>
+                      @csrf
+                        <div class="col">
+                            <label class=" col-form-label">{{ __('Reason For Rejection') }}</label>
+                            <textarea class="form-control" name="reason" cols="40" rows="10" required placeholder="  You must give a reason to proceed"></textarea>
                         </div>
                         <div class="modal-footer">
                             <button type="button" style="background-color: #15224c; hover:background-color: gold;" class="btn btn-secondary btn-round" data-dismiss="modal">Close</button>
@@ -266,6 +258,7 @@
             "processing": true,
             "serverSide": false,
             "searchable": true,
+            "responsive": true,
             "ajax": "/ajax",
 
 
@@ -308,6 +301,7 @@
             data:{'_method':'DELETE'},
         }).always(function (data) {
             $('#table1').DataTable().draw(false);
+            $('#table1').DataTable().ajax.reload();
         });
     }else
         alert("You have cancelled!");
@@ -332,6 +326,7 @@ $('#table1').on('click', '.validates[data-remote]', function (e) {
             data:{'_method':'GET'},
         }).always(function (data) {
             $('#table1').DataTable().draw(false);
+            $('#table1').DataTable().ajax.reload();
         });
 
 });
@@ -365,6 +360,7 @@ $('#table1').on('click', '.denies[data-remote]', function (e) {
             },
         }).always(function (data) {
             $('#table1').DataTable().draw(false);
+            $('#table1').DataTable().ajax.reload();
         });
     });
 

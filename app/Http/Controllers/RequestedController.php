@@ -34,6 +34,7 @@ class RequestedController extends Controller
     {
         if (auth()->user()->department == 'css') {
             $data = Requested::where('confirmed', 0)->where('rejected', 0)->get();
+
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($data) {
@@ -191,7 +192,7 @@ class RequestedController extends Controller
                 }
             }
 
-            public function rejected()
+ public function rejected()
     {
         return view('request.rejected');
     }
@@ -236,6 +237,7 @@ class RequestedController extends Controller
     public function store(Request $request)
     {
 
+
         $data = $request->validate([
 
             'account_type' => 'required|string',
@@ -243,17 +245,16 @@ class RequestedController extends Controller
             'cards' => 'required',
             'account_number' => 'required|max:15',
             'account_name' => 'required|string',
-            'request_type' => 'required|string',
+            'request_type' => 'required',
             'requested_by' => 'required',
             'done_by' => 'required',
-            'email' => 'required',
-            'tel' => 'required'
 
             ]);
         try {
             Requested::create($data);
         } catch (\Throwable $th) {
-            return redirect()->route('request.create')->withErrors('errors');
+
+            return redirect()->route('request.create')->withErrors($data);
         }
         return redirect()->route('request.index')->with( 'success','New Entry created succesfully');
     }

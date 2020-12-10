@@ -49,6 +49,43 @@
                     </ul>
                 </div>
             </li>
+            <li class="{{ $elementActive == 'user' || $elementActive == 'profile' ? 'active' : '' }}">
+                <a data-toggle="collapse" aria-expanded="true" href="#laravelExample">
+                    <p>
+                        <i class="nc-icon nc-book-bookmark" aria-hidden="true"></i>
+                            {{ __('Transmissions') }}
+                        <b class="caret"></b>
+                    </p>
+                </a>
+                <div class="collapse show" id="laravelExample">
+                    <ul class="nav">
+                        <li class="{{ $elementActive == 'profile' ? 'active' : '' }}">
+                            <a href="{{ route('transmissions.index') }}">
+                                <span class="sidebar-mini-icon">...</span>
+                                <span class="sidebar-normal">{{ __(' Pending Cards') }}</span>
+                            </a>
+                        </li>
+                        <li class="{{ $elementActive == 'user' ? 'active' : '' }}">
+                            <a href="{{ route('transmissions.collected') }}">
+                                <i class="nc-icon nc-check-2 sidebar-mini-icon" aria-hidden="true"></i>
+                                <span class="sidebar-normal">{{ __('Cards Collected') }}</span>
+                            </a>
+                        </li>
+                        <li class="{{ $elementActive == 'user' ? 'active' : '' }}">
+                            <a href="{{ route('cheque.index') }}">
+                                <i class="nc-icon nc-simple-remove sidebar-mini-icon" aria-hidden="true"></i>
+                                <span class="sidebar-normal">{{ __('Pending Cheques') }}</span>
+                            </a>
+                        </li>
+                        <li class="{{ $elementActive == 'user' ? 'active' : '' }}">
+                            <a href="{{ route('cheque.collected') }}">
+                                <i class="nc-icon nc-simple-remove sidebar-mini-icon" aria-hidden="true"></i>
+                                <span class="sidebar-normal">{{ __('Cheques Collected') }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
             @else
             <li class="{{ $elementActive == 'dashboard' ? 'active' : '' }}">
                 <a href="{{ route('request.approved') }}">
