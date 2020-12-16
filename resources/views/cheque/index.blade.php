@@ -10,13 +10,16 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title"> @role('css')Pending @endrole Cheque Transmissions </h4>
+                    <h4 class="card-title"> @role('csa')Pending @endrole Cheque Transmissions </h4>
                     <div class="text-right" style='float:right;'>
-                        <a href="cheque/create" class="btn  btn-primary" style="background-color: #15224c">New Request</a>
+                        @role('cards')
+                        <a href="cheque/create" class="btn  btn-primary" style="background-color: #15224c">Upload New Cheque Transmissions</a>
+                        @endrole
                         <!-- Button trigger modal -->
                         <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#modelId" style="background-color: #15224c">
                             Download the data
                         </button>
+
                     </div>
                     <div class="card-body">
                     </div>
@@ -129,7 +132,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" style="background-color: #15224c; hover:background-color: gold;" class="btn btn-secondary btn-round" data-dismiss="modal">Close</button>
-                            <button id="send" type="button" style="background-color: #15224c; hover:background-color: gold;" class="btn btn-info btn-round">{{ __('Reject') }}</button>
+                            <button id="send" type="button" style="background-color: #15224c; hover:background-color: gold;" class="btn btn-info btn-round">{{ __('DONE') }}</button>
                         </div>
                 </form>
             </div>

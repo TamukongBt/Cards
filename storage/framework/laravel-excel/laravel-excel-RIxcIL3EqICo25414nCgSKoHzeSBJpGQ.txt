@@ -1,0 +1,2 @@
+,Cards Holder,Type of Card,Branch ordering,Card Number,Phone Number,Remarks
+1,Tamukong Brian ,Trust Saphir,Limbe,502886XXXXXX0700,2.37651E+11,card requests Oct 2020

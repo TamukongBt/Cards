@@ -10,7 +10,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title"> @role('cards')Pending @endrole Request Tables</h4>
+                    <h4 class="card-title"> @role('cards')Pending @endrole @role('css') Unapproved @endrole Request Tables</h4>
                     <div class="text-right" style='float:right;'>
                         <a href="request/create" class="btn  btn-primary" style="background-color: #15224c">New Request</a>
                         <!-- Button trigger modal -->
@@ -21,112 +21,6 @@
                     <div class="card-body">
                     </div>
                     <div class="table-responsive">
-                        {{-- <table class="table" id="myTable">
-                            <thead class=" text-primary">
-                                <th>
-                                    Account Number
-                                </th>
-                                <th>
-                                    Account Name
-                                </th>
-                                <th>
-                                    Request Type
-                                </th>
-                                <th>
-                                    Card Type
-                                </th>
-                                <th>
-                                    Date Requested
-                                </th>
-                                <th>
-                                    Requested By
-                                </th>
-                                <th>
-                                    Branch
-                                </th>
-                                <th>
-                                </th>
-                                <th>
-                                </th>
-                                <th>
-                                </th>
-                            </thead>
-                            <tbody>
-                                @foreach ($request as $entry)
-
-                            <tbody>
-                                <tr>
-                                    <td>{{ $entry->account_number}}
-                                        </a></td>
-                                    <td>{{ $entry->account_name }}</a></td>
-                                    <td>{{ $entry->request_type }}</td>
-                                    <td>{{ $entry->cards }}</td>
-                                    <td>{{ $entry->created_at }}</td>
-                                    <td>{{ $entry->requested_by }}</td>
-                                    <td>{{ $entry->branch_id }}</td>
-                                    @auth
-                                    @can('validate')
-                                    <td><a class="btn btn-outline-primary btn-sm"
-                                            href="/request/fulfilled/{{ $entry->id }}"><i class="nc-icon nc-check-2"
-                                                aria-hidden="true" style="color: black"></i></a></td>
-                                    @endcan
-                                    @can('edit')
-                                    <td id="float">
-                                        <button id="view1" type="button" class="btn btn-outline-dark btn-sm"
-                                            style="cursor:pointer;">
-                                            <i class="nc-icon nc-simple-info" aria-hidden="true"
-                                                style="color: black"></i>
-                                        </button>
-                                    </td>
-                                    <td>
-                                        <button id="deletebutton" type="button" class="btn btn-outline-dark btn-sm"
-                                            data-toggle="modal" data-target="#delete" style="cursor:pointer;">
-                                            <i class="nc-icon nc-simple-remove" aria-hidden="true"
-                                                style="color: black"></i>
-                                        </button>
-
-                                        <div class="modal fade" id="delete" tabindex="-1" role="dialog"
-                                            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered " role="document">
-                                                <div class="modal-content">
-                                                    <div class="card-header">
-                                                        <h5 class="modal-title" id="exampleModalLongTitle">Confirm
-                                                            Delete</h5>
-                                                        <button href="#" type="button" class="close"
-                                                            data-dismiss="modal" aria-label="Close"
-                                                            style="margin-top:-25px;cursor:pointer">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <div class="container">
-                                                            Are you sure you want to delete this entry
-                                                        </div>
-
-                                                    </div>
-                                                    <div class="modal-footer float-right">
-                                                        <button type="button" class="btn btn-outline-dark btn-sm"
-                                                            data-dismiss="modal" style="cursor:pointer;">
-                                                            No
-                                                        </button>
-                                                        <form id="deletelink" method="post">
-                                                            {{csrf_field()}}
-                                                            <input name="_method" type="hidden" value="DELETE">
-                                                            <button class="btn btn-outline-danger btn-sm"
-                                                                type="submit">Yes</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-
-                                    @endcan
-                                    @endauth
-                                </tr>
-                            </tbody>
-                            @endforeach
-                        </table> --}}
                         <table id="table1" class="table ">
                             <thead>
 
@@ -227,7 +121,7 @@
             <div class="modal-header text-light" style="background-color: #15224c; hover:background-color: gold;">
                 <h5 class="modal-title">{{ __('Reason') }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span  class="text-light" aria-hidden="true">&times;</span>
+                        <span  class="text-light " aria-hidden="true">&times;</span>
                     </button>
             </div>
             <div class="modal-body">
@@ -270,6 +164,7 @@
                 { "data": "created_at", name: 'Requested Date' },
                 { "data": "requested_by", name: 'Requested By' },
                 { "data": "branch_id", name: 'Branch' },
+
                 {
                     data: 'action', name: 'action', orderable: true, searchable: true
                 },
@@ -300,7 +195,7 @@
             dataType: 'json',
             data:{'_method':'DELETE'},
         }).always(function (data) {
-            $('#table1').DataTable().draw(false);
+            // $('#table1').DataTable().draw(false);
             $('#table1').DataTable().ajax.reload();
         });
     }else
@@ -325,7 +220,7 @@ $('#table1').on('click', '.validates[data-remote]', function (e) {
             dataType: 'json',
             data:{'_method':'GET'},
         }).always(function (data) {
-            $('#table1').DataTable().draw(false);
+            // $('#table1').DataTable().draw(false);
             $('#table1').DataTable().ajax.reload();
         });
 
@@ -359,7 +254,7 @@ $('#table1').on('click', '.denies[data-remote]', function (e) {
                 console.log(data);
             },
         }).always(function (data) {
-            $('#table1').DataTable().draw(false);
+            // $('#table1').DataTable().draw(false);
             $('#table1').DataTable().ajax.reload();
         });
     });

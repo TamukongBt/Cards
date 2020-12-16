@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Batch;
 use App\Notifications\BatchNotify;
 use App\User;
@@ -12,6 +13,7 @@ use Illuminate\Validation\Rule;
 
 
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class BatchController extends Controller
 {
@@ -28,7 +30,8 @@ class BatchController extends Controller
 
     public function index1()
     {
-        $data=Batch::all();
+        if (auth()->user()->department == 'it') {
+            $data=Batch::all();
         return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($data) {
@@ -39,7 +42,8 @@ class BatchController extends Controller
                 $actionBtn =
 
                 '<td>
-                <a href="'.route('batch.edit',$row->id).'" class="edit btn btn-info btn-sm "><i class="nc-icon nc-alert-circle-i"></i></a>
+
+                <a href="'.route('batch.view',$row->id).'" class="edit btn btn-info btn-sm ">View Accounts</i></a>
 
 
                 <button id="deletebutton" class="btn btn-sm btn-danger btn-delete" data-remote="'.route('batch.destroy',$row->id). '">
@@ -52,6 +56,34 @@ class BatchController extends Controller
                 })
                 ->rawColumns(['action'])
                 ->make(true);
+        } elseif(auth()->user()->department == 'cards') {
+            $data=Batch::all();
+            return DataTables::of($data)
+                    ->addIndexColumn()
+                    ->editColumn('created_at', function ($data) {
+                        return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                    })
+                    ->addColumn('action', function ($row) {
+
+                    $actionBtn =
+
+                    '<td>
+
+
+                    <a href="'.route('batch.view',$row->id).'" class="edit btn btn-info btn-sm ">View Accounts</i></a>
+
+
+
+
+                     </td>
+                 ';
+                        return $actionBtn;
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+        }
+
+
     }
 
     /**
@@ -73,32 +105,32 @@ class BatchController extends Controller
     public function store(Request $request)
     {
        $batch= new Batch();
-        try {
 
-        $start=Requested::where('account_number',$request->start_acct)->where('cards',$request->start_cards)->where('confirmed',0)->where('rejected',0)->latest()->first();
-        $end=Requested::where('account_number',$request->end_acct)->where('cards',$request->end_cards)->where('confirmed',0)->where('rejected',0)->latest()->first();
+       $start=Requested::where('account_number',$request->start_acct)->where('request_type','new_card')->where('cards',$request->start_cards)->where('confirmed',1)->where('rejected',0)->latest()->first();
+       $end=Requested::where('account_number',$request->end_acct)->where('request_type','new_card') ->where('cards',$request->end_cards)->where('confirmed',1)->where('rejected',0)->latest()->first();
+   $reqstart=$start->id;
+   $reqend=$end->id;
+   $batchnumber = 'N'.$reqstart.$reqend.now()->format('mdY');
+   $batch->batch_number=$batchnumber;
+   $batch->done_by=auth()->user()->name;
+   $batch->start_acct=$request->start_acct;
+   $batch->end_acct=$request->end_acct;
+   $batch->start_id=$reqstart;
+   $batch->end_id=$reqend;
+   $batch->save();
+   $user= User::where('department','cards')->get();
 
-        $reqstart=$start->account_number;
-        $reqend=$end->account_number;
-        $batchnumber = 'N'.substr($reqstart, 0, 2).substr($reqend, 0, 2).now()->format('mdY');
-        $description= $request->gold.' Gold.'.$request->silver.' Silver.'.$request->sapphire.' Sapphire';
-        $batch->batch_number=$batchnumber;
-        $batch->done_by=auth()->user()->name;
-        $batch->start_acct=$request->start_acct;
-        $batch->end_acct=$request->end_acct;
-        $batch->description=$description;
-        $batch->save();
-        $user= User::where('department','cards')->get();
-        foreach ($user as $card) {
-            $card->notify(new BatchNotify($batch));
-        }
+   foreach ($user as $card) {
+       $card->notify(new BatchNotify($batch));
+   }
+       try {
 
          return redirect()->route('batch.index')->with('success','New Entry created succesfully');
 
 
     } catch (\Throwable $th) {
-
-           return  view('batch.create')->with('success','The account doesnt exist in the system');
+        Alert::alert('Error', 'The accounts doesnt exist in the system', 'error');
+           return  view('batch.create');
         };
     }
 
@@ -140,6 +172,14 @@ class BatchController extends Controller
          // return $data;
 
      }
+
+     public function view($id)
+    {
+        $batch=Batch::find($id);
+        $accounts=Requested::whereBetween('id',[$batch->start_id,$batch->end_id])->where('request_type','new_card')->where('confirmed',1)->get();
+        return view('batch.view')->with('accounts', $accounts);
+    }
+
 
 
 

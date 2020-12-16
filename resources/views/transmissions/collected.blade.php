@@ -36,6 +36,9 @@
                                    Card Number
                                 </th>
                                 <th>
+                                   Phone Number
+                                </th>
+                                <th>
                                     Remarks
                                 </th>
                                 <th>
@@ -124,6 +127,7 @@
                 { "data": "card_type", name: 'Type Of Card' },
                 { "data": "branchcode", name: 'Branch' },
                 { "data": "card_number", name: 'Cards Number' },
+                { "data": "phone_number", name: 'Phone Number' },
                 { "data": "remarks", name: 'Remarks' },
                 { "data": "collected_by", name: 'Collected By' },
                 { "data": "collected_at", name: 'Collected On', orderable: true, searchable: true },

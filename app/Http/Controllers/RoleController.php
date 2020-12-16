@@ -10,17 +10,18 @@ class RoleController extends Controller
 {
     // function to create roles that will be used by the system
     public function sysrole(){
-        $csa = Role::create(['name' => 'css']);
+        $css = Role::create(['name' => 'css']);
         $cards = Role::create(['name'=>'cards']);
         $it= Role::create(['name'=>'it']);
+        $csa= Role::create(['name'=>'csa']);
 
-        return view('home');
+        return redirect(route('permissions'));
     }
 
 
     // create all the permisions used in the system
     public function permissions(){
-        
+
         $edit= Permission::create(['name' => 'edit']);
         $create=Permission::create(['name'=>'create']);
         $delete=Permission::create(['name'=>'delete']);
@@ -32,13 +33,18 @@ class RoleController extends Controller
         $csa->givePermissionTo('delete');
         $csa->givePermissionTo('edit');
 
+        $css=Role::findByName('csa');
+        $css->givePermissionTo('create');
+        $css->givePermissionTo('delete');
+        $css->givePermissionTo('edit');
+
         $cards=Role::findByName('cards');
         $cards->givePermissionTo('download');
         $cards->givePermissionTo('edit');
 
         $it=Role::findByName('it');
         $it->givePermissionTo('download');
-        return view('home');
+        return view('pages.dashboard')->with('success','Roles Created');
     }
 
 

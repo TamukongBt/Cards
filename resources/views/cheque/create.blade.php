@@ -16,7 +16,7 @@
                             <span aria-hidden="true"><a  style=" background-color: #15224c;" class="btn btn-sm" href="{{ url()->previous() }}"> <i class="nc-icon nc-minimal-left"></i></a></span>
                         </button>
                         <div class="card-header">
-                            <h5 class="title">{{ __('Make a new Request') }}</h5>
+                            <h5 class="title">{{ __('Create New Cheque Transmissions') }}</h5>
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -35,7 +35,7 @@
                         <div class="card-footer ">
                             <div class="form-row">
                                 <div class="col">
-                                    <button type="submit" class="btn btn-info btn-round" style="background-color: #15224c">{{ __('Create Request') }}</button>
+                                    <button type="submit" class="btn btn-info btn-round" style="background-color: #15224c">{{ __('Upload Cheques') }}</button>
                                 </div>
 
                             </div>

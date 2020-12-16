@@ -17,7 +17,8 @@ class CreateBatchesTable extends Migration
             $table->id();
             $table->string('start_acct');
             $table->string('end_acct');
-            $table->string('description');
+            $table->string('start_id');
+            $table->string('end_id');
             $table->string('batch_number');
             $table->string('done_by');
             $table->timestamps();

@@ -30,6 +30,9 @@
                                     Branch
                                 </th>
                                 <th>
+                                    Phone Number
+                                </th>
+                                <th>
                                     Remarks
                                 </th>
                                 <th>
@@ -91,7 +94,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="background-color: #15224c">Close</button>
+                <button type="button" class="btn btn-secondary" data-dismisres="modal" style="background-color: #15224c">Close</button>
                 <button type="submit" id="download" class="btn btn-primary" style="background-color: #15224c">Download</button>
             </div>
             </form>
@@ -116,6 +119,7 @@
             "columns": [
                 { "data": "chequeholder", name: 'Cheque Holder' },
                 { "data": "branchcode", name: 'Branch' },
+                { "data": "phone_number", name: 'Phone Number' },
                 { "data": "remarks", name: 'Remarks' },
                 { "data": "collected_by", name: 'Collected By' },
                 { "data": "collected_at", name: 'Collected On', orderable: true, searchable: true },

@@ -51,7 +51,12 @@ class BranchSeeder extends Seeder
                 'name' => 'Mboppi',
                 'branch_code' => '012',
                 'created_at' => now(),
-                'updated_at' => now()]
+                'updated_at' => now()],
+                [
+                    'name' => 'HeadOffice',
+                    'branch_code' => '000',
+                    'created_at' => now(),
+                    'updated_at' => now()]
         ]);
 
     }

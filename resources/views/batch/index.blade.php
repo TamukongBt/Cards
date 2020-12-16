@@ -25,20 +25,11 @@
                                    Batch Number
                                 </th>
                                 <th>
-                                    First Account In Batch
-                                </th>
-                                <th>
-                                    Last Account In Batch
-                                </th>
-                                <th>
-                                   Slot Details
-                                </th>
-                                <th>
                                     Date Created
                                 </th>
                                 <th>
-                                    Actions
-                                </th>
+                                    View Accounts In Batch
+                                  </th>
 
                             </thead>
                         </table>
@@ -66,9 +57,6 @@
 
             "columns": [
                 { "data": "batch_number", name: 'Batch Number' },
-                { "data": "start_acct", name: 'First Account In Batch' },
-                { "data": "end_acct", name: ' Last Account In Batch' },
-                { "data": "description", name: 'Slot Details' },
                 { "data": "created_at", name: ' Date Created' },
                 {
                     data: 'action', name: 'action', orderable: true, searchable: true
@@ -84,7 +72,7 @@
 
     //Start Edit Record
 
-    $('#table1').on('click', '.btn-delete[data-remote]', function (e) {
+    $('#tables').on('click', '.btn-delete[data-remote]', function (e) {
     e.preventDefault();
      $.ajaxSetup({
         headers: {
@@ -102,8 +90,7 @@
             dataType: 'json',
             data:{'_method':'DELETE'},
         }).always(function (data) {
-            $('#table1').DataTable().draw(false);
-            $('#table1').DataTable().ajax.reload();
+            $('#table1').DataTable().ajax.reload(   );
         });
     }else
         alert("You have cancelled!");

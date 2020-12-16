@@ -19,10 +19,14 @@ class CreateTransmissionsTable extends Migration
             $table->string('card_type');
             $table->string('branchcode');
             $table->string('card_number');
+            $table->string('phone_number');
             $table->string('remarks');
             $table->string('collected_by')->nullable();
             $table->boolean('collected')->nullable();
             $table->timestamp('collected_at')->nullable();
+            $table->boolean('notified')->default(0);
+            $table->timestamp('notified_on')->nullable();
+
             $table->timestamps();
         });
     }

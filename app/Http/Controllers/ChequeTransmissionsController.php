@@ -7,10 +7,15 @@ use App\Imports\ChequeTransmissionsImport;
 use App\Exports\CollectedCExports;
 use DataTables;
 use App\Downloads;
+use App\Events\ChequeAvailable;
+use App\Notifications\AvailableChequeNotify;
+use App\Recipients\DynamicRecipient;
 use Carbon\Carbon;
 use App\Upload;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
+use Nexmo\Laravel\Facade\Nexmo;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class ChequeTransmissionsController extends Controller
 {
@@ -50,7 +55,7 @@ class ChequeTransmissionsController extends Controller
             ->rawColumns(['action'])
             ->make(true);
         }
-        elseif (auth()->user()->department == 'css') {
+        elseif (auth()->user()->department == 'csa'|| auth()->user()->department == 'css') {
             $data = ChequeTransmissions::where('collected', null)->where('branchcode',auth()->user()->branch->name )->get();
 
             return DataTables::of($data)
@@ -142,9 +147,25 @@ class ChequeTransmissionsController extends Controller
         $doneby->save();
         $path1 = $request->file('file')->store('assets');
         $path=storage_path('app').'/'.$path1;
+        try {
+            Excel::import(new ChequeTransmissionsImport, $path);
 
-        Excel::import(new ChequeTransmissionsImport, $path);
-        return redirect()->route('cheque.index')->with( 'success','New Entries added');
+            $ChequeTransmissions = ChequeTransmissions::where('notified',0);
+            foreach($ChequeTransmissions as $transmission) {
+                $client=new DynamicRecipient($transmission->email);
+                $client->notify(new AvailableChequeNotify($transmission));
+               $transmission->notified=1;
+               $transmission->notified_on=now();
+               $transmission->save();
+             }
+
+            return redirect()->route('cheque.index')->with( 'success','New Entries added');
+        } catch (\Throwable $th) {
+            Alert::alert('Error', 'There is a problem with the file', 'error');
+            return redirect()->route('cheque.create');
+        }
+
+
     }
 
     /**

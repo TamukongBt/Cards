@@ -39,9 +39,10 @@
                                             </span>
                                         </div>
                                         <select  name="department" id="department" class="form-control @error('department') is-invalid @enderror" required autofocus>
-                                            <option>Choose Your Department</option>
+                                            <option selected="true" disabled="disabled">Choose Your Department</option>
                                             <option value="cards">Cards And Checks</option>
-                                            <option value="css">Customer Service</option>
+                                            <option value="css">Customer Service Supervisor(CSS)</option>
+                                            <option value="csa">Customer Service Assistant(CSA)</option>
                                             <option value="it">IT Department</option>
                                         </select>
                                         @if ($errors->has('department'))
@@ -58,7 +59,7 @@
                                             </span>
                                         </div>
                                         <select name="branch_id" id="branch_id" class="form-control @error('branch_id') is-invalid @enderror" required autofocus>
-                                            <option >Choose Your Branch</option>
+                                            <option  selected="true" disabled="disabled">Choose Your Branch</option>
                                             <option value="000">Head Office</option>
                                             <option value="001">Bamenda</option>
                                             <option value="002">Akwa</option>

@@ -27,17 +27,17 @@ class CardsTableSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now()],
                 [
-                    'name' => 'Check 25',
-                    'card_type' => 'check_25',
+                    'name' => 'Cheque 25',
+                    'card_type' => 'cheque_25',
                     'created_at' => now(),
                     'updated_at' => now()],
                 [
-                    'name' => 'Check 50',
-                    'card_type' => 'check_50',
+                    'name' => 'Cheque 50',
+                    'card_type' => 'cheque_50',
                     'created_at' => now(),
                     'updated_at' => now()],
                     [
-                        'name' => 'Certified Check',
+                        'name' => 'Certified Cheque',
                         'card_type' => 'certified',
                         'created_at' => now(),
                         'updated_at' => now()]

@@ -2,13 +2,26 @@
 
 namespace App\Imports;
 
-use App\Transmission;
 use App\ChequeTransmissions;
+use App\Events\ChequeAvailable;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 
-class ChequeTransmissionsImport implements ToModel, WithHeadingRow
+
+class ChequeTransmissionsImport implements WithEvents, ToModel, WithHeadingRow
 {
+    use  RegistersEventListeners;
+
+
+
+    public static function afterImport(AfterImport $event)
+    {
+        $transmission=ChequeTransmissions::all();
+        ChequeAvailable::dispatch($transmission);
+        // event(new CardsAvailable($event));
+    }
     /**
     * @param array $row
     *
@@ -21,6 +34,7 @@ class ChequeTransmissionsImport implements ToModel, WithHeadingRow
                     ([
                         'chequeholder' => $row['cheque_holder'],
                         'branchcode'=>$row['branch_ordering'],
+                        'phone_number'=>$row['phone_number'],
                         'remarks'=>$row['remarks'],
                     ]);
 

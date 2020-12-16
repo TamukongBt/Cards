@@ -4,13 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Transmissions;
 use App\Imports\TransmissionsImport;
+use App\Notifications\AvailableNotify;
 use App\Exports\CollectedExports;
 use DataTables;
 use App\Downloads;
+use App\Recipients\DynamicRecipient;
+use App\Events\CardsAvailable;
 use Carbon\Carbon;
 use App\Upload;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class TransmissionsController extends Controller
 {
@@ -50,7 +54,7 @@ class TransmissionsController extends Controller
             ->rawColumns(['action'])
             ->make(true);
         }
-        elseif (auth()->user()->department == 'css') {
+        elseif (auth()->user()->department == 'csa'||auth()->user()->department == 'css') {
             $data = Transmissions::where('collected', null)->where('branchcode',auth()->user()->branch->name )->get();
 
             return DataTables::of($data)
@@ -85,6 +89,7 @@ class TransmissionsController extends Controller
         {
             return view('transmissions.collected');
         }
+
 
         public function collected1()
         {
@@ -142,9 +147,27 @@ class TransmissionsController extends Controller
         $doneby->save();
         $path1 = $request->file('file')->store('assets');
         $path=storage_path('app').'/'.$path1;
+        $transmissions = Transmissions::where('notified',0);
+        foreach($transmissions as $transmission) {
+            $client=new DynamicRecipient($transmission->phone_number);
+            $client->notify(new AvailableNotify($transmission));
+           $transmission->notified=1;
+           $transmission->notified_on=now();
+           $transmission->save();}
+        try {
+            Excel::import(new TransmissionsImport, $path);
 
-        Excel::import(new TransmissionsImport, $path);
+
         return redirect()->route('transmissions.index')->with( 'success','New Entries added');
+
+        } catch (\Throwable $th) {
+            Alert::alert('Error', 'There is a problem with the file', 'error');
+            return redirect()->route('transmissions.create');
+        }
+
+
+
+
     }
 
     /**
@@ -223,6 +246,11 @@ class TransmissionsController extends Controller
             return (new CollectedExports($startdate, $enddate))->download($title . '.csv');
          }
 
+         // Fetch validated data
+        public function notify()
+        {
+            return view('transmissions.collected');
+        }
 
 
 }

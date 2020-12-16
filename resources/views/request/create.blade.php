@@ -53,7 +53,7 @@
                                 <div class="col-md-9">
                                     <div class="form-group">
                                         <select name="request_type" id="request_type" class="form-control @error('request_type') is-invalid @enderror" required autofocus>
-                                            <option >Choose Your Request Type</option>
+                                            <option selected="true" disabled="disabled">Choose Your Request Type</option>
                                             {{-- <option value="cheque_25">New </option> --}}
                                             <option value="cheque">New Cheque Request</option>
                                             <option value="new_card">New Card Request</option>
@@ -70,14 +70,14 @@
                                 </div>
                             </div>
 
-                           
+
 
                             <div class="row" id="cards">
                                <label class="col-md-3 col-form-label">{{ __('Card Type Requested') }}</label>
                                <div class="col-md-9">
                                    <div class="form-group">
                                    <select name="cards" id="cards" class="form-control @error('cards') is-invalid @enderror" required autofocus>
-                                       <option >Choose Your Card Type</option>
+                                       <option selected="true" disabled="disabled">Choose Your Card Type</option>
                                        <option value="saphire">Sapphire</option>
                                        <option value="silver">Silver</option>
                                        <option value="gold">Gold</option>
@@ -95,8 +95,8 @@
                             <label class="col-md-3 col-form-label">{{ __('Cheque Type Requested') }}</label>
                             <div class="col-md-9">
                                 <div class="form-group">
-                                <select name="cards" id="cards" class="form-control @error('cheque') is-invalid @enderror" required autofocus>
-                                    <option >Choose Your Cheque Type</option>
+                                <select name="cards" id="cheques" class="form-control @error('cheque') is-invalid @enderror" required autofocus>
+                                    <option selected="true" disabled="disabled">Choose Your Cheque Type</option>
                                     <option value="certified">Certified Cheque</option>
                                     <option value="cheque_50">Cheque 50</option>
                                     <option value="cheque_25">Cheque 25</option>
@@ -116,7 +116,7 @@
                                 <div class="col-md-9">
                                     <div class="form-group">
                                     <select name="account_type" id="account_type" class="form-control " required autofocus>
-                                        <option >Is this a New Account</option>
+                                        <option selected="true" disabled="disabled">Is this a New Account</option>
                                         <option value="new">Yes</option>
                                         <option value="old">No</option>
                                     </select>
@@ -203,10 +203,10 @@ $(document).ready(function () {
         switch(selection){
         case 'cheque':
         $('#cheques').show(),
-        $('#cards').hide()
+        $('#cards').remove()
         break;
         case 'new_card':
-        $('#cheques').hide()
+        $('#cheques').remove()
         $('#cards').show()
         break;
         default:

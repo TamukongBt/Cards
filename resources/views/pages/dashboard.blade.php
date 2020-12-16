@@ -4,6 +4,7 @@
 ])
 
 @section('content')
+@auth
 <div class="content">
     @role('cards')
     <div class="row">
@@ -117,7 +118,7 @@
         </div>
     </div>
     @endrole
-    @role('css')
+    @hasanyrole('csa|css')
     <div class="row">
         <div class="col-lg-3 col-md-6 col-sm-6">
             <div class="card card-stats">
@@ -229,7 +230,7 @@
             </div>
         </div>
     </div>
-    @endrole
+    @endhasanyrole
     @role('it')
     <div class="row">
         <div class="col-lg-3 col-md-6 col-sm-6">
@@ -318,120 +319,100 @@
     </div>
     @endrole
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card ">
-                <div class="card-header ">
-                    <h5 class="card-title">Users Behavior</h5>
-                    <p class="card-category">24 Hours performance</p>
-                </div>
-                <div class="card-body ">
-                    <canvas id=chartHours width="400" height="100"></canvas>
-                </div>
-                <div class="card-footer ">
-                    <hr>
-                    <div class="stats">
-                        <i class="fa fa-history"></i> <a href="/request">Updated 3 minutes ago</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
     <div class="row">
         <div class="col-md-4">
             <div class="card ">
                 <div class="card-header ">
-                    <h5 class="card-title">Email Statistics</h5>
-                    <p class="card-category">Last Campaign Performance</p>
+                    <h5 class="card-title">Cards and Cheque Request </h5>
+                    <p class="card-category">Monthly Statistics</p>
                 </div>
                 <div class="card-body ">
                     <canvas id="chartEmail"></canvas>
                 </div>
                 <div class="card-footer ">
                     <div class="legend">
-                        <i class="fa fa-circle text-primary"></i> Opened
-                        <i class="fa fa-circle text-warning"></i> Read
-                        <i class="fa fa-circle text-danger"></i> Deleted
-                        <i class="fa fa-circle text-gray"></i> Unopened
+                        <i class="fa fa-circle text-primary"></i> Approved
+                        <i class="fa fa-circle text-danger"></i> Rejected
+                        <i class="fa fa-circle text-gray"></i> Pending
                     </div>
                     <hr>
-                    <div class="stats">
-                        <i class="fa fa-calendar"></i> Number of emails sent
-                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-8">
-            <div class="card card-chart">
-                <div class="card-header">
-                    <h5 class="card-title">NASDAQ: AAPL</h5>
-                    <p class="card-category">Line Chart with Points</p>
+
+        <div class="col-md-4">
+            <div class="card ">
+                <div class="card-header ">
+                    <h5 class="card-title">Cards Transmissions</h5>
+                        <p class="card-category">Monthly Statistics</p>
                 </div>
-                <div class="card-body">
-                    <canvas id="speedChart" width="400" height="100"></canvas>
+                <div class="card-body ">
+                    <canvas id="chartCards"></canvas>
                 </div>
-                <div class="card-footer">
-                    <div class="chart-legend">
-                        <i class="fa fa-circle text-info"></i> Tesla Model S
-                        <i class="fa fa-circle text-warning"></i> BMW 5 Series
+                <div class="card-footer ">
+                    <div class="legend">
+                        <i class="fa fa-circle text-primary"></i> Collected
+                        <i class="fa fa-circle text-gray"></i> Pending
                     </div>
-                    <hr />
-                    <div class="card-stats">
-                        <i class="fa fa-check"></i> Data information certified
+                    <hr>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card ">
+                <div class="card-header ">
+                    <h5 class="card-title">Cheque Transmissions</h5>
+                        <p class="card-category">Monthly Statistics</p>
+                </div>
+                <div class="card-body ">
+                    <canvas id="chartCheques"></canvas>
+                </div>
+                <div class="card-footer ">
+                    <div class="legend">
+                        <i class="fa fa-circle text-primary"></i> Collected
+                        <i class="fa fa-circle text-gray"></i> Pending
+                    </div>
+                    <hr>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+@endauth
+@guest
+<div class="content col-md-12 ml-auto mr-auto">
+    <div class="header py-5 pb-7 pt-lg-9">
+        <div class="container col-md-10">
+            <div class="header-body text-center mb-7">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 col-md-12 pt-5">
+                        <h1 class="@if(Auth::guest()) text-white @endif">{{ __('Welcome to CARDS n CHECKS.') }}</h1>
+
+                        <p class="@if(Auth::guest()) text-white @endif text-lead mt-3 mb-0">
+                            {{ __('Are You a user?') }}<a href="/login"> {{ __('Login') }}</a> or {{ __('Sign Up Here to begin using the system') }} <a href="/register"> {{ __('Register') }}</a>
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        demo.checkFullPageBackgroundImage();
+    });
+</script>
+@endpush
+@endguest
 @endsection
 
 @role('cards')
 @push('scripts')
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-<script type="text/javascript">google.load('visualization', '1.0', {'packages':['corechart']});</script>
 
-    <script type="text/javascript">
-        google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback(drawChart);
-
-        function drawChart() {
-
-        google.visualization.arrayToDataTable([
-            ['Day', 'Cards'],
-            $.ajax({
-                url: '/groupcount',
-                type: "GET",
-                dataType: 'json',
-                success: function (data){
-                    var len = data.length;
-                   for(var i=0; i<len; i++){
-                        var id = response[i].created;
-                        var username = response[i].number;
-
-
-                    }
-
-
-                    var draw = new google.visualization.DataTable(data);
-                    var options = {
-                        title: 'Cards Created this Month',
-                    };
-                    var chart = new  google.visualization.PieChart(document.getElementById('chart_div'));
-                        chart.draw(draw, options);
-
-
-
-                },
-
-
-
-            }) ]);
-
-
-        }
-      </script>
 <script>
     $(document).ready(function () {
         // Javascript method's body can be found in assets/assets-for-demo/js/demo.js
@@ -502,7 +483,7 @@
 @endpush
 @endrole
 
-@role('css')
+@hasanyrole('csa|css')
 @push('scripts')
 <script>
     $(document).ready(function () {
@@ -553,7 +534,7 @@
     });
 </script>
 @endpush
-@endrole
+@endhasanyrole
 
 @role('it')
 @push('scripts')

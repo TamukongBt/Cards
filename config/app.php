@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Cards Request'),
+    'name' => env('APP_NAME', 'Cardsn Cheques'),
 
     /*
     |--------------------------------------------------------------------------

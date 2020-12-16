@@ -21,6 +21,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\Newuser' => [
             'App\Listeners\Setrole',
         ],
+        'App\Events\CardsAvailable' => [
+            'App\Listeners\NotifyCardsAvailable',
+        ],
     ];
 
     /**

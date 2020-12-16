@@ -12,7 +12,9 @@
                 <div class="card-header">
                     <h4 class="card-title"> @role('css')Pending @endrole Transmissions </h4>
                     <div class="text-right" style='float:right;'>
-                        <a href="transmissions/create" class="btn  btn-primary" style="background-color: #15224c">New Request</a>
+                        @role('cards')
+                        <a href="transmissions/create" class="btn  btn-primary" style="background-color: #15224c">Upload New Cards</a>
+                        @endrole
                         <!-- Button trigger modal -->
                         <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#modelId" style="background-color: #15224c">
                             Download the data
@@ -37,10 +39,13 @@
                                    Card Number
                                 </th>
                                 <th>
+                                    Phone Number
+                                 </th>
+                                <th>
                                     Remarks
                                 </th>
                                 <th>
-                                   Collected_On
+                                   Created_On
                                 </th>
                                 <th>
                                     Action
@@ -135,7 +140,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" style="background-color: #15224c; hover:background-color: gold;" class="btn btn-secondary btn-round" data-dismiss="modal">Close</button>
-                            <button id="send" type="button" style="background-color: #15224c; hover:background-color: gold;" class="btn btn-info btn-round">{{ __('Reject') }}</button>
+                            <button id="send" type="button" style="background-color: #15224c; hover:background-color: gold;" class="btn btn-info btn-round">{{ __('DONE') }}</button>
                         </div>
                 </form>
             </div>
@@ -162,6 +167,7 @@
                 { "data": "card_type", name: 'Type Of Card' },
                 { "data": "branchcode", name: 'Branch' },
                 { "data": "card_number", name: 'Cards Number' },
+                { "data": "phone_number", name: 'Phone Number' },
                 { "data": "remarks", name: 'Remarks' },
                 { "data": "created_at", name: 'Collected On', orderable: true, searchable: true },
                 {

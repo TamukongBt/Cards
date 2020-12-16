@@ -6,19 +6,23 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Messages\NexmoMessage;
 
-class BatchNotifty extends Notification
+class AvailableNotify extends Notification implements ShouldQueue
 {
     use Queueable;
+    public $transmissions;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($batch)
+    public function __construct($transmissions)
     {
-        $this->batch = $batch;
+        dd();
+        $this->transmissions = $transmissions;
+
     }
 
     /**
@@ -29,7 +33,7 @@ class BatchNotifty extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail','database'];
+        return ['mail','nexmo'];
     }
 
     /**
@@ -41,10 +45,10 @@ class BatchNotifty extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-        ->line('New Batch of cards has been created you can check the details on the site')
-        ->line( 'Batch Number :'.$this->batch['batch_number'])
+        ->line('Dear Customer')
+        ->line('Your Bank Card is available  Please report to the '.$this->transmissions['branchcode'].' branch and collected your cards')
         ->line('Regards,')
-        ->line('IT Department');
+        ->line('Union Bank Of Cameroon Plc');
     }
 
     /**
@@ -56,7 +60,15 @@ class BatchNotifty extends Notification
     public function toArray($notifiable)
     {
         return [
-            '$batch' => $this->batch
+            //
         ];
+    }
+
+    public function toNexmo($notifiable)
+    {
+        return (new NexmoMessage())
+                    ->content('Dear Customer,
+                    Your Bank Card is available  Please report to the '.$this->transmissions['branchcode'].' branch and collected your cards
+                    Regards Union Bank Of Cameroon Plc');
     }
 }

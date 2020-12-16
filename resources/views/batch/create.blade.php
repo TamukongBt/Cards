@@ -37,7 +37,7 @@
                                     <select name="start_cards"
                                         class="form-control @error('start_cards') is-invalid @enderror" required
                                         autofocus>
-                                        <option>Choose Your Card Type</option>
+                                        <option selected="true" disabled="disabled">Choose Your Card Type</option>
                                         <option value="saphire">Sapphire</option>
                                         <option value="silver">Silver</option>
                                         <option value="gold">Gold</option>
@@ -46,6 +46,21 @@
                                 @if ($errors->has('start_cards'))
                                 <span class="invalid-feedback" style="display: block;" role="alert">
                                     <strong>{{ $errors->first('start_cards') }}</strong>
+                                </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <label class="col-md-3 col-form-label">{{ __('Start Account Creation Date') }}</label>
+                            <div class="col-md-9">
+                                <div class="form-group">
+                                    <input type="date" name="start_acctdate" class="form-control"
+                                        placeholder="Last Account in Batch" required>
+                                </div>
+                                @if ($errors->has('start_acctdate'))
+                                <span class="invalid-feedback" style="display: block;" role="alert">
+                                    <strong>{{ $errors->first('start_acctdate') }}</strong>
                                 </span>
                                 @endif
                             </div>
@@ -88,24 +103,17 @@
                         </div>
 
                         <div class="row">
-                            <label class="col-md-3 col-form-label">{{ __('Cards Details') }}</label>
-
-                            <div class="form-row">
-                                <div class="col">
-                                    <label class=" col-form-label"><span style="color: goldenrod; font-size: 15px; padding-right: .5rem; "> <i class="fa fa-circle" aria-hidden="true"></i></span>{{ __('Gold Cards') }}</label>
-                                    <input type="text" name="gold" class="form-control"
-                                        placeholder="Gold Slots" required>
+                            <label class="col-md-3 col-form-label">{{ __('End Account Creation Date') }}</label>
+                            <div class="col-md-9">
+                                <div class="form-group">
+                                    <input type="date" name="end_acctdate" class="form-control"
+                                        placeholder="Last Account in Batch" required>
                                 </div>
-                                <div class="col">
-                                    <label class=" col-form-label"><span style="color: silver; font-size: 15px; padding-right: .5rem; "> <i class="fa fa-circle" aria-hidden="true"></i></span>{{ __('Silver Cards') }}</label>
-                                    <input type="text" name="silver" class="form-control"
-                                        placeholder="Silver Slots" required>
-                                </div>
-                                <div class="col">
-                                    <label class=" col-form-label"><span style="color: #0f52ba; font-size: 15px; padding-right: .5rem; "> <i class="fa fa-circle" aria-hidden="true"></i></span>{{ __('Sapphire Cards') }}</label>
-                                    <input type="text" name="sapphire" class="form-control"
-                                        placeholder="Sapphire Slots" required>
-                                </div>
+                                @if ($errors->has('end_acctdate'))
+                                <span class="invalid-feedback" style="display: block;" role="alert">
+                                    <strong>{{ $errors->first('end_acctdate') }}</strong>
+                                </span>
+                                @endif
                             </div>
                         </div>
 

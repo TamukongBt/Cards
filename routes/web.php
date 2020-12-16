@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('pages.dashboard');
+    return view('pages/dashboard');
 });
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('cards','CardsController');
@@ -29,6 +29,7 @@ Route::group(['middleware' => ['auth']], function () {
 
 // Custom Views
 Route::get('/validated', 'RequestedController@validated')->name('request.approved');
+Route::get('/approves', 'RequestedController@approves')->name('request.approves');
 Route::get('/rejected', 'RequestedController@rejected')->name('request.rejected');
 Route::get('/collected', 'TransmissionsController@collected')->name('transmissions.collected');
 Route::get('/ccollected', 'ChequeTransmissionsController@collected')->name('cheque.collected');
@@ -45,14 +46,19 @@ Route::get('/ccollected', 'ChequeTransmissionsController@collected')->name('cheq
     Route::get('/ajax', 'RequestedController@index1');
     Route::get('/validated_ajax', 'RequestedController@validated1');
     Route::get('/rejected_ajax', 'RequestedController@rejected1');
+    Route::get('/approves_ajax', 'RequestedController@approves1');
+    Route::get('/view_ajax', 'BatchController@view1');
     Route::get('/read_ajax', 'RequestedController@markread');
     Route::get('/collect_ajax', 'TransmissionsController@collected1');
     Route::get('/ccollect_ajax', 'ChequeTransmissionsController@collected1');
+    Route::get('/notify', 'ChequeTransmissionsController@notify');
 
 
 // validate actions
     // Request
     Route::get('request/confirm/{id}', 'RequestedController@fulfilled');
+    Route::get('batch/view/{id}', 'BatchController@view')->name('batch.view');
+    Route::get('request/approve/{id}', 'RequestedController@approved');
     Route::post('request/reject/{id}', 'RequestedController@denied');
     Route::post('/transmissions/collected/{id}', 'TransmissionsController@collect');
     Route::post('/cheque/collected/{id}', 'ChequeTransmissionsController@collect');
@@ -88,7 +94,7 @@ Route::get('/ccollected', 'ChequeTransmissionsController@collected')->name('cheq
 });
 
 Route::get('roles', 'RoleController@sysrole');
-Route::get('permissions', 'RoleController@permissions');
+Route::get('permissions', 'RoleController@permissions')->name('permissions');
 
 Route::get('/home', 'HomeController@index')->name('home');
 Auth::routes();
