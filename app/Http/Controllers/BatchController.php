@@ -105,6 +105,7 @@ class BatchController extends Controller
     public function store(Request $request)
     {
        $batch= new Batch();
+       return $request;
 
        $start=Requested::where('account_number',$request->start_acct)->where('request_type','new_card')->where('cards',$request->start_cards)->where('confirmed',1)->where('rejected',0)->latest()->first();
        $end=Requested::where('account_number',$request->end_acct)->where('request_type','new_card') ->where('cards',$request->end_cards)->where('confirmed',1)->where('rejected',0)->latest()->first();
@@ -233,8 +234,7 @@ class BatchController extends Controller
 
         if($request->has('q')){
             $search = $request->q;
-            $query =Requested::select("account_number", "cards","account_name","created_at")
-            		->where('account_number', 'LIKE', "%$search%")
+            $query =Requested::selectRaw('account_number, account_name, cards, DATE_FORMAT(created_at, "%M %d %Y") as date')->where('account_number', 'LIKE', "%$search%")
             		->get();
         }
         return response()->json($query);

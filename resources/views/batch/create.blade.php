@@ -72,7 +72,7 @@
                             <label class="col-md-3 col-form-label">{{ __('End Account') }}</label>
                             <div class="col-md-9">
                                 <div class="form-group">
-                                    <select  name="start_acct"
+                                    <select  name="end_acct"
                                         class="livesearch2 form-control @error('end_acct') is-invalid @enderror" required
                                         autofocus>
                                     </select>
@@ -162,7 +162,8 @@
                 return {
                     results: $.map(data, function (item) {
                         return {
-                            text: item.account_number+' , '+item.account_name,
+
+                            text: item.account_number+' , '+item.account_name+' , '+item.cards+' , '+item.date,
                             id: item.account_number
                         }
                     })
@@ -172,7 +173,7 @@
         }
     });
 
-
++
     $('.livesearch2').select2({
         placeholder: 'Choose End Account Number',
         ajax: {
@@ -183,7 +184,7 @@
                 return {
                     results: $.map(data, function (item) {
                         return {
-                            text: item.account_number+' , '+item.account_name,
+                            text: item.account_number+' , '+item.account_name+' , '+item.cards+' , '+item.date,
                             id: item.account_number
                         }
                     })
