@@ -24,8 +24,8 @@ class TransmissionsImport implements ToModel, WithHeadingRow,  WithEvents
         return [
             AfterImport::class => function (CardsAvailable $transmission) {
                 $transmission=Transmissions::all();
-                dd($transmission);
-                CardsAvailable::dispatch($transmission);
+               
+
             },
         ];
     }
@@ -38,6 +38,7 @@ class TransmissionsImport implements ToModel, WithHeadingRow,  WithEvents
                     ([
                         'cardholder' => $row['card_holder'],
                         'card_type'=>$row['type_of_card'],
+                        'email'=>$row['email'],
                         'branchcode'=>$row['branch_ordering'],
                         'card_number'=>$row['card_number'],
                         'phone_number'=>$row['phone_number'],

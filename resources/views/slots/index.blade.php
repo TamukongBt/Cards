@@ -10,7 +10,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">Slots Requested</h4>
+                    <h4 class="card-title">@role('cards') Confirmed @endrole Slots Requested</h4>
                     <div class="text-right" style='float:right;'>
                         <!-- Button trigger modal -->
                         <a href=# class="btn  btn-primary" type="button" data-toggle="modal" data-target="#modelId" style="background-color: #15224c; hover:background-color: gold;">Request Extra Slots</a>

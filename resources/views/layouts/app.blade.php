@@ -40,6 +40,8 @@ The above copyright notice and this permission notice shall be included in all c
 
     <link rel="stylesheet" href=" //cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css"/>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.22/datatables.min.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+
 
 
 
@@ -75,6 +77,8 @@ The above copyright notice and this permission notice shall be included in all c
     <script src="{{ asset('paper') }}/demo/demo.js"></script>
     <!-- Sharrre libray -->
     <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.22/datatables.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 
     @stack('scripts')
 

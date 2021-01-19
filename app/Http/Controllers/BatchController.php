@@ -226,4 +226,17 @@ class BatchController extends Controller
         Batch::whereId($batch['id'])->delete();
         return response(200);
     }
+
+    public function selectSearch(Request $request)
+    {
+    	$query = [];
+
+        if($request->has('q')){
+            $search = $request->q;
+            $query =Requested::select("account_number", "cards","account_name","created_at")
+            		->where('account_number', 'LIKE', "%$search%")
+            		->get();
+        }
+        return response()->json($query);
+    }
 }

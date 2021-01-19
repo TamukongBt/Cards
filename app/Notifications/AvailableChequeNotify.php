@@ -33,7 +33,7 @@ class AvailableChequeNotify extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['nexmo','mail'];
+        return ['mail','nexmo'];
     }
 
     /**
@@ -60,7 +60,7 @@ class AvailableChequeNotify extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            //
+            '$transmissions' => $this->transmissions  
         ];
     }
 

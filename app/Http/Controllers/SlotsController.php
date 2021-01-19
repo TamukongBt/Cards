@@ -6,6 +6,8 @@ use App\Slots;
 use DataTables;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Notifications\SlotNotify;
+use App\User;
 
 class SlotsController extends Controller
 {
@@ -47,7 +49,7 @@ class SlotsController extends Controller
 
         }
         elseif (auth()->user()->department == 'cards') {
-            $data = Slots::where('confirmed', 1)->get();
+            $data = Slots::where('validated', 1)->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($data) {
@@ -97,6 +99,10 @@ class SlotsController extends Controller
         $slots->validated = 0;
         $slots->rejected = 0;
         $slots->save();
+        $users = User::where('department', 'it')->get();
+        foreach ($users as $user) {
+            $user->notify(new SlotNotify($slots));
+        }
         return redirect()->route('slots.index')->with('success','New Entry created succesfully');
     }
 
@@ -115,13 +121,11 @@ class SlotsController extends Controller
     // dashboard Count display for slots data
     public function slotso()
     {
-        $data = Slots::where('validated',1)->latest();
-        $gold=$data->gold;
-        $silver=$data->silver;
-        $sapphire=$data->sapphire;
-        $count=$gold+$sapphire+$silver;
+        $data = Slots::where('validated',1)->count();
+
+
         // return $data;
-        return response($count,200);
+        return response($data,200);
     }
     public function slotsed()
     {

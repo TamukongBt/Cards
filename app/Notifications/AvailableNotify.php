@@ -20,8 +20,16 @@ class AvailableNotify extends Notification implements ShouldQueue
      */
     public function __construct($transmissions)
     {
-        dd();
+
         $this->transmissions = $transmissions;
+
+    }
+
+    public function routeNotificationForMail($notification)
+    {
+        // Return email address only...
+        return $this->email;
+
 
     }
 
@@ -60,7 +68,7 @@ class AvailableNotify extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            //
+           '$transmissions' => $this->transmissions
         ];
     }
 

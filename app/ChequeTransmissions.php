@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ChequeTransmissions extends Model
 {
-    protected $fillable= ['chequeholder','branchcode','remarks'];
+    protected $fillable= ['chequeholder','branchcode','remarks','email'];
 
     protected $dispatchesEvents = [
         'created' => ChequeAvailable::class,

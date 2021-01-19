@@ -43,6 +43,7 @@ class BatchNotify extends Notification
         return (new MailMessage)
         ->line('New Batch of cards has been created you can check the details on the site')
         ->line( 'Batch Number :'.$this->batch['batch_number'])
+        ->action('Review Now', url('/batch'))
         ->line('Regards,')
         ->line('IT Department');
     }

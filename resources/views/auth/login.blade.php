@@ -23,7 +23,7 @@
                                         <i class="nc-icon nc-single-02"></i>
                                     </span>
                                 </div>
-                                <input class="form-control{{ $errors->has('employee_id') ? ' is-invalid' : '' }}" placeholder="{{ __('employee_id') }}" type="text" name="employee_id" value="{{ old('employee_id') }}" required autofocus>
+                                <input class="form-control{{ $errors->has('employee_id') ? ' is-invalid' : '' }}" placeholder="{{ __('Employee id') }}" type="text" name="employee_id" value="{{ old('employee_id') }}" required autofocus>
 
                                 @if ($errors->has('employee_id'))
                                     <span class="invalid-feedback" style="display: block;" role="alert">

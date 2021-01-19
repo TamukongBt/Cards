@@ -20,8 +20,10 @@
                             <label class="col-md-3 col-form-label">{{ __('Start Account') }}</label>
                             <div class="col-md-9">
                                 <div class="form-group">
-                                    <input type="text" name="start_acct" class="form-control"
-                                        placeholder="First Account in Batch" required>
+                                    <select  name="start_acct"
+                                        class="livesearch form-control @error('start_acct') is-invalid @enderror" required
+                                        autofocus>
+                                    </select>
                                 </div>
                                 @if ($errors->has('start_acct'))
                                 <span class="invalid-feedback" style="display: block;" role="alert">
@@ -70,8 +72,10 @@
                             <label class="col-md-3 col-form-label">{{ __('End Account') }}</label>
                             <div class="col-md-9">
                                 <div class="form-group">
-                                    <input type="text" name="end_acct" class="form-control"
-                                        placeholder="Last Account in Batch" required>
+                                    <select  name="start_acct"
+                                        class="livesearch2 form-control @error('end_acct') is-invalid @enderror" required
+                                        autofocus>
+                                    </select>
                                 </div>
                                 @if ($errors->has('end_acct'))
                                 <span class="invalid-feedback" style="display: block;" role="alert">
@@ -141,4 +145,55 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+
+<script type="text/javascript">
+
+
+
+    $('.livesearch').select2({
+        placeholder: 'Choose Start Account Number',
+        ajax: {
+            url: '/autosearch',
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+                return {
+                    results: $.map(data, function (item) {
+                        return {
+                            text: item.account_number+' , '+item.account_name,
+                            id: item.account_number
+                        }
+                    })
+                };
+            },
+            cache: true
+        }
+    });
+
+
+    $('.livesearch2').select2({
+        placeholder: 'Choose End Account Number',
+        ajax: {
+            url: '/autosearch',
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+                return {
+                    results: $.map(data, function (item) {
+                        return {
+                            text: item.account_number+' , '+item.account_name,
+                            id: item.account_number
+                        }
+                    })
+                };
+            },
+            cache: true
+        }
+    });
+
+
+</script>
+@endpush
 @endsection

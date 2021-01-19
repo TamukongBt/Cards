@@ -486,24 +486,22 @@
 @hasanyrole('csa|css')
 @push('scripts')
 <script>
-    $(document).ready(function () {
-        // Javascript method's body can be found in assets/assets-for-demo/js/demo.js
-        demo.initChartsPages();
+
         $(document).ready(function () {
             $.ajax({
-                url: '/validatedcount',
+                url: '/pendingcount',
                 type: "GET",
                 dataType: 'json',
                 success: function (data) {
                     $('#new').append(data);
                     $.ajax({
-                        url: '/rejectedcount',
+                        url: '/validatedcount',
                         type: "GET",
                         dataType: 'json',
                         success: function (data) {
                             $('#pins').append(data);
                             $.ajax({
-                                url: '/pendingcount',
+                                url: '/rejectedcount',
                                 type: "GET",
                                 dataType: 'json',
                                 success: function (data) {
@@ -520,18 +518,18 @@
                                 },
                                 error: function (data) {
                                     $('#slots').append(0);
-                                },
+                                }
                             });
                         },
                     });
                 },
             });
-        },
 
-            });
+
+
 
         });
-    });
+
 </script>
 @endpush
 @endhasanyrole

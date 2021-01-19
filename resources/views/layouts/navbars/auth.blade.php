@@ -101,17 +101,21 @@
                 <div class="collapse show" id="laravelExamples">
                     <ul class="nav">
                         <li class="{{ $elementActive == 'user' ? 'active' : '' }}">
-                            <a href="{{ route('request.approves') }}">
-                                <i class="nc-icon nc-check-2 sidebar-mini-icon" aria-hidden="true"></i>
-                                <span class="sidebar-normal">{{ __('Approved Requests') }}</span>
+                            <a href="{{ route('request.index') }}">
+                                <span class="sidebar-mini-icon">...</span>
+                                <span class="sidebar-normal">{{ __('Pending Requests') }}</span>
                             </a>
                         </li>
+                    </ul>
+                    <ul class="nav">
                         <li class="{{ $elementActive == 'user' ? 'active' : '' }}">
                             <a href="{{ route('request.approved') }}">
-                                <i class="nc-icon nc-simple-remove sidebar-mini-icon" aria-hidden="true"></i>
+                                <i class="nc-icon nc-check-2 sidebar-mini-icon" aria-hidden="true"></i>
                                 <span class="sidebar-normal">{{ __('Processed Requests') }}</span>
                             </a>
                         </li>
+                    </ul>
+                    <ul class="nav">
                         <li class="{{ $elementActive == 'user' ? 'active' : '' }}">
                             <a href="{{ route('request.rejected') }}">
                                 <i class="nc-icon nc-simple-remove sidebar-mini-icon" aria-hidden="true"></i>
@@ -147,13 +151,13 @@
                         </li>
                         <li class="{{ $elementActive == 'user' ? 'active' : '' }}">
                             <a href="{{ route('cheque.index') }}">
-                                <i class="nc-icon nc-simple-remove sidebar-mini-icon" aria-hidden="true"></i>
+                                <span class="sidebar-mini-icon">...</span>
                                 <span class="sidebar-normal">{{ __('Pending Cheques') }}</span>
                             </a>
                         </li>
                         <li class="{{ $elementActive == 'user' ? 'active' : '' }}">
                             <a href="{{ route('cheque.collected') }}">
-                                <i class="nc-icon nc-simple-remove sidebar-mini-icon" aria-hidden="true"></i>
+                                <i class="nc-icon nc-check-2 sidebar-mini-icon" aria-hidden="true"></i>
                                 <span class="sidebar-normal">{{ __('Cheques Collected') }}</span>
                             </a>
                         </li>

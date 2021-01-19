@@ -34,6 +34,7 @@ class ChequeTransmissionsImport implements WithEvents, ToModel, WithHeadingRow
                     ([
                         'chequeholder' => $row['cheque_holder'],
                         'branchcode'=>$row['branch_ordering'],
+                        'email'=>$row['email'],
                         'phone_number'=>$row['phone_number'],
                         'remarks'=>$row['remarks'],
                     ]);

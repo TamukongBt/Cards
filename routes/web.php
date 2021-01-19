@@ -52,6 +52,7 @@ Route::get('/ccollected', 'ChequeTransmissionsController@collected')->name('cheq
     Route::get('/collect_ajax', 'TransmissionsController@collected1');
     Route::get('/ccollect_ajax', 'ChequeTransmissionsController@collected1');
     Route::get('/notify', 'ChequeTransmissionsController@notify');
+    Route::get('/autosearch', 'BatchController@selectSearch');
 
 
 // validate actions

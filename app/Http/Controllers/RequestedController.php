@@ -17,7 +17,10 @@ use App\Exports\ApprovedExports;
 use DataTables;
 use RealRashid\SweetAlert\Facades\Alert;
 use Carbon\Carbon;
+use Exception;
 use Spatie\Permission\Traits\HasRoles;
+use Swift_SmtpTransport;
+use Swift_TransportException;
 
 class RequestedController extends Controller
 {
@@ -36,8 +39,9 @@ class RequestedController extends Controller
     }
     public function index1()
     {
+
         if (auth()->user()->department == 'css') {
-            $data = Requested::where('confirmed', 0)->where('rejected', 0)->where('approved', 0)->get();
+            $data = Requested::where('approved', 0)->where('branch_id',auth()->user()->branch_id)->get();
 
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -58,7 +62,7 @@ class RequestedController extends Controller
                     $actionBtn =
 
                         '<td><a class="validates btn btn-outline-primary btn-sm"
-                data-remote="/request/approve/' . $row->id . '"><i class="nc-icon nc-check-2"
+                data-remote="request/approve/' . $row->id . '"><i class="nc-icon nc-check-2"
                     aria-hidden="true" style="color: black"></i></a></td>
 
                 <button id="deletebutton" class="btn btn-sm btn-danger btn-delete" data-remote="' . route('request.destroy', $row->id) . '">
@@ -152,7 +156,7 @@ class RequestedController extends Controller
                         $actionBtn =
                         '<td>
                         <a href="' . route('request.edit', $row->id) . '" class="edit btn btn-info btn-sm "><i class="nc-icon nc-alert-circle-i"></i></a>
-                
+
 
             <a class="denies btn btn-outline-danger btn-sm"
                 data-remote="/request/reject/' . $row->id . '" data-toggle="modal" data-target="#modelreject"><i class="nc-icon nc-simple-remove"
@@ -173,7 +177,41 @@ class RequestedController extends Controller
 
     public function approves1()
     {
-        $data = Requested::where('branch_id', auth()->user()->branch_id)->where('approved', '1')->get();
+        if (auth()->user()->department == 'cards') {
+            $data = Requested::where('rejected', '0')->where('confirmed', '0')->where('approved', '1')->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->editColumn('branch_id', function ($data) {
+
+                    return $data->branch->name;
+                })
+                ->editColumn('cards', function ($data) {
+                    return $data->cardtype->name;
+                })
+                ->editColumn('request_type', function ($data) {
+                    return $data->requesttype->name;
+                })
+                ->addColumn('action', function ($row) {
+
+                    $actionBtn =
+                        '
+                <td><a class="validates btn btn-outline-primary btn-sm"
+                     data-remote="/request/confirm/' . $row->id . '"><i class="nc-icon nc-check-2"
+                         aria-hidden="true" style="color: black"></i></a></td>
+                <a class="denies btn btn-outline-danger btn-sm"
+                    data-remote="/request/reject/' . $row->id . '" data-toggle="modal" data-target="#modelreject"><i class="nc-icon nc-simple-remove"
+                        aria-hidden="true" style="color: black"></i></a></td>  ';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->editColumn('id', 'ID: {{$id}}')
+                ->make(true);
+        }
+        else{
+            $data = Requested::where('branch_id', auth()->user()->branch_id)->where('rejected', '0')->where('confirmed', '0')->where('approved', '1')->get();
         return DataTables::of($data)
             ->addIndexColumn()
             ->editColumn('created_at', function ($data) {
@@ -198,6 +236,8 @@ class RequestedController extends Controller
             ->rawColumns(['action'])
             ->editColumn('id', 'ID: {{$id}}')
             ->make(true);
+        }
+
     }
 
     public function validated()
@@ -369,7 +409,7 @@ class RequestedController extends Controller
 
         ]);
         Requested::create($data);
-        $users = User::where('branch_id', auth()->user()->branch_id)->where('department', 'csa')->get();
+        $users = User::where('branch_id', auth()->user()->branch_id)->where('department', 'css')->get();
         $request = Requested::where('account_name', $request->account_name)->where('account_number', $request->account_number)->where('branch_id', $request->branch_id)->where('cards', $request->cards)->get()->first();
         foreach ($users as $user) {
             $user->notify(new NewRequestNotification($request));
@@ -474,7 +514,7 @@ class RequestedController extends Controller
     public function approved($id)
     {
         $req = Requested::findorFail($id);
-        $req->confirmed = 1;
+        $req->approved = 1;
         $req->updated_at = now();
         $req->save();
         return response()->json(200);
