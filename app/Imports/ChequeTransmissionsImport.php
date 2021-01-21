@@ -16,12 +16,7 @@ class ChequeTransmissionsImport implements WithEvents, ToModel, WithHeadingRow
 
 
 
-    public static function afterImport(AfterImport $event)
-    {
-        $transmission=ChequeTransmissions::all();
-        ChequeAvailable::dispatch($transmission);
-        // event(new CardsAvailable($event));
-    }
+  
     /**
     * @param array $row
     *

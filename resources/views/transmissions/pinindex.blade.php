@@ -10,7 +10,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title"> @role('css')Pending @endrole Transmissions </h4>
+                    <h4 class="card-title"> @role('css')Pending @endrole Cards collected without pins</h4>
                     <div class="text-right" style='float:right;'>
                         @role('cards')
                         <a href="transmissions/create" class="btn  btn-primary" style="background-color: #15224c">Upload New Cards</a>
@@ -114,7 +114,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">{{ __('Collected By') }}</h5>
+                <h5 class="modal-title">{{ __("Client's National ID Number") }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -125,14 +125,14 @@
 
                         <div class="card-body">
                             <div class="row">
-                                <label class="col-md-3 col-form-label">{{ __('Collected By') }}</label>
+                                <label class="col-md-3 col-form-label">{{ __('National Identity  Number') }}</label>
                                 <div class="col-md-9">
                                     <div class="form-group">
-                                        <input type="text" name="collected_by" class="form-control" placeholder="Collected By"  required>
+                                        <input type="text" name="NIC_number" class="form-control" placeholder="Collected By"  required>
                                     </div>
-                                    @if ($errors->has('collected_by'))
+                                    @if ($errors->has('NIC_number'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
-                                            <strong>{{ $errors->first('collected_by') }}</strong>
+                                            <strong>{{ $errors->first('NIC_number') }}</strong>
                                         </span>
                                     @endif
                                 </div>
@@ -159,7 +159,7 @@
             "processing": true,
             "serverSide": false,
             "searchable": true,
-            "ajax": "/transmissions_ajax",
+            "ajax": "/ajax_pin",
 
 
             "columns": [
@@ -222,7 +222,7 @@ $('#table1').on('click', '.validates[data-remote]', function (e) {
 
         $.ajax({
             url: url,
-            type: 'POST',
+            type: 'GET',
             dataType: 'json',
             data:{'_method':'GET'},
         }).always(function (data) {

@@ -105,11 +105,12 @@ class BatchController extends Controller
     public function store(Request $request)
     {
        $batch= new Batch();
-       return $request;
+
 
        $start=Requested::where('account_number',$request->start_acct)->where('request_type','new_card')->where('cards',$request->start_cards)->where('confirmed',1)->where('rejected',0)->latest()->first();
        $end=Requested::where('account_number',$request->end_acct)->where('request_type','new_card') ->where('cards',$request->end_cards)->where('confirmed',1)->where('rejected',0)->latest()->first();
-   $reqstart=$start->id;
+
+       $reqstart=$start->id;
    $reqend=$end->id;
    $batchnumber = 'N'.$reqstart.$reqend.now()->format('mdY');
    $batch->batch_number=$batchnumber;
@@ -199,8 +200,8 @@ class BatchController extends Controller
             'start_acct' => 'required|exists:requesteds|string|max:50',
             'end_acct' => 'required|exists:requesteds|string|max:50',
         ]);
-        $start=Requested::where('account_number',$request->start_acct)->where('cards',$request->start_cards)->where('confirmed',0)->where('rejected',0)->latest()->first();
-        $end=Requested::where('account_number',$request->end_acct)->where('cards',$request->end_cards)->where('confirmed',0)->where('rejected',0)->latest()->first();
+        $start=Requested::where('account_number',$request->start_acct)->where('cards',$request->start_cards)->where('confirmed',1)->where('rejected',0)->latest()->first();
+        $end=Requested::where('account_number',$request->end_acct)->where('cards',$request->end_cards)->where('confirmed',1)->where('rejected',0)->latest()->first();
         $reqstart=$start->account_number;
         $reqend=$end->account_number;
         $batchnumber = 'N'.substr($reqstart, 0, 2).substr($reqend, 0, 2).now()->format('mdY');
@@ -235,7 +236,7 @@ class BatchController extends Controller
         if($request->has('q')){
             $search = $request->q;
             $query =Requested::selectRaw('account_number, account_name, cards, DATE_FORMAT(created_at, "%M %d %Y") as date')->where('account_number', 'LIKE', "%$search%")
-            		->get();
+            		->where('confirmed',1)->where('request_type','new_card')->get();
         }
         return response()->json($query);
     }

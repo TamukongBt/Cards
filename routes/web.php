@@ -32,6 +32,8 @@ Route::get('/validated', 'RequestedController@validated')->name('request.approve
 Route::get('/approves', 'RequestedController@approves')->name('request.approves');
 Route::get('/rejected', 'RequestedController@rejected')->name('request.rejected');
 Route::get('/collected', 'TransmissionsController@collected')->name('transmissions.collected');
+Route::get('/pinindex', 'TransmissionsController@pinindex')->name('transmissions.pinindex');
+Route::get('/collectedpin', 'TransmissionsController@pin')->name('transmissions.collectedpin');
 Route::get('/ccollected', 'ChequeTransmissionsController@collected')->name('cheque.collected');
 
 
@@ -50,6 +52,8 @@ Route::get('/ccollected', 'ChequeTransmissionsController@collected')->name('cheq
     Route::get('/view_ajax', 'BatchController@view1');
     Route::get('/read_ajax', 'RequestedController@markread');
     Route::get('/collect_ajax', 'TransmissionsController@collected1');
+    Route::get('/ajax_pin', 'TransmissionsController@pinindex1');
+    Route::get('/ajax_collectedpin', 'TransmissionsController@pin1');
     Route::get('/ccollect_ajax', 'ChequeTransmissionsController@collected1');
     Route::get('/notify', 'ChequeTransmissionsController@notify');
     Route::get('/autosearch', 'BatchController@selectSearch');
@@ -62,6 +66,7 @@ Route::get('/ccollected', 'ChequeTransmissionsController@collected')->name('cheq
     Route::get('request/approve/{id}', 'RequestedController@approved');
     Route::post('request/reject/{id}', 'RequestedController@denied');
     Route::post('/transmissions/collected/{id}', 'TransmissionsController@collect');
+    Route::post('/transmissions/collectpin/{id}', 'TransmissionsController@collectpin');
     Route::post('/cheque/collected/{id}', 'ChequeTransmissionsController@collect');
     // Slots
     Route::get('slots/confirm/{id}', 'SlotsController@fulfilled');

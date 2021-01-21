@@ -31,40 +31,10 @@
                     <a class="nav-link dropdown-toggle"  id="navbarDropdownMenuLink"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
                         @if (count(auth()->user()->unreadNotifications)>0)
-                            @role('csa')
-                            @foreach (auth()->user()->unreadNotifications as $notification)
-                            {{-- if its a rejected request  --}}
-                            @if ($notification->type=='App\Notifications\RejectRequest')
-                            <span id="badge" class="badge alert-danger">{{count(auth()->user()->unreadNotifications)}}</span>
-                            @endif
-                            @endforeach
-                            @endrole
-                            @role('css')
-                            @foreach (auth()->user()->unreadNotifications as $notification)
-                            {{-- if its a rejected request  --}}
-                            @if ($notification->type=='App\Notifications\RejectRequest'||$notification->type=='App\Notifications\NewRequestNotification')
-                            <span id="badge" class="badge alert-danger">{{count(auth()->user()->unreadNotifications)}}</span>
-                            @endif
-                            @endforeach
-                            @endrole
-                            @role('it')
-                            @foreach (auth()->user()->unreadNotifications as $notification)
-                            {{-- if its a rejected request  --}}
-                            @if ($notification->type=='App\Notifications\SlotNotify')
-                            <span id="badge" class="badge alert-danger">{{count(auth()->user()->unreadNotifications)}}</span>
-                            @endif
-                            @endforeach
-                            @endrole
-                            @role('cards')
-                            @foreach (auth()->user()->unreadNotifications as $notification)
-                            {{-- if its a rejected request  --}}
-                            @if ($notification->type=='App\Notifications\BatchNotify')
-                            <span id="badge" class="badge alert-danger">{{count(auth()->user()->unreadNotifications)}}</span>
-                            @endif
-                            @endforeach
-                            @endrole
-
+                        <span id="badge" class="badge alert-danger">{{count(auth()->user()->unreadNotifications)}}</span>
                         @endif
+
+
 
 
                         <i class="nc-icon nc-bell-55"  id="read"> </i>
@@ -104,6 +74,15 @@
                                @endforeach
                                @endif
                                @endif
+                               @if($notification->type=='App\Notifications\CardCollected')
+                               @if (count(auth()->user()->unreadNotifications)==0)
+                               <a href="#"> <span class="dropdown-item list-group text-mute">No New Notifications</span></a>
+                               @else
+                               @foreach($notification->data as $data_item)
+                               <span class="dropdown-item list-group">A {{ $data_item['card_type']  }}  has been collected make sure you register its pin &nbsp;&nbsp; <br><small class="text-right text-mute"> {{ \Carbon\Carbon::parse($data_item['updated_at'] )->diffForHumans() }}</small> </span>
+                               @endforeach
+                               @endif
+                               @endif
                                @endrole
                                {{-- if it is a batch request that is being made  --}}
                                @if($notification->type=='App\Notifications\BatchNotify')
@@ -124,12 +103,14 @@
                                @if (count(auth()->user()->unreadNotifications)==0)
                                <a href="#"> <span class="dropdown-item list-group text-mute">No New Notifications</span></a>
                                @else
+
                                @foreach($notification->data as $data_item)
                                <span class="dropdown-item list-group">New Slot of cards have Been requested By Cards & Cheques  &nbsp;&nbsp; <br><small class="text-right text-mute"> {{ \Carbon\Carbon::parse($data_item['updated_at'] )->diffForHumans() }}</small> </span>
                                @endforeach
                                @endif
                                @endrole
                                @endif
+                               {{-- // --}}
                                @endforeach
                                @endif
                             </div>
@@ -137,7 +118,7 @@
                     </div>
                 </li>
                 <li class="nav-item btn-rotate dropdown">
-                    <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink2"
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink2"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="nc-icon nc-settings-gear-65"></i>
                         <p>

@@ -24,7 +24,7 @@ class TransmissionsImport implements ToModel, WithHeadingRow,  WithEvents
         return [
             AfterImport::class => function (CardsAvailable $transmission) {
                 $transmission=Transmissions::all();
-               
+
 
             },
         ];

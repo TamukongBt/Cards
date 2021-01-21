@@ -7,6 +7,7 @@ use DataTables;
 use Carbon\Carbon;
 use App\Cards;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class CardsController extends Controller
 {
@@ -66,10 +67,17 @@ class CardsController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate ( [
-            'name' => 'required',
-            'card_type'=>'required'
-        ]);
+        try {
+            $data = $request->validate ([
+                'name' => 'required',
+                'card_type' => 'required',
+            ]);
+        } catch (\Throwable $th) {
+            Alert::alert('Error', 'There is a problem with this entry ', 'error');
+            return redirect()->route('cards.create')->with('success','New Entry created succesfully');
+        }
+
+
        Cards::create($data);
          return redirect()->route('cards.index')->with('success','New Entry created succesfully');
     }

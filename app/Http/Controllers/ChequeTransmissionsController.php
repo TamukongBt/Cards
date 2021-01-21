@@ -157,9 +157,9 @@ class ChequeTransmissionsController extends Controller
                $transmission->notified=1;
                $transmission->notified_on=now();
                $transmission->save();
-             }
-
+            }
             return redirect()->route('cheque.index')->with( 'success','New Entries added');
+
         } catch (\Throwable $th) {
             Alert::alert('Error', 'There is a problem with the file', 'error');
             return redirect()->route('cheque.create');

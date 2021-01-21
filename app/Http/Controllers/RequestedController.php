@@ -408,20 +408,18 @@ class RequestedController extends Controller
             'tel' => 'required'
 
         ]);
-        Requested::create($data);
-        $users = User::where('branch_id', auth()->user()->branch_id)->where('department', 'css')->get();
-        $request = Requested::where('account_name', $request->account_name)->where('account_number', $request->account_number)->where('branch_id', $request->branch_id)->where('cards', $request->cards)->get()->first();
-        foreach ($users as $user) {
-            $user->notify(new NewRequestNotification($request));
-        }
 
         try {
-
-
+            Requested::create($data);
+            $users = User::where('branch_id', auth()->user()->branch_id)->where('department', 'css')->get();
+            $request = Requested::where('account_name', $request->account_name)->where('account_number', $request->account_number)->where('branch_id', $request->branch_id)->where('cards', $request->cards)->get()->first();
+            foreach ($users as $user) {
+                $user->notify(new NewRequestNotification($request));
+            }
             return redirect()->route('request.index')->with('success', 'New Entry created succesfully');
         } catch (\Throwable $th) {
 
-            Alert::alert('Error', 'There is a problem with the entry ', 'error');
+            Alert::alert('Error', 'There is a problem with this entry ', 'error');
             return redirect()->route('request.create');
         }
     }

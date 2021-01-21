@@ -43,7 +43,7 @@ class RejectRequest extends Notification
     {
         return (new MailMessage)
                     ->from('cardsrequest@unionbankcameroon.cm',' Cards n Cheques')
-                    ->line('Your Request has been rejected for the following reason:')
+                    ->line('The Request made by'. $this->request['requested_by'].' for account number' . $this->request['account_number'].' has been rejected for the following reason:')
                     ->line( $this->request['reason_rejected'])
                     ->line( 'Visit the site now to fix the issue or contact Cards and Checks Office')
                     ->action('Review Now', url('/rejected'))

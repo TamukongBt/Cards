@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transmissions extends Model
 {
-    protected $fillable= ['cardholder','card_type','branchcode','card_number','remarks','phone_number','email'];
+    protected $fillable= ['cardholder','card_type','branchcode','card_number','remarks','phone_number','email','pin_collected'];
 
     protected $dispatchesEvents = [
         'created' => CardsAvailable::class,

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddEmailToChequetransmissionTable extends Migration
+class AddCollectedPinToTransmissions extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,9 @@ class AddEmailToChequetransmissionTable extends Migration
      */
     public function up()
     {
-        Schema::table('chequetransmissions', function (Blueprint $table) {
-            $table->string('email');
+        Schema::table('transmissions', function (Blueprint $table) {
+            $table->boolean('pin_collected')->default(0);
+            $table->string('NIC_number')->default(NULL);
         });
     }
 
@@ -25,7 +26,7 @@ class AddEmailToChequetransmissionTable extends Migration
      */
     public function down()
     {
-        Schema::table('chequetransmissions', function (Blueprint $table) {
+        Schema::table('transmissions', function (Blueprint $table) {
             //
         });
     }

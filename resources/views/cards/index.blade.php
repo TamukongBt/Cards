@@ -58,7 +58,7 @@
                                 <div class="row">
                                     <div class="form-row">
                                         <div class="col">
-                                            <label class=" col-form-label">{{ __('Branch Name') }}</label>
+                                            <label class=" col-form-label">{{ __('Card Name') }}</label>
                                             <input type="text" name="name" class="form-control"
                                                 placeholder="Card Name" required>
                                         </div>
@@ -73,7 +73,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary btn-round" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-info btn-round">{{ __('Create Create') }}</button>
+                                <button type="submit" class="btn btn-info btn-round">{{ __('Create Card') }}</button>
                             </div>
                     </form>
                 </div>

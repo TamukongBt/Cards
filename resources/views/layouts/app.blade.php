@@ -80,7 +80,6 @@ The above copyright notice and this permission notice shall be included in all c
 
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 
-    <script src="http://www.datejs.com/build/date.js" type="text/javascript"></script>
 
     @stack('scripts')
 
