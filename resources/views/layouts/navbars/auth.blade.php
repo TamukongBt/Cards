@@ -149,6 +149,21 @@
                                 <span class="sidebar-normal">{{ __('Cards Collected') }}</span>
                             </a>
                         </li>
+
+                        @hasanyrole('css|cards')
+                        <li class="{{ $elementActive == 'user' ? 'active' : '' }}">
+                            <a href="{{ route('transmissions.pinindex') }}">
+                                <i class="nc-icon nc-button-power sidebar-mini-icon" aria-hidden="true"></i>
+                                <span class="sidebar-normal">{{ __('Cards without Pins') }}</span>
+                            </a>
+                        </li>
+                        <li class="{{ $elementActive == 'user' ? 'active' : '' }}">
+                            <a href="{{ route('transmissions.collectedpin') }}">
+                                <i class="nc-icon nc-user-run sidebar-mini-icon" aria-hidden="true"></i>
+                                <span class="sidebar-normal">{{ __('Cards with pins') }}</span>
+                            </a>
+                        </li>
+                        @endhasanyrole
                         <li class="{{ $elementActive == 'user' ? 'active' : '' }}">
                             <a href="{{ route('cheque.index') }}">
                                 <span class="sidebar-mini-icon">...</span>
@@ -164,7 +179,7 @@
                     </ul>
                 </div>
             </li>
-            @else
+
             <li class="{{ $elementActive == 'dashboard' ? 'active' : '' }}">
                 <a href="{{ route('request.approved') }}">
                     <i class="nc-icon nc-check-2"></i>
@@ -172,6 +187,39 @@
                 </a>
             </li>
             @endhasanyrole
+            @role('dso')
+            <li class="{{ $elementActive == 'icons' ? 'active' : '' }}">
+                <a href="{{ route('transmissions.index') }}">
+                    <i class="nc-icon nc-book-bookmark"></i>
+                    <p>{{ __('Cards Available') }}</p>
+                </a>
+            </li>
+            <li class="{{ $elementActive == 'icons' ? 'active' : '' }}">
+                <a href="{{ route('request.index') }}">
+                    <i class="fa fa-credit-card"></i>
+                    <p>{{ __('Cards Requests') }}</p>
+                </a>
+            </li>
+            <li class="{{ $elementActive == 'icons' ? 'active' : ''}}">
+                <a href="{{ route('request.index') }}">
+                    <i class="nc-icon nc-badge"></i>
+                    <p>{{ __('Cards Renewals') }}</p>
+                </a>
+            </li>
+            <li class="{{ $elementActive == 'user' ? 'active' : '' }}">
+                <a href="{{ route('transmissions.pinindex') }}">
+                    <i class="nc-icon nc-button-power " aria-hidden="true"></i>
+                    <span class="sidebar-normal">{{ __('Cards without Pins') }}</span>
+                </a>
+            </li>
+            <li class="{{ $elementActive == 'user' ? 'active' : '' }}">
+                <a href="{{ route('transmissions.collectedpin') }}">
+                    <i class="nc-icon nc-user-run sidebar-mini-icon" aria-hidden="true"></i>
+                    <span class="sidebar-normal">{{ __('Cards with pins') }}</span>
+                </a>
+            </li>
+
+            @endrole
             @hasanyrole('cards|it')
             <li >
                 <a href="{{ route('batch.index') }}">

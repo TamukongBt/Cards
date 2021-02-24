@@ -12,13 +12,7 @@
                 <div class="card-header">
                     <h4 class="card-title"> @role('css')Pending @endrole Cards collected without pins</h4>
                     <div class="text-right" style='float:right;'>
-                        @role('cards')
-                        <a href="transmissions/create" class="btn  btn-primary" style="background-color: #15224c">Upload New Cards</a>
-                        @endrole
                         <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#modelId" style="background-color: #15224c">
-                            Download the data
-                        </button>
                     </div>
                     <div class="card-body">
                     </div>
@@ -61,53 +55,6 @@
 
 
 
-<!-- Modal for data download -->
-<div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Choose The date Range for Downloads</h5>
-
-            </div>
-        <form action="{{route('export.collected')}}" method="post">
-            @csrf
-            <div class="modal-body">
-                <div class="row">
-                    <label class="col-md-3 col-form-label">{{ __('Start Date') }}</label>
-                    <div class="col-md-9">
-                        <div class="form-group">
-                            <input type="date" name="start_date" class="form-control" placeholder="Start Date"  required>
-                        </div>
-                        @if ($errors->has('start_date'))
-                            <span class="invalid-feedback" style="display: block;" role="alert">
-                                <strong>{{ $errors->first('start_date') }}</strong>
-                            </span>
-                        @endif
-                    </div>
-                </div>
-
-                <div class="row">
-                    <label class="col-md-3 col-form-label">{{ __('End Date') }}</label>
-                    <div class="col-md-9">
-                        <div class="form-group">
-                            <input type="date" name="end_date" class="form-control" placeholder="End Date"  required>
-                        </div>
-                        @if ($errors->has('end_date'))
-                            <span class="invalid-feedback" style="display: block;" role="alert">
-                                <strong>{{ $errors->first('end_date') }}</strong>
-                            </span>
-                        @endif
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button id="download" type="submit" class="btn btn-primary">Download</button>
-            </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 <!-- Modal to get reason for rejecting -->
 <div class="modal fade" id="modelreject" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">

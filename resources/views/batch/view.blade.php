@@ -24,10 +24,10 @@
                             <thead>
 
                                 <th>
-                                    Account Number
+                                    Account Name
                                 </th>
                                 <th>
-                                    Account Name
+                                    Account Number
                                 </th>
                                 <th>
                                     Card Type

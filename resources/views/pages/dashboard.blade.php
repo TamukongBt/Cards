@@ -319,6 +319,116 @@
     </div>
     @endrole
 
+    @role('dso')
+    <div class="row">
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card card-stats">
+                <div class="card-body ">
+                    <div class="row">
+                        <div class="col-5 col-md-4">
+                            <div class="icon-big text-center icon-warning">
+                                <i class="nc-icon nc-tv-2 text-warning"></i>
+                            </div>
+                        </div>
+                        <div class="col-7 col-md-8">
+                            <div class="numbers">
+                                <p class="card-category">Cards In Stock <span class="text-mute badge"> Total Number </span></p>
+                                <p class="card-title" id="new">
+                                <p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer ">
+                    <hr>
+                    <div class="stats">
+                        <i class="fa fa-refresh"></i> <a class="text-muted" href="/transmissions">View Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card card-stats">
+                <div class="card-body ">
+                    <div class="row">
+                        <div class="col-5 col-md-4">
+                            <div class="icon-big text-center icon-warning">
+                                <i class="nc-icon nc-bullet-list-67  text-success"></i>
+                            </div>
+                        </div>
+                        <div class="col-7 col-md-8">
+                            <div class="numbers">
+                                <p class="card-category">Over Due Cards<span class="text-mute badge">Over 3 Months Old</span>
+                                </p>
+                                <p class="card-title" id="pins">
+                                <p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer ">
+                    <hr>
+                    <div class="stats">
+                        <i class="fa fa-calendar-o"></i><a class="text-muted" href="/request">View Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card card-stats">
+                <div class="card-body ">
+                    <div class="row">
+                        <div class="col-5 col-md-4">
+                            <div class="icon-big text-center icon-warning">
+                                <i class="nc-icon nc-credit-card text-danger"></i>
+                            </div>
+                        </div>
+                        <div class="col-7 col-md-8">
+                            <div class="numbers">
+                                <p class="card-category">Total Request <span class="text-mute badge">for New Cards </span></p>
+                                <p class="card-title" id="slots">
+                                <p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer ">
+                    <hr>
+                    <div class="stats">
+                        <i class="fa fa-clock-o"></i> <a class="text-muted" href="/request">View Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card card-stats">
+                <div class="card-body ">
+                    <div class="row">
+                        <div class="col-5 col-md-4">
+                            <div class="icon-big text-center icon-warning">
+                                <i class="nc-icon nc-box text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="col-7 col-md-8">
+                            <div class="numbers">
+                                <p class="card-category"> Card Renewals<span class="text-mute badge">Request made this month </span></p>
+                                <p class="card-title" id="batch">
+                                <p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer ">
+                    <hr>
+                    <div class="stats">
+                        <i class="fa fa-refresh"></i> 13 Hours Ago
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endrole
+
 
     <div class="row">
         <div class="col-md-4">
@@ -461,6 +571,79 @@
                                         $('#batch').append(0);
                                         $.ajax({
                                             url: '/batch1',
+                                            type: "GET",
+                                            dataType: 'json',
+                                            success: function (data) {
+                                                $('#batch').append(data);
+                                            },
+                                    });
+                                },
+                                    });
+                                },
+                            });
+                        },
+                    });
+                },
+
+            });
+
+        });
+    });
+</script>
+@endpush
+@endrole
+
+@role('dso')
+@push('scripts')
+
+<script>
+    $(document).ready(function () {
+        // Javascript method's body can be found in assets/assets-for-demo/js/demo.js
+        demo.initChartsPages();
+        $(document).ready(function () {
+            $.ajax({
+                url: '/stock',
+                type: "GET",
+                dataType: 'json',
+                success: function (data) {
+                    $('#new').append(data);
+                    $.ajax({
+                        url: '/overdue',
+                        type: "GET",
+                        dataType: 'json',
+                        success: function (data) {
+                            $('#pins').append(data);
+                            $.ajax({
+                                url: '/week',
+                                type: "GET",
+                                dataType: 'json',
+                                success: function (data) {
+                                    $('#slots').append(data);
+                                    $.ajax({
+                                        url: '/renew',
+                                        type: "GET",
+                                        dataType: 'json',
+                                        success: function (data) {
+                                            $('#batch').append(data);
+
+                                        },
+                                    });
+                                },
+                                error: function (data) {
+                                    console.log(data);
+                                    $('#slots').append(0);
+                                    $.ajax({
+                                        url: '/batch1',
+                                        type: "GET",
+                                        dataType: 'json',
+                                        success: function (data) {
+                                            $('#batch').append(data);
+                                        },
+                                        error: function (data) {
+                                        console.log(data);
+                                        $('#batch').append(0);
+                                        $.ajax({
+                                            url: '/week',
                                             type: "GET",
                                             dataType: 'json',
                                             success: function (data) {

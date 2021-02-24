@@ -44,6 +44,7 @@
                                             <option value="css">Customer Service Supervisor(CSS)</option>
                                             <option value="csa">Customer Service Assistant(CSA)</option>
                                             <option value="it">IT Department</option>
+                                            <option value="dso">Digital Sales Officer</option>
                                         </select>
                                         @if ($errors->has('department'))
                                             <span class="invalid-feedback" style="display: block;" role="alert">

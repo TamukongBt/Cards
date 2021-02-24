@@ -74,9 +74,5 @@ class AvailableNotify extends Notification implements ShouldQueue
 
     public function toNexmo($notifiable)
     {
-        return (new NexmoMessage())
-                    ->content('Dear Customer,
-                    Your Bank Card is available  Please report to the '.$this->transmissions['branchcode'].' branch and collected your cards
-                    Regards Union Bank Of Cameroon Plc');
-    }
+      
 }

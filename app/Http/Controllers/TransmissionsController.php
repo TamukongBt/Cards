@@ -5,17 +5,17 @@ namespace App\Http\Controllers;
 use App\Transmissions;
 use App\Imports\TransmissionsImport;
 use App\Notifications\CardCollected;
-use App\Notifications\AvailableNotify;
 use App\Exports\CollectedExports;
 use DataTables;
 use App\Downloads;
-use App\Recipients\DynamicRecipient;
-use App\Events\CardsAvailable;
+use App\Mail\Cardmail;
 use Carbon\Carbon;
 use App\Upload;
 use App\User;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Nexmo\Laravel\Facade\Nexmo;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class TransmissionsController extends Controller
@@ -64,9 +64,6 @@ class TransmissionsController extends Controller
                 ->editColumn('created_at', function ($data) {
                     return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
                 })
-
-
-
                 ->addColumn('action', function ($row) {
 
                     $actionBtn =
@@ -81,11 +78,28 @@ class TransmissionsController extends Controller
                 ->make(true);
         }
 
+        elseif(auth()->user()->department == 'dso'){
+            $data = Transmissions::where('collected', null)->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+               ->addColumn('age', function ($item) {
+                  return $item->created_at > now()->subMonth(3)? 10: 100;
+                   })
+                ->make(true);
+
+        }
+
         }
 
         public function pinindex()
     {
         if (auth()->user()->department == 'css'||auth()->user()->department == 'cards') {
+            return view('transmissions.pinindex');
+        }
+        else  if (auth()->user()->department == 'dso') {
             return view('transmissions.pinindex');
         }
         else{
@@ -121,7 +135,7 @@ class TransmissionsController extends Controller
             ->rawColumns(['action'])
             ->make(true);
         }
-        elseif (auth()->user()->department == 'css') {
+        elseif (auth()->user()->department == 'css'||auth()->user()->department == 'dso') {
             $data = Transmissions::where('collected', 1)->where('pin_collected', 0)->where('branchcode',auth()->user()->branch->name )->get();
 
             return DataTables::of($data)
@@ -165,7 +179,7 @@ class TransmissionsController extends Controller
                 $data = Transmissions::where('collected', '1')->get();
                 return DataTables::of($data)
                 ->addIndexColumn()
-                ->editColumn('created_at', function ($data) {
+                ->editColumn('collected_at', function ($data) {
                     return $data->collected_at ? with(new Carbon($data->collected_at))->format('m/d/Y') : '';
                 })
 
@@ -185,7 +199,7 @@ class TransmissionsController extends Controller
           // Fetch validated data
           public function pin()
           {
-              return view('transmissions.collected');
+              return view('transmissions.pincollected');
           }
 
 
@@ -196,10 +210,9 @@ class TransmissionsController extends Controller
                   $data = Transmissions::where('pin_collected', '1')->get();
                   return DataTables::of($data)
                   ->addIndexColumn()
-                  ->editColumn('created_at', function ($data) {
-                      return $data->collected_at ? with(new Carbon($data->collected_at))->format('m/d/Y') : '';
-                  })
-
+                  ->editColumn('collected_at', function ($data) {
+                    return $data->collected_at ? with(new Carbon($data->collected_at))->format('m/d/Y') : '';
+                })
                       ->make(true);
                   }
               else{
@@ -225,6 +238,24 @@ class TransmissionsController extends Controller
         return view('transmissions.create');
     }
 
+    public function alerts(){
+        $transmissions = Transmissions::where('notified',0)->get;
+
+        foreach($transmissions as $transmission) {
+            // Nexmo::message()->send([
+            //     'to'   => $transmission->phone_number,
+            //     'from' => 'UBC. Plc',
+            //     'text' => 'Dear customer your card is now available at the '.$transmission->branchcode.''
+            // ]);
+            Mail::to($transmission->email)->send(new Cardmail($transmission));
+
+           $transmission->notified=1;
+           $transmission->notified_on=now();
+           $transmission->save();}
+            return $transmissions;
+    }
+
+
     /**
      * Store a newly created resource in storage.
      *
@@ -247,17 +278,18 @@ class TransmissionsController extends Controller
         $path1 = $request->file('file')->store('assets');
         $path=storage_path('app').'/'.$path1;
         Excel::import(new TransmissionsImport, $path);
+        $transmissions = Transmissions::where('notified',0)->get();
 
-             $transmissions = Transmissions::where('notified',0);
         foreach($transmissions as $transmission) {
-            // $client=new DynamicRecipient($transmission->email);
-            $transmission->email->notify(new AvailableNotify($transmission));
+            Mail::to($transmission->email)->send(new Cardmail($transmission));
+
            $transmission->notified=1;
            $transmission->notified_on=now();
            $transmission->save();}
 
-        try {
 
+
+        try {
 
         return redirect()->route('transmissions.index')->with( 'success','New Entries added');
 
@@ -270,6 +302,7 @@ class TransmissionsController extends Controller
 
 
     }
+
 
     /**
      * Display the specified resource.
@@ -339,6 +372,19 @@ class TransmissionsController extends Controller
         $req->save();
         return response()->json(200);
     }
+
+    public function count()
+    {
+        $data = Transmissions::where('collected', 1)->count();
+        return response($data, 200);
+    }
+
+    public function overdue()
+    {
+        $data = Transmissions::where('collected', 1)->where('created_at','>',now()->addMonths(3))->count();
+        return response($data, 200);
+    }
+
 
 
 

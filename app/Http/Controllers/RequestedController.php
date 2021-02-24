@@ -33,7 +33,12 @@ class RequestedController extends Controller
     public function index()
     {
 
-        $request = Requested::all();
+        if (auth()->user()->department == 'dso') {
+            $request =  Requested::where('confirmed', 1)->where('request_type', 'new_card')->get();
+            return view('request.index')->with('request', $request);
+        }
+        else{
+        $request = Requested::all();}
 
         return view('request.index')->with('request', $request);
     }
@@ -166,6 +171,32 @@ class RequestedController extends Controller
                 })
                 ->rawColumns(['action'])
                 ->editColumn('id', 'ID: {{$id}}')
+                ->make(true);
+        }
+        elseif (auth()->user()->department == 'dso') {
+            $data = Requested::where('confirmed', 1)->where('request_type', 'renew_card')->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->editColumn('branch_id', function ($data) {
+
+                    return $data->branch->name;
+                })
+                ->editColumn('cards', function ($data) {
+                    return $data->cardtype->name;
+                })
+                ->editColumn('request_type', function ($data) {
+                    return $data->requesttype->name;
+                })
+                ->addColumn('action', function ($row) {
+
+                    $actionBtn =
+                        '<td class=" "><i class="nc-icon nc-check-2 alert-success btn-outline-success" aria-hidden="true" style="color: limegreen;" ></i></td>  ';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
                 ->make(true);
         }
     }
@@ -534,7 +565,7 @@ class RequestedController extends Controller
     }
 
     // these are the count functions that display the count of the dataon the dashboard for request
-
+// /week
     public function newcardcount()
     {
         $data = Requested::get()->where('request_type', 'new_card')->where('confirmed', 0)->where('rejected', 0)->count();
@@ -544,6 +575,12 @@ class RequestedController extends Controller
     public function newcardbranch()
     {
         $data = Requested::get()->where('request_type', 'new_card')->where('branch_id', auth()->user()->branch_id)->where('confirmed', 1)->where('rejected', 0)->count();
+        // return $data;
+        return response($data, 200);
+    }
+    public function renew()
+    {
+        $data = Requested::get()->where('request_type', 'renew_card')->where('confirmed', 1)->where('rejected', 0)->count();
         // return $data;
         return response($data, 200);
     }

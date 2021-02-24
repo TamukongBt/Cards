@@ -10,7 +10,11 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title"> @role('cards')Pending @endrole @role('css') Unapproved @endrole Request Tables</h4>
+                    @hasanyrole('cards|css|csa')
+                    <h4 class="card-title"> Pending @role('css') Unapproved @endrole Request Tables </h4>
+                    @endhasanyrole
+                    @role('dso') <h4 class="card-title"> Card Renewal Request </h4> @endrole
+                    @hasanyrole('cards|css|csa')
                     <div class="text-right" style='float:right;'>
                         <a href="request/create" class="btn  btn-primary" style="background-color: #15224c">New Request</a>
                         <!-- Button trigger modal -->
@@ -18,6 +22,7 @@
                             Download the data
                         </button>
                     </div>
+                    @endhasanyrole
                     <div class="card-body">
                     </div>
                     <div class="table-responsive">

@@ -8,12 +8,14 @@ use App\Exports\CollectedCExports;
 use DataTables;
 use App\Downloads;
 use App\Events\ChequeAvailable;
+use App\Mail\Cheque;
 use App\Notifications\AvailableChequeNotify;
 use App\Recipients\DynamicRecipient;
 use Carbon\Carbon;
 use App\Upload;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Nexmo\Laravel\Facade\Nexmo;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -97,10 +99,9 @@ class ChequeTransmissionsController extends Controller
                 $data = ChequeTransmissions::where('collected', '1')->get();
                 return DataTables::of($data)
                 ->addIndexColumn()
-                ->editColumn('created_at', function ($data) {
+                ->editColumn('collected_at', function ($data) {
                     return $data->collected_at ? with(new Carbon($data->collected_at))->format('m/d/Y') : '';
                 })
-
                     ->make(true);
                 }
             else{
@@ -147,18 +148,17 @@ class ChequeTransmissionsController extends Controller
         $doneby->save();
         $path1 = $request->file('file')->store('assets');
         $path=storage_path('app').'/'.$path1;
-        try {
-            Excel::import(new ChequeTransmissionsImport, $path);
+        Excel::import(new ChequeTransmissionsImport, $path);
 
-            $ChequeTransmissions = ChequeTransmissions::where('notified',0);
-            foreach($ChequeTransmissions as $transmission) {
-                $client=new DynamicRecipient($transmission->email);
-                $client->notify(new AvailableChequeNotify($transmission));
-               $transmission->notified=1;
-               $transmission->notified_on=now();
-               $transmission->save();
-            }
-            return redirect()->route('cheque.index')->with( 'success','New Entries added');
+        $ChequeTransmissions = ChequeTransmissions::where('notified',0)->get();
+        foreach($ChequeTransmissions as $transmission) {
+            Mail::to($transmission->email)->send(new Cheque($transmission));
+           $transmission->notified=1;
+           $transmission->notified_on=now();
+           $transmission->save();
+        }
+        return redirect()->route('cheque.index')->with( 'success','New Entries added');
+        try {
 
         } catch (\Throwable $th) {
             Alert::alert('Error', 'There is a problem with the file', 'error');

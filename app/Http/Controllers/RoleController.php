@@ -14,6 +14,7 @@ class RoleController extends Controller
         $cards = Role::create(['name'=>'cards']);
         $it= Role::create(['name'=>'it']);
         $csa= Role::create(['name'=>'csa']);
+        $dso = Role::create(['name'=>'dso']);
 
         return redirect(route('permissions'));
     }
@@ -44,6 +45,9 @@ class RoleController extends Controller
 
         $it=Role::findByName('it');
         $it->givePermissionTo('download');
+
+        $dso=Role::findByName('dso');
+        $dso->givePermissionTo('download');
         return view('pages.dashboard')->with('success','Roles Created');
     }
 

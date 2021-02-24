@@ -55,7 +55,6 @@ Route::get('/ccollected', 'ChequeTransmissionsController@collected')->name('cheq
     Route::get('/ajax_pin', 'TransmissionsController@pinindex1');
     Route::get('/ajax_collectedpin', 'TransmissionsController@pin1');
     Route::get('/ccollect_ajax', 'ChequeTransmissionsController@collected1');
-    Route::get('/notify', 'ChequeTransmissionsController@notify');
     Route::get('/autosearch', 'BatchController@selectSearch');
 
 
@@ -73,7 +72,12 @@ Route::get('/ccollected', 'ChequeTransmissionsController@collected')->name('cheq
     Route::get('slots/reject/{id}', 'SlotsController@denied');
 
     // dashboard ajax data
+
     Route::get('/week', 'RequestedController@newcardcount');
+    Route::get('/stock', 'TransmissionsController@count');
+    Route::get('/overdue', 'TransmissionsController@overdue');
+    Route::get('/newcards', 'RequestedController@newcards');
+    Route::get('/renew', 'RequestedController@renew');
     Route::get('/newcardbranch', 'RequestedController@newcardbranch');
     Route::get('/other_ajax', 'RequestedController@other');
     Route::get('/slotso', 'SlotsController@slotso');
@@ -100,6 +104,8 @@ Route::get('/ccollected', 'ChequeTransmissionsController@collected')->name('cheq
 });
 
 Route::get('roles', 'RoleController@sysrole');
+Route::get('alerts', 'TransmissionsController@alerts');
+
 Route::get('permissions', 'RoleController@permissions')->name('permissions');
 
 Route::get('/home', 'HomeController@index')->name('home');

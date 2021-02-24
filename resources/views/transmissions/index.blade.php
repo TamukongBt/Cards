@@ -10,7 +10,10 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
+                    @hasanyrole('cards|css')
                     <h4 class="card-title"> @role('css')Pending @endrole Transmissions </h4>
+                    @endhasanyrole
+                    @role('dso') <h4 class="card-title"> Cards Available </h4> @endrole
                     <div class="text-right" style='float:right;'>
                         @role('cards')
                         <a href="transmissions/create" class="btn  btn-primary" style="background-color: #15224c">Upload New Cards</a>
@@ -148,7 +151,100 @@
     </div>
 </div>
 
+@role('dso')
 @push('scripts')
+
+
+<script type="text/javascript">
+
+    // This script is used in passing data from the table directly to form in the book hall page
+    // var table = $('#myTable').DataTable();
+    $(document).ready(function () {
+        $('#table1').DataTable({
+            "processing": true,
+            "serverSide": false,
+            "searchable": true,
+            "ajax": "/transmissions_ajax",
+
+
+            "columns": [
+                { "data": "cardholder", name: 'Card Holder' },
+                { "data": "card_type", name: 'Type Of Card' },
+                { "data": "branchcode", name: 'Branch' },
+                { "data": "card_number", name: 'Cards Number' },
+                { "data": "phone_number", name: 'Phone Number' },
+                { "data": "remarks", name: 'Remarks' },
+                { "data": "created_at", name: 'Collected On', orderable: true, searchable: true },
+                {
+                    data: 'age', name: 'age', orderable: true, searchable: true
+                },
+
+
+            ],
+            "createdRow": function (row, data, index) {
+                const threeMonthsAgo = new Date();
+                const sixMonthsAgo = new Date();
+
+
+                threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+                sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+                const  created = new Date( data['created_at'] );
+
+                if (  threeMonthsAgo > created  ) {
+                    $('td', row).eq(8).addClass('success');
+                } else if( sixMonthsAgo > created ){
+                    $('td', row).eq(8).addClass('danger');
+                }else{
+                    $('td', row).eq(2).addClass(' ');
+                }
+            }
+
+
+        });
+    });
+
+    //Start Edit Record
+
+    $('#table1').on('click', '.btn-delete[data-remote]', function (e) {
+    e.preventDefault();
+     $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    var url = $(this).data('remote');
+
+    // confirm then
+
+    if (confirm('Are you sure you want to delete this?')) {
+        $.ajax({
+            url: url,
+            type: 'DELETE',
+            dataType: 'json',
+            data:{'_method':'DELETE'},
+        }).always(function (data) {
+            console.log(data);
+            // $('#table1').DataTable().draw(true);
+            $('#table1').DataTable().ajax.reload();
+        });
+    }else
+        alert("You have cancelled!");
+});
+
+
+
+
+
+
+
+</script>
+@endpush
+@endrole
+
+@hasanyrole('cards|css|csa|it')
+@push('scripts')
+
 
 <script type="text/javascript">
 
@@ -222,7 +318,7 @@ $('#table1').on('click', '.validates[data-remote]', function (e) {
 
         $.ajax({
             url: url,
-            type: 'POST',
+            type: 'GET',
             dataType: 'json',
             data:{'_method':'GET'},
         }).always(function (data) {
@@ -273,4 +369,5 @@ $('#table1').on('click', '.denies[data-remote]', function (e) {
 
 </script>
 @endpush
+@endhasanyrole
 @endsection

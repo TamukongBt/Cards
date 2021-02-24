@@ -11,10 +11,12 @@
             <div class="card">
                 <div class="card-header">
                     <h4 class="card-title">Batch Created</h4>
+                    @role('it')
                     <div class="text-right" style='float:right;'>
                         <a href="batch/create" class="btn  btn-primary" style="background-color: #15224c">Register New Batch Created</a>
                         <!-- Button trigger modal -->
                     </div>
+                    @endrole
                     <div class="card-body">
                     </div>
                     <div class="table-responsive">

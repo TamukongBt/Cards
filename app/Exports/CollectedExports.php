@@ -28,8 +28,12 @@ class CollectedExports implements FromQuery, WithColumnFormatting, WithMapping, 
         public function headings(): array
         {
             return [
-                'Cheque Holder',
+                'Card Holder',
+                'Card Type',
+                'Card Number',
                 'Branch Code',
+                'Remarks',
+                'PIN Collected',
                 'Collected By',
                 'Date Uploaded',
                 'Date Collected',
@@ -44,6 +48,7 @@ class CollectedExports implements FromQuery, WithColumnFormatting, WithMapping, 
                             $requested->card_number,
                             $requested->branchcode,
                             $requested->remarks,
+                            $requested->pin_collected,
                             $requested->collected_by,
                             Date::dateTimeToExcel($requested->created_at),
                             Date::dateTimeToExcel($requested->collected_at),
@@ -54,10 +59,14 @@ class CollectedExports implements FromQuery, WithColumnFormatting, WithMapping, 
                     {
                         return [
                             'A' => NumberFormat::FORMAT_TEXT,
-                            'B' => NumberFormat::FORMAT_NUMBER,
-                            'C' => NumberFormat::FORMAT_TEXT,
-                            'D' => NumberFormat::FORMAT_DATE_DDMMYYYY,
-                            'E' => NumberFormat::FORMAT_DATE_DDMMYYYY,
+                            'A' => NumberFormat::FORMAT_TEXT,
+                            'B' => NumberFormat::FORMAT_TEXT,
+                            'C' => NumberFormat::FORMAT_NUMBER,
+                            'D' => NumberFormat::FORMAT_TEXT,
+                            'E' => NumberFormat::FORMAT_TEXT,
+                            'F' => NumberFormat::FORMAT_TEXT,
+                            'G' => NumberFormat::FORMAT_DATE_DDMMYYYY,
+                            'H' => NumberFormat::FORMAT_DATE_DDMMYYYY,
                         ];
                     }
 
@@ -66,6 +75,6 @@ class CollectedExports implements FromQuery, WithColumnFormatting, WithMapping, 
         {
             ob_end_clean();
              ob_start();
-            return Transmissions::query()->select('cardholder','card_type','card_number','branchcode','remarks','collected_by','created_at','collected_at')->wherebetween('created_at', [$this->startdate, $this->enddate])->where('collected',1);
+            return Transmissions::query()->select('cardholder','card_type','card_number','branchcode','remarks','pin_collected','collected_by','created_at','collected_at')->wherebetween('created_at', [$this->startdate, $this->enddate])->where('collected',1);
         }
 }
