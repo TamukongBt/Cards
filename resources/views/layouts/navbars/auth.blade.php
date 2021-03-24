@@ -6,7 +6,7 @@
             </div>
         </a>
         <a href="/" class="simple-text text-center logo-normal">
-            {{ __('Cards n Cheques ') }}
+            {{ __('Cards n Checks ') }}
         </a>
     </div>
     <div class="sidebar-wrapper">
@@ -17,60 +17,28 @@
                     <p>{{ __('Dashboard') }}</p>
                 </a>
             </li>
-            @role('css')
+
+
             <li class="{{ $elementActive == 'user' || $elementActive == 'profile' ? 'active' : '' }}">
                 <a data-toggle="collapse" aria-expanded="true" href="#laravelExamples">
                     <p>
                         <i class="nc-icon nc-book-bookmark" aria-hidden="true"></i>
-                            {{ __('Request') }}
+                            {{ __(' Card Request') }}
                         <b class="caret"></b>
                     </p>
                 </a>
                 <div class="collapse show" id="laravelExamples">
                     <ul class="nav">
                         <li class="{{ $elementActive == 'profile' ? 'active' : '' }}">
-                            <a href="{{ route('request.index') }}">
+                            <a href="{{ route('cardrequest.index') }}">
                                 <span class="sidebar-mini-icon">...</span>
-                                <span class="sidebar-normal">{{ __(' Pending Requests ') }}</span>
-                            </a>
-                        </li>
-                        <li class="{{ $elementActive == 'user' ? 'active' : '' }}">
-                            <a href="{{ route('request.approved') }}">
-                                <i class="nc-icon nc-check-2 sidebar-mini-icon" aria-hidden="true"></i>
-                                <span class="sidebar-normal">{{ __('Processed Requests') }}</span>
-                            </a>
-                        </li>
-                        <li class="{{ $elementActive == 'user' ? 'active' : '' }}">
-                            <a href="{{ route('request.rejected') }}">
-                                <i class="nc-icon nc-simple-remove sidebar-mini-icon" aria-hidden="true"></i>
-                                <span class="sidebar-normal">{{ __('Rejected Requests') }}</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            @endrole
-            @role('csa')
-            <li class="{{ $elementActive == 'user' || $elementActive == 'profile' ? 'active' : '' }}">
-                <a data-toggle="collapse" aria-expanded="true" href="#laravelExamples">
-                    <p>
-                        <i class="nc-icon nc-book-bookmark" aria-hidden="true"></i>
-                            {{ __('Request') }}
-                        <b class="caret"></b>
-                    </p>
-                </a>
-                <div class="collapse show" id="laravelExamples">
-                    <ul class="nav">
-                        <li class="{{ $elementActive == 'profile' ? 'active' : '' }}">
-                            <a href="{{ route('request.index') }}">
-                                <span class="sidebar-mini-icon">...</span>
-                                <span class="sidebar-normal">{{ __(' Pending Requests ') }}</span>
+                                <span class="sidebar-normal">{{ __('Card Subscriptions ') }}</span>
                             </a>
                         </li>
                         <li class="{{ $elementActive == 'user' ? 'active' : '' }}">
                             <a href="{{ route('request.approves') }}">
                                 <i class="nc-icon nc-check-2 sidebar-mini-icon" aria-hidden="true"></i>
-                                <span class="sidebar-normal">{{ __('Approved Requests') }}</span>
+                                <span class="sidebar-normal">{{ __('Card Renewals') }}</span>
                             </a>
                         </li>
                         <li class="{{ $elementActive == 'user' ? 'active' : '' }}">
@@ -88,7 +56,7 @@
                     </ul>
                 </div>
             </li>
-            @endrole
+
             @role('cards')
             <li class="{{ $elementActive == 'user' || $elementActive == 'profile' ? 'active' : '' }}">
                 <a data-toggle="collapse" aria-expanded="true" href="#laravelExamples">
@@ -101,7 +69,7 @@
                 <div class="collapse show" id="laravelExamples">
                     <ul class="nav">
                         <li class="{{ $elementActive == 'user' ? 'active' : '' }}">
-                            <a href="{{ route('request.index') }}">
+                            <a href="{{ route('cardrequest.index') }}">
                                 <span class="sidebar-mini-icon">...</span>
                                 <span class="sidebar-normal">{{ __('Pending Requests') }}</span>
                             </a>
@@ -195,13 +163,13 @@
                 </a>
             </li>
             <li class="{{ $elementActive == 'icons' ? 'active' : '' }}">
-                <a href="{{ route('request.index') }}">
+                <a href="{{ route('cardrequest.index') }}">
                     <i class="fa fa-credit-card"></i>
                     <p>{{ __('Cards Requests') }}</p>
                 </a>
             </li>
             <li class="{{ $elementActive == 'icons' ? 'active' : ''}}">
-                <a href="{{ route('request.index') }}">
+                <a href="{{ route('cardrequest.index') }}">
                     <i class="nc-icon nc-badge"></i>
                     <p>{{ __('Cards Renewals') }}</p>
                 </a>

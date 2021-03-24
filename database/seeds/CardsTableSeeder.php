@@ -12,17 +12,17 @@ class CardsTableSeeder extends Seeder
     public function run()
     {
         DB::table('cards')->insert([
-            ['name' => 'Silver',
+            ['name' => 'Trust Silver',
             'card_type' => 'silver',
             'created_at' => now(),
             'updated_at' => now()],
             [
-                'name' => 'Gold',
+                'name' => 'Trust Gold',
                 'card_type' => 'gold',
                 'created_at' => now(),
                 'updated_at' => now()],
             [
-                'name' => 'Sapphire',
+                'name' => 'Trust Saphir',
                 'card_type' => 'saphire',
                 'created_at' => now(),
                 'updated_at' => now()],

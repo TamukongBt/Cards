@@ -277,19 +277,19 @@ class TransmissionsController extends Controller
         $doneby->save();
         $path1 = $request->file('file')->store('assets');
         $path=storage_path('app').'/'.$path1;
-        Excel::import(new TransmissionsImport, $path);
-        $transmissions = Transmissions::where('notified',0)->get();
-
-        foreach($transmissions as $transmission) {
-            Mail::to($transmission->email)->send(new Cardmail($transmission));
-
-           $transmission->notified=1;
-           $transmission->notified_on=now();
-           $transmission->save();}
 
 
 
         try {
+            Excel::import(new TransmissionsImport, $path);
+            $transmissions = Transmissions::where('notified',0)->get();
+
+            foreach($transmissions as $transmission) {
+                Mail::to($transmission->email)->send(new Cardmail($transmission));
+
+               $transmission->notified=1;
+               $transmission->notified_on=now();
+               $transmission->save();}
 
         return redirect()->route('transmissions.index')->with( 'success','New Entries added');
 

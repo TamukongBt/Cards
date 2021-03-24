@@ -40,11 +40,11 @@
                                         </div>
                                         <select  name="department" id="department" class="form-control @error('department') is-invalid @enderror" required autofocus>
                                             <option selected="true" disabled="disabled">Choose Your Department</option>
-                                            <option value="cards">Cards And Checks</option>
+                                            <option value="branchadmin">Branch/Sales Manager</option>
                                             <option value="css">Customer Service Supervisor(CSS)</option>
                                             <option value="csa">Customer Service Assistant(CSA)</option>
-                                            <option value="it">IT Department</option>
                                             <option value="dso">Digital Sales Officer</option>
+                                            <option value="cards">Cards And Checks</option>
                                         </select>
                                         @if ($errors->has('department'))
                                             <span class="invalid-feedback" style="display: block;" role="alert">
@@ -53,16 +53,17 @@
                                         @endif
                                     </div>
 
-                                    <div class="input-group{{ $errors->has('branch_id') ? ' has-danger' : '' }}">
+                                    <input type="hidden" name="branch_id" id="headoffice"  value="000" >
+
+                                    <div class="input-group{{ $errors->has('branch_id') ? ' has-danger' : '' }}" id="branch_id">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">
                                                 <i class="nc-icon nc-bank"></i>
                                             </span>
                                         </div>
-                                        <select name="branch_id" id="branch_id" class="form-control @error('branch_id') is-invalid @enderror" required autofocus>
+                                        <select name="branch_id"  class="form-control @error('branch_id') is-invalid @enderror" required autofocus>
                                             <option  selected="true" disabled="disabled">Choose Your Branch</option>
-                                            <option value="000">Head Office</option>
-                                            <option value="001">Bamenda</option>
+                                            <option idvalue="001">Bamenda</option>
                                             <option value="002">Akwa</option>
                                             <option value="003">Limbe</option>
                                             <option value="004">Yaounde</option>
@@ -177,5 +178,37 @@
 
 
         });
+
+
+
+
+$(document).ready(function () {
+$('#headoffice').hide()
+    $('#branch_id').hide()
+});
+
+    $('#department').on('change',function(){
+    var selection = $(this).val();
+    console.log(selection);
+    switch(selection){
+    case 'css':
+    $('#branch_id').show(),
+    $('#headoffice').remove()
+    break;
+    case 'csa':
+    $('#branch_id').show(),
+    $('#headoffice').remove()
+    break;
+    case 'branchadmin':
+    $('#branch_id').show(),
+    $('#headoffice').remove()
+    break;
+    default:
+    $('#headoffice').show()
+    $('#branch_id').remove()
+    }
+});
+
+
     </script>
 @endpush

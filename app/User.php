@@ -55,9 +55,11 @@ class User extends Authenticatable
     {
         return $this->belongsTo('App\Branch', 'branch_id', 'branch_code');
     }
+    
     public function doneby()
     {
         return $this->hasMany('App\Request', 'done_by', 'employee_id');
     }
+
 
 }

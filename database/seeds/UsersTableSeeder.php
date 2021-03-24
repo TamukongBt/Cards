@@ -19,6 +19,9 @@ class UsersTableSeeder extends Seeder
             'employee_id'=>'so1000',
             'branch_id'=>'002',
             'department'=>'css',
+            'oldbranch'=>'',
+            'newbranch'=>'',
+            'is_changed'=>0,
             'password' => Hash::make('secret'),
             'created_at' => now(),
             'updated_at' => now()

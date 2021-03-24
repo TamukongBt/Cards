@@ -17,8 +17,13 @@ class RequestTypeSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now()],
             [
-                'name' => 'New Card Request',
+                'name' => 'Card Subscription',
                 'request_code' => 'new_card',
+                'created_at' => now(),
+                'updated_at' => now()],
+            [
+                'name' => 'Card Renewal',
+                'request_code' => 'renew_card',
                 'created_at' => now(),
                 'updated_at' => now()],
             [

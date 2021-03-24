@@ -1,4 +1,20 @@
 <nav class="navbar navbar-expand-lg navbar-absolute fixed-top navbar-transparent">
+
+@php
+    $role;
+    if(auth()->user()->department=='cards'){
+        $role = "Cards and Checks Office";
+    }
+    else if(auth()->user()->department=='css'){
+        $role = "Customer Service Supervisor".' '.auth()->user()->branch->name;
+    }
+    else if(auth()->user()->department=='csa'){
+        $role = "Customer Service Assistant".' '.auth()->user()->branch->name;
+    }
+    else if(auth()->user()->department=='branchadmin'){
+        $role = "Branch / Sales Manager".' '.auth()->user()->branch->name;
+    }
+@endphp
     <div class="container-fluid">
         <div class="navbar-wrapper">
             <div class="navbar-toggle">
@@ -8,7 +24,7 @@
                     <span class="navbar-toggler-bar bar3"></span>
                 </button>
             </div>
-            <a class="navbar-brand" style="font-size: 170%" href="#pablo">{{ __('Union Bank of Cameroon') }} <SMall>  {{auth()->user()->branch->name}} </SMall></a>
+            <a class="navbar-brand" style="font-size: 170%" href="#pablo"> {{$role}}  </a>
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation"
             aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +67,22 @@
                                @else
                                {{-- list notifications  --}}
                                @foreach (auth()->user()->unreadNotifications as $notification)
-                               @hasanyrole('csa|css')
+                                 {{-- if it is a locationchange that is being made  --}}
+                                 @if($notification->type=='App\Notifications\Locationchange')
+                                 @role('cards')
+
+                                 @if (count(auth()->user()->unreadNotifications)==0)
+                                 <a href="#"> <span class="dropdown-item list-group text-mute">No New Notifications</span></a>
+
+                                 @else
+                                 <a href="/change">
+                                 <span class="dropdown-item list-group">Transfer of Location Request has been made  &nbsp;&nbsp; <br><small class="text-right text-mute"> {{ \Carbon\Carbon::parse( $notification->created_at)->diffForHumans() }}</small> </span>
+                                 </a>
+                                 @endif
+                                 @endrole
+                                 @endif
+
+                               @hasanyrole('csa|css|branchadmin')
                                {{-- if its a rejected request  --}}
                                @if ($notification->type=='App\Notifications\RejectRequest')
                                @if (count(auth()->user()->unreadNotifications)==0)
@@ -59,6 +90,18 @@
                                @else
                                @foreach($notification->data as $data_item)
                                <a href="/rejected"> <span class="dropdown-item list-group">The Request Made by {{ $data_item['account_name']  }} has been rejected                &nbsp;&nbsp; <br><small class="text-right text-mute"> {{ \Carbon\Carbon::parse($data_item['updated_at'] )->diffForHumans() }}</small></span></a>
+                               @endforeach
+                               @endif
+                               @endif
+                               @endrole
+                               @hasanyrole('csa|css|branchadmin')
+                               {{-- if its a rejected request  --}}
+                               @if ($notification->type=='App\Notifications\TransferApprove')
+                               @if (count(auth()->user()->unreadNotifications)==0)
+                               <a href="#"> <span class="dropdown-item list-group text-mute">No New Notifications</span></a>
+                               @else
+                               @foreach($notification->data as $data_item)
+                               <a href="/"> <span class="dropdown-item list-group">Your Transfer Request has been Approved          &nbsp;&nbsp; <br><small class="text-right text-mute"> {{ \Carbon\Carbon::parse($data_item['updated_at'] )->diffForHumans() }}</small></span></a>
                                @endforeach
                                @endif
                                @endif
@@ -84,22 +127,10 @@
                                @endif
                                @endif
                                @endrole
-                               {{-- if it is a batch request that is being made  --}}
-                               @if($notification->type=='App\Notifications\BatchNotify')
-                               @role('cards')
-                               @if (count(auth()->user()->unreadNotifications)==0)
-                               <a href="#"> <span class="dropdown-item list-group text-mute">No New Notifications</span></a>
-                               @else
-                               @foreach($notification->data as $data_item)
-                               <span class="dropdown-item list-group">New Batch of cards has been created with number {{ $data_item['batch_number']  }}  &nbsp;&nbsp; <br><small class="text-right text-mute"> {{ \Carbon\Carbon::parse($data_item['updated_at'] )->diffForHumans() }}</small> </span>
-                               @endforeach
-                               @endif
-                               @endrole
-                               @endif
 
                                {{-- if it is a request for new slots  --}}
-                               @if($notification->type=='App\Notifications\SlotNotify')
-                               @role('it')
+                               @if($notification->type=='App\Notifications\NewRequestNotification'||$notification->type=='App\Notifications\RejectRequest'||$notification->type=='App\Notifications\Locationchange')
+                               @role('branchadmin')
                                @if (count(auth()->user()->unreadNotifications)==0)
                                <a href="#"> <span class="dropdown-item list-group text-mute">No New Notifications</span></a>
                                @else

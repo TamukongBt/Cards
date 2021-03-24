@@ -12,8 +12,8 @@ class RoleController extends Controller
     public function sysrole(){
         $css = Role::create(['name' => 'css']);
         $cards = Role::create(['name'=>'cards']);
-        $it= Role::create(['name'=>'it']);
         $csa= Role::create(['name'=>'csa']);
+        $branchadmin= Role::create(['name'=>'branchadmin']);
         $dso = Role::create(['name'=>'dso']);
 
         return redirect(route('permissions'));
@@ -34,6 +34,11 @@ class RoleController extends Controller
         $csa->givePermissionTo('delete');
         $csa->givePermissionTo('edit');
 
+        $branchadmin=Role::findByName('branchadmin');
+        $branchadmin->givePermissionTo('create');
+        $branchadmin->givePermissionTo('delete');
+        $branchadmin->givePermissionTo('edit');
+
         $css=Role::findByName('csa');
         $css->givePermissionTo('create');
         $css->givePermissionTo('delete');
@@ -42,9 +47,6 @@ class RoleController extends Controller
         $cards=Role::findByName('cards');
         $cards->givePermissionTo('download');
         $cards->givePermissionTo('edit');
-
-        $it=Role::findByName('it');
-        $it->givePermissionTo('download');
 
         $dso=Role::findByName('dso');
         $dso->givePermissionTo('download');
