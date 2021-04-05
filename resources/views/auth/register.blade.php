@@ -40,9 +40,8 @@
                                         </div>
                                         <select  name="department" id="department" class="form-control @error('department') is-invalid @enderror" required autofocus>
                                             <option selected="true" disabled="disabled">Choose Your Department</option>
-                                            <option value="branchadmin">Branch/Sales Manager</option>
-                                            <option value="css">Customer Service Supervisor(CSS)</option>
                                             <option value="csa">Customer Service Assistant(CSA)</option>
+                                            <option value="branchadmin">Branch/Sales Manager</option>
                                             <option value="dso">Digital Sales Officer</option>
                                             <option value="cards">Cards And Checks</option>
                                         </select>
@@ -63,7 +62,7 @@
                                         </div>
                                         <select name="branch_id"  class="form-control @error('branch_id') is-invalid @enderror" required autofocus>
                                             <option  selected="true" disabled="disabled">Choose Your Branch</option>
-                                            <option idvalue="001">Bamenda</option>
+                                            <option value="001">Bamenda</option>
                                             <option value="002">Akwa</option>
                                             <option value="003">Limbe</option>
                                             <option value="004">Yaounde</option>

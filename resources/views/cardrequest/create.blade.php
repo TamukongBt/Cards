@@ -29,9 +29,9 @@ New Card Request
                                     <div class="form-group">
                                         <input type="text" name="accountname" class="form-control" placeholder="Account Name"   required>
                                     </div>
-                                    @if ($errors->has('account_name'))
+                                    @if ($errors->has('accountname'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
-                                            <strong>{{ $errors->first('account_name') }}</strong>
+                                            <strong>{{ $errors->first('accountname') }}</strong>
                                         </span>
                                     @endif
                                 </div>
@@ -41,7 +41,7 @@ New Card Request
                                 <div class="col-sm">
                                     <div class="form-group">
                                         <label class="col-sm">{{ __('Bank Code') }}</label>
-                                        <input type="text" name="bankcode" class="form-control" value="10023" required>
+                                        <input type="text" name="bankcode" id="bankcode" class="form-control" value="10023" required>
                                     </div>
                                     @if ($errors->has('bankcode'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
@@ -52,7 +52,7 @@ New Card Request
                                 <div class="col-sm">
                                     <div class="form-group">
                                         <label class="col-sm">{{ __('Branch Code') }}</label>
-                                        <input type="text" name="branchcode" class="form-control"   id="branchcode" value="{{auth()->user()->branch_id}}" required>
+                                        <input type="text" name="branchcode" id="branchcode" class="form-control"   id="branchcode" value="0{{auth()->user()->branch_id}}0" required>
                                     </div>
                                     @if ($errors->has('bbranchcode'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
@@ -63,7 +63,7 @@ New Card Request
                                 <div class="col-sm">
                                     <div class="form-group">
                                         <label class="col-sm">{{ __('Account No') }}</label>
-                                        <input type="text" name="account_number" class="form-control" maxlength="11"  required>
+                                        <input type="text" name="account_number" id="acc_num" class="form-control" maxlength="11"  required>
                                     </div>
                                     @if ($errors->has('account_number'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
@@ -74,7 +74,7 @@ New Card Request
                                 <div class="col-sm">
                                     <div class="form-group">
                                         <label class="col-sm">{{ __('RIB') }}</label>
-                                        <input type="text" name="RIB" class="form-control"   required>
+                                        <input type="text" name="RIB" class="form-control"  id="RIB" required>
                                     </div>
                                     @if ($errors->has('account_number'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
@@ -199,12 +199,20 @@ New Card Request
 
 
         $('#branch_id').on('change',function(){
-        var selection = $(this).val();
-        console.log(selection);
+        var selection = 0+$(this).val()+0;
         $('#branchcode').val(selection);
+          });
 
 
-    });
+          $('#acc_num').on('change',function(){
+        var bankcode = $('#bankcode').val();
+        var branchcode = $('#branchcode').val();
+        var acc_num = $('#acc_num').val();
+        var rib= 97 - (((89*bankcode) + (15*branchcode) + (3*acc_num) )%97)
+        $('#RIB').val(rib);
+          });
+
+
 
     </script>
     @endpush

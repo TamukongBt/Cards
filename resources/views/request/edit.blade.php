@@ -15,7 +15,7 @@
                             <span aria-hidden="true"><a  style=" background-color: #15224c;" class="btn btn-sm" href="{{ url()->previous() }}"> <i class="nc-icon nc-minimal-left"></i></a></span>
                         </button>
                         <div class="card-header">
-                            <h5 class="title">{{$request->account_name}}</h5>
+                            <h5 class="title">{{$request->accountname}}</h5>
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -36,11 +36,11 @@
                                 <label class="col-md-3 col-form-label">{{ __('Account Name') }}</label>
                                 <div class="col-md-9">
                                     <div class="form-group">
-                                        <input type="text" name="account_name" class="form-control" placeholder="Account Name"  value='{{$request->account_name}}'  required>
+                                        <input type="text" name="accountname" class="form-control" placeholder="Account Name"  value='{{$request->accountname}}'  required>
                                     </div>
-                                    @if ($errors->has('account_name'))
+                                    @if ($errors->has('accountname'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
-                                            <strong>{{ $errors->first('account_name') }}</strong>
+                                            <strong>{{ $errors->first('accountname') }}</strong>
                                         </span>
                                     @endif
                                 </div>

@@ -37,11 +37,11 @@
                                 <label class="col-md-3 col-form-label">{{ __('Account Name') }}</label>
                                 <div class="col-md-9">
                                     <div class="form-group">
-                                        <input type="text" name="account_name" class="form-control" placeholder="Account Name"  required>
+                                        <input type="text" name="accountname" class="form-control" placeholder="Account Name"  required>
                                     </div>
-                                    @if ($errors->has('account_name'))
+                                    @if ($errors->has('accountname'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
-                                            <strong>{{ $errors->first('account_name') }}</strong>
+                                            <strong>{{ $errors->first('accountname') }}</strong>
                                         </span>
                                     @endif
                                 </div>

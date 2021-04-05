@@ -19,24 +19,24 @@
                     </div>
                     <div class="card-body">
                     </div>
-                    <div class="table-responsive">
-                        <table id="table1" class="table ">
-                            <thead>
+                    <div class="table-responsive ">
+                        <table id="table1" class="table table-bordered ">
+                            <thead style="font-size: 75%;">
 
+                                <th>
+                                    Date Requested
+                                </th>
+                                <th>
+                                     Card Holder
+                                </th>
                                 <th>
                                     Account Number
                                 </th>
                                 <th>
-                                    Account Name
+                                    Type Of Card
                                 </th>
                                 <th>
                                     Request Type
-                                </th>
-                                <th>
-                                    Card Type
-                                </th>
-                                <th>
-                                    Date Requested
                                 </th>
                                 <th>
                                     Requested By
@@ -116,15 +116,15 @@
             "processing": true,
             "serverSide": false,
             "searchable": true,
-            "ajax": "/rejected_ajax",
+            "ajax": "/checkrejected_ajax",
 
 
             "columns": [
-                { "data": "account_number", name: 'Account Number' },
-                { "data": "account_name", name: 'Account Name' },
-                { "data": "request_type", name: 'Request Type' },
-                { "data": "cards", name: 'Cards Requested' },
                 { "data": "created_at", name: 'Requested Date' },
+                { "data": "accountname", name: 'Account Name' },
+                { "data": "account_number", name: 'Account Number' },
+                { "data": "checks", name: 'Checks Requested' },
+                { "data": "account_type", name: 'Account Type' },
                 { "data": "requested_by", name: 'Requested By' },
                 {
                     data: 'reason_rejected', name: 'Reason', orderable: true, searchable: true

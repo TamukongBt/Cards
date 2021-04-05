@@ -163,7 +163,7 @@
 
             "columns": [
                 { "data": "account_number", name: 'Account Number' },
-                { "data": "account_name", name: 'Account Name' },
+                { "data": "accountname", name: 'Account Name' },
                 { "data": "request_type", name: 'Request Type' },
                 { "data": "cards", name: 'Cards Requested' },
                 { "data": "created_at", name: 'Requested Date' },

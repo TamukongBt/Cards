@@ -46,7 +46,7 @@ class RequestExports implements FromQuery, WithColumnFormatting, WithMapping, Wi
                     return [
                         $requested->branch_id,
                         $requested->account_number,
-                        $requested->account_name,
+                        $requested->accountname,
                         $requested->cards,
                         $requested->request_type,
                         $requested->account_type,
@@ -73,6 +73,6 @@ class RequestExports implements FromQuery, WithColumnFormatting, WithMapping, Wi
 
     public function query()
     {
-        return Requested::query()->select('branch_id','account_number','account_name','cards','request_type','account_type','done_by','requested_by','created_at')->wherebetween('created_at', [$this->startdate, $this->enddate]);;
+        return Requested::query()->select('branch_id','account_number','accountname','cards','request_type','account_type','done_by','requested_by','created_at')->wherebetween('created_at', [$this->startdate, $this->enddate]);;
     }
 }

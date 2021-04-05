@@ -3,6 +3,10 @@
 'elementActive' => 'tables'
 ])
 
+@section('title')
+Checkbook Production
+@endsection
+
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="content">
@@ -10,49 +14,43 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title"> Processed Request </h4>
+                    <h4 class="card-title">Checkbook Production <br> <small>For {{now()->format('F Y')}}</small> </h4>
                     <div class="text-right" style='float:right;'>
                         <!-- Button trigger modal -->
                         <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#modelId" style="background-color: #15224c">
-                            Download the data
+                            Download Production File By Month
                         </button>
                     </div>
                     <div class="card-body">
                     </div>
                     <div class="table-responsive">
-                        <table id="table1" class="table ">
+                        <table id="table1" class="table table-bordered">
                             <thead>
-
+                            <th>
+                                    Date Requested
+                                </th>
+                                <th>
+                                     Check Holder
+                                </th>
                                 <th>
                                     Account Number
                                 </th>
                                 <th>
-                                    Account Name
-                                </th>
-                                <th>
-                                    Request Type
-                                </th>
-                                <th>
-                                    Card Type
-                                </th>
-                                <th>
-                                    Date Requested
+                                    Type Of Card
                                 </th>
                                 <th>
                                     Requested By
                                 </th>
                                 <th>
+                                    Telephone
+                                </th>
+                                <th>
                                     Branch
                                 </th>
-                                @role('it')
                                 <th>
-                                    Status
+                                   Account Type
                                 </th>
-                                @else
-                                <th>
-                                    Actions
-                                </th>
-                                @endrole
+
 
                             </thead>
                         </table>
@@ -75,7 +73,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
             </div>
-        <form action="{{route('export.approved')}}" method="post">
+        <form action="{{route('export.checks')}}" method="post">
             @csrf
             <div class="modal-body">
                 <div class="row">
@@ -126,22 +124,18 @@
             "processing": true,
             "serverSide": false,
             "searchable": true,
-            "ajax": "/validated_ajax",
+            "ajax": "/production_ajax",
 
 
             "columns": [
-                { "data": "account_number", name: 'Account Number', orderable: true, searchable: true },
-                { "data": "account_name", name: 'Account Name', orderable: true, searchable: true },
-                { "data": "request_type", name: 'Request Type' , orderable: true, searchable: true},
-                { "data": "cards", name: 'Cards Requested', orderable: true, searchable: true },
                 { "data": "created_at", name: 'Requested Date', orderable: true, searchable: true },
+                { "data": "accountname", name: 'Account Name', orderable: true, searchable: true },
+                { "data": "account_number", name: 'Account Number', orderable: true, searchable: true },
+                { "data": "checks", name: 'Checks Requested', orderable: true, searchable: true },
                 { "data": "requested_by", name: 'Requested By' , orderable: true, searchable: true},
+                { "data": "tel", name: 'Telephone' },
                 { "data": "branch_id", name: 'Branch' },
-                {
-                    data: 'action', name: 'action', orderable: true, searchable: true
-                },
-
-
+                { "data": "account_type", name: 'Request Type' , orderable: true, searchable: true},
             ]
 
         });

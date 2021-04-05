@@ -27,9 +27,9 @@ Edit Request
                                 <div class="form-group">
                                     <input type="text" name="accountname" class="form-control" placeholder="Account Name"  value='{{$request->accountname}}'  >
                                 </div>
-                                @if ($errors->has('account_name'))
+                                @if ($errors->has('accountname'))
                                     <span class="invalid-feedback" style="display: block;" role="alert">
-                                        <strong>{{ $errors->first('account_name') }}</strong>
+                                        <strong>{{ $errors->first('accountname') }}</strong>
                                     </span>
                                 @endif
                             </div>

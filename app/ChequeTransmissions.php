@@ -19,7 +19,7 @@ class ChequeTransmissions extends Model
     }
     public function reqholder()
     {
-        return $this->belongsTo('App\Requested', 'chequeholder', 'account_name');
+        return $this->belongsTo('App\Requested', 'chequeholder', 'accountname');
     }
     public function reqbranch()
     {

@@ -12,7 +12,7 @@ class CardRequest extends Model
     ];
 
     protected $fillable = ['branch_id','accountname','account_number','bankcode','branchcode','RIB','cards','account_type',
-    'request_type','done_by','account_name','requested_by','email','tel','card_number'];
+    'request_type','done_by','accountname','requested_by','email','tel','card_number'];
 
     public function branch()
     {

@@ -36,8 +36,6 @@ The above copyright notice and this permission notice shall be included in all c
     <link href="{{ asset('paper') }}/css/bootstrap.min.css" rel="stylesheet" />
     <link href="{{ asset('paper') }}/css/paper-dashboard.css?v=2.0.0" rel="stylesheet" />
     <link rel="stylesheet" href=" //cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css"/>
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/sweetalert2@10">
-    <link rel="stylesheet" href="sweetalert2/dist/sweetalert2.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.22/datatables.min.css"/>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
 

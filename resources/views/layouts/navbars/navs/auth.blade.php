@@ -89,7 +89,7 @@
                                <a href="#"> <span class="dropdown-item list-group text-mute">No New Notifications</span></a>
                                @else
                                @foreach($notification->data as $data_item)
-                               <a href="/rejected"> <span class="dropdown-item list-group">The Request Made by {{ $data_item['account_name']  }} has been rejected                &nbsp;&nbsp; <br><small class="text-right text-mute"> {{ \Carbon\Carbon::parse($data_item['updated_at'] )->diffForHumans() }}</small></span></a>
+                               <a href="/rejected"> <span class="dropdown-item list-group">The Request Made by {{ $data_item['accountname']  }} has been rejected                &nbsp;&nbsp; <br><small class="text-right text-mute"> {{ \Carbon\Carbon::parse($data_item['updated_at'] )->diffForHumans() }}</small></span></a>
                                @endforeach
                                @endif
                                @endif
@@ -113,7 +113,7 @@
                                <a href="#"> <span class="dropdown-item list-group text-mute">No New Notifications</span></a>
                                @else
                                @foreach($notification->data as $data_item)
-                               <span class="dropdown-item list-group">New Request made by {{ $data_item['account_name']  }}  &nbsp;&nbsp; <br><small class="text-right text-mute"> {{ \Carbon\Carbon::parse($data_item['updated_at'] )->diffForHumans() }}</small> </span>
+                               <span class="dropdown-item list-group">New Request made by {{ $data_item['accountname']  }}  &nbsp;&nbsp; <br><small class="text-right text-mute"> {{ \Carbon\Carbon::parse($data_item['updated_at'] )->diffForHumans() }}</small> </span>
                                @endforeach
                                @endif
                                @endif

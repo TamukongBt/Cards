@@ -197,8 +197,8 @@ class BatchController extends Controller
     {
         $batch= new Batch();
         $data = $this->validate ($request, [
-            'start_acct' => 'required|exists:requesteds|string|max:50',
-            'end_acct' => 'required|exists:requesteds|string|max:50',
+            'start_acct' => 'required|string|max:50',
+            'end_acct' => 'required|string|max:50',
         ]);
         $start=Requested::where('account_number',$request->start_acct)->where('cards',$request->start_cards)->where('confirmed',1)->where('rejected',0)->latest()->first();
         $end=Requested::where('account_number',$request->end_acct)->where('cards',$request->end_cards)->where('confirmed',1)->where('rejected',0)->latest()->first();
@@ -235,7 +235,7 @@ class BatchController extends Controller
 
         if($request->has('q')){
             $search = $request->q;
-            $query =Requested::selectRaw('account_number, account_name, cards, DATE_FORMAT(created_at, "%M %d %Y") as date')->where('account_number', 'LIKE', "%$search%")
+            $query =Requested::selectRaw('account_number, accountname, cards, DATE_FORMAT(created_at, "%M %d %Y") as date')->where('account_number', 'LIKE', "%$search%")
             		->where('confirmed',1)->where('request_type','new_card')->get();
         }
         return response()->json($query);

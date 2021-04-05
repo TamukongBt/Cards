@@ -163,8 +163,8 @@
                     results: $.map(data, function (item) {
                         return {
 
-                            text: item.account_number+' , '+item.account_name+' , '+item.cards+' , '+item.date,
-                            id: item.account_number
+                            text: item.account_number+' , '+item.accountname+' , '+item.cards+' , '+item.date,
+                            id: item.id
                         }
                     })
                 };
@@ -184,7 +184,7 @@
                 return {
                     results: $.map(data, function (item) {
                         return {
-                            text: item.account_number+' , '+item.account_name+' , '+item.cards+' , '+item.date,
+                            text: item.account_number+' , '+item.accountname+' , '+item.cards+' , '+item.date,
                             id: item.account_number
                         }
                     })

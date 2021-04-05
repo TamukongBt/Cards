@@ -49,3 +49,5 @@ class CreateCardRequestsTable extends Migration
         Schema::dropIfExists('card_requests');
     }
 }
+
+

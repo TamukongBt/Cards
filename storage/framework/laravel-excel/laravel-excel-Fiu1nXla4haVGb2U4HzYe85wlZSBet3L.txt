@@ -1,0 +1,2 @@
+,Card Holder,Email,Type of Card,Branch ordering,Card Number,Phone Number,Remarks
+1,Tamukong Brian ,briantbrian4@gmail.com,Trust Gold,Bamenda,502823XXXXXX0700,2375690806194.00,card requests2021

@@ -19,27 +19,27 @@
                     </div>
                     <div class="card-body">
                     </div>
-                    <div class="table-responsive">
-                        <table id="table1" class="table ">
-                            <thead>
+                    <div class="table-responsive ">
+                        <table id="table1" class="table table-bordered ">
+                            <thead style="font-size: 75%;">
 
+                                <th>
+                                    Date Requested
+                                </th>
+                                <th>
+                                     Card Holder
+                                </th>
                                 <th>
                                     Account Number
                                 </th>
                                 <th>
-                                    Account Name
+                                    Type Of Card
                                 </th>
                                 <th>
                                     Request Type
                                 </th>
                                 <th>
-                                    Card Type
-                                </th>
-                                <th>
-                                    Date Requested
-                                </th>
-                                <th>
-                                    Requested By
+                                   Branch
                                 </th>
                                 <th>
                                     Reason for Rejection
@@ -120,12 +120,12 @@
 
 
             "columns": [
-                { "data": "account_number", name: 'Account Number' },
-                { "data": "account_name", name: 'Account Name' },
-                { "data": "request_type", name: 'Request Type' },
-                { "data": "cards", name: 'Cards Requested' },
                 { "data": "created_at", name: 'Requested Date' },
-                { "data": "requested_by", name: 'Requested By' },
+                { "data": "accountname", name: 'Account Name' },
+                { "data": "account_number", name: 'Account Number' },
+                { "data": "cards", name: 'Cards Requested' },
+                { "data": "request_type", name: 'Request Type' },
+                { "data": "branch_id", name: 'Branch' },
                 {
                     data: 'reason_rejected', name: 'Reason', orderable: true, searchable: true
                 },

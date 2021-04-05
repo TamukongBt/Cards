@@ -12,8 +12,8 @@ use App\Notifications\NewRequestNotification;
 use App\Downloads;
 use App\Exports\RequestExports;
 use App\Exports\RejectedExports;
-use App\Exports\ApprovedNewExports;
-use App\Exports\ApprovedExports;
+use App\Exports\RenewalsExport;
+use App\Exports\SubscriptionExports;
 use DataTables;
 use RealRashid\SweetAlert\Facades\Alert;
 use Carbon\Carbon;
@@ -431,7 +431,7 @@ class RequestedController extends Controller
             'branch_id' => 'required',
             'cards' => 'required',
             'account_number' => 'required',
-            'account_name' => 'required',
+            'accountname' => 'required',
             'request_type' => 'required',
             'requested_by' => 'required',
             'done_by' => 'required',
@@ -443,7 +443,7 @@ class RequestedController extends Controller
         try {
             Requested::create($data);
             $users = User::where('branch_id', auth()->user()->branch_id)->where('department', 'css')->get();
-            $request = Requested::where('account_name', $request->account_name)->where('account_number', $request->account_number)->where('branch_id', $request->branch_id)->where('cards', $request->cards)->get()->first();
+            $request = Requested::where('accountname', $request->accountname)->where('account_number', $request->account_number)->where('branch_id', $request->branch_id)->where('cards', $request->cards)->get()->first();
             foreach ($users as $user) {
                 $user->notify(new NewRequestNotification($request));
             }
@@ -495,7 +495,7 @@ class RequestedController extends Controller
             'branch_id' => 'required',
             'cards' => 'required',
             'account_number' => 'required|max:15',
-            'account_name' => 'required|string',
+            'accountname' => 'required|string',
             'request_type' => 'required|string',
             'requested_by' => 'required',
             'done_by' => 'required',
@@ -680,7 +680,7 @@ class RequestedController extends Controller
         return (new RejectedExports($startdate, $enddate))->download($title . '.csv');
     }
 
-    public function exportapproved(Request $request)
+    public function exportsubs(Request $request)
     {
 
         $startdate = $request->start_date;
@@ -699,9 +699,9 @@ class RequestedController extends Controller
         ob_start();
 
         if (auth()->user()->department == 'it') {
-            return (new ApprovedNewExports($startdate, $enddate))->download($ittitle . '.csv');
+            return (new RenewalsExport($startdate, $enddate))->download($ittitle . '.csv');
         } else {
-            return (new ApprovedExports($startdate, $enddate))->download($title . '.csv');
+            return (new SubscriptionExports($startdate, $enddate))->download($title . '.csv');
         }
     }
 }

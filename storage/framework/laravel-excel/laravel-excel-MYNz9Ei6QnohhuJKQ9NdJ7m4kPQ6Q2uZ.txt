@@ -1,0 +1,2 @@
+,Card Holder,Email,Type of Card,Branch ordering,Card Number,Phone Number,Remarks,pin_collected
+1,Tamukong Aldo,briantbrian4@gmail.com,Trust Saphir,Bamenda,502823XXXXXX0700,2375600806194.00,card REQPOOuests2021,1

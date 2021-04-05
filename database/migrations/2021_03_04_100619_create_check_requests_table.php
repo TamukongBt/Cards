@@ -19,7 +19,7 @@ class CreateCheckRequestsTable extends Migration
             $table->string('bankcode');
             $table->string('branchcode');
             $table->string('RIB');
-            $table->string('account_name');
+            $table->string('accountname');
             $table->string('account_type');
             $table->string('branch_id');
             $table->string('checks');

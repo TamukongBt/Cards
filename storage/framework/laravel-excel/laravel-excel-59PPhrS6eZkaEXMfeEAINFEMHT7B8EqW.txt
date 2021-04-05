@@ -1,0 +1,2 @@
+Requested Date,Branch,Bank Code,Branch Code,Account Number,RIB,Account Name,Card Type,Telephone,Email,Type Of Account,Keyer ID,Requested By,card_number
+5/4/2021,1,10023,1,20090987,34,User One,silver,675409872,user@mail.com,individual,bt1000,User One,502823XXXXXX0700

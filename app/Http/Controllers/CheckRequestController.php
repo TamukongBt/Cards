@@ -9,10 +9,11 @@ use App\User;
 use App\Notifications\RejectRequest;
 use App\Notifications\NewRequestNotification;
 use App\Downloads;
+use App\Exports\ChecksExport;
 use App\Exports\RequestExports;
 use App\Exports\RejectedExports;
-use App\Exports\ApprovedNewExports;
-use App\Exports\ApprovedExports;
+use App\Exports\RenewalsExport;
+use App\Exports\SubscriptionExports;
 use DataTables;
 use RealRashid\SweetAlert\Facades\Alert;
 use Carbon\Carbon;
@@ -22,7 +23,7 @@ class CheckRequestController extends Controller
     public function index()
     {
         $request = CheckRequest::all();
-        return view('cardrequest.index')->with('request', $request);
+        return view('checkrequest.index')->with('request', $request);
     }
     public function index1()
     {
@@ -41,18 +42,23 @@ class CheckRequestController extends Controller
                 ->editColumn('checks', function ($data) {
                     return $data->cardtype->name;
                 })
-                ->editColumn('request_type', function ($data) {
-                    return $data->requesttype->name;
+                ->editColumn('account_type', function ($data) {
+                    if ($data->account_type=='moral') {
+                        return 'Moral Entity';
+                    }
+                    else {
+                        return 'Individual Account';
+                    }
                 })
                 ->addColumn('action', function ($row) {
 
                     $actionBtn =
 
                         '<td><a class="validates btn btn-outline-primary btn-sm"
-                data-remote="cardrequest/approve/' . $row->id . '"><i class="nc-icon nc-check-2"
+                data-remote="checkrequest/approve/' . $row->id . '"><i class="nc-icon nc-check-2"
                     aria-hidden="true" style="color: black"></i></a></td>
 
-                <button id="deletebutton" class="btn btn-sm btn-danger btn-delete" data-remote="' . route('cardrequest.destroy', $row->id) . '">
+                <button id="deletebutton" class="btn btn-sm btn-danger btn-delete" data-remote="' . route('checkrequest.destroy', $row->id) . '">
                 <i class="nc-icon nc-simple-remove" aria-hidden="true"
                          style="color: black"></i></button>
 
@@ -77,44 +83,24 @@ class CheckRequestController extends Controller
                 ->editColumn('checks', function ($data) {
                     return $data->cardtype->name;
                 })
-                ->editColumn('request_type', function ($data) {
-                    return $data->requesttype->name;
+                ->editColumn('account_type', function ($data) {
+                    if ($data->account_type=='moral') {
+                        return 'Moral Entity';
+                    }
+                    else {
+                        return 'Individual Account';
+                    }
                 })
                 ->addColumn('action', function ($row) {
 
                     $actionBtn =
                         '
                 <td><a class="validates btn btn-outline-primary btn-sm"
-                     data-remote="/cardrequest/confirm/' . $row->id . '"><i class="nc-icon nc-check-2"
-                         aria-hidden="true" style="color: black"></i></a></td>
+                     data-remote="/checkrequest/confirm/' . $row->id . '"><i class="nc-icon nc-check-2"
+                     aria-hidden="true" style="color: black"></i>Confirm</a></td>
                 <a class="denies btn btn-outline-danger btn-sm"
-                    data-remote="/cardrequest/reject/' . $row->id . '" data-toggle="modal" data-target="#modelreject"><i class="nc-icon nc-simple-remove"
-                        aria-hidden="true" style="color: black"></i></a></td>  ';
-                    return $actionBtn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        } elseif (auth()->user()->department == 'it') {
-            $data = CheckRequest::where('confirmed', 1)->where('request_type', 'new_card')->get();
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->editColumn('created_at', function ($data) {
-                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
-                })
-                ->editColumn('branch_id', function ($data) {
-
-                    return $data->branch->name;
-                })
-                ->editColumn('checks', function ($data) {
-                    return $data->cardtype->name;
-                })
-                ->editColumn('request_type', function ($data) {
-                    return $data->requesttype->name;
-                })
-                ->addColumn('action', function ($row) {
-
-                    $actionBtn =
-                        '<td class=" "><i class="nc-icon nc-check-2 alert-success btn-outline-success" aria-hidden="true" style="color: limegreen;" ></i></td>  ';
+                    data-remote="/checkrequest/reject/' . $row->id . '" data-toggle="modal" data-target="#modelreject"><i class="nc-icon nc-simple-remove"
+                    aria-hidden="true" style="color: black"></i>Reject</a></td>  ';
                     return $actionBtn;
                 })
                 ->rawColumns(['action'])
@@ -133,20 +119,18 @@ class CheckRequestController extends Controller
                 ->editColumn('checks', function ($data) {
                     return $data->cardtype->name;
                 })
-                ->editColumn('request_type', function ($data) {
-                    return $data->requesttype->name;
-                })
+
                 ->addColumn('action', function ($row) {
 
                     $actionBtn =
 
                         $actionBtn =
                         '<td>
-                        <a href="' . route('cardrequest.edit', $row->id) . '" class="edit btn btn-info btn-sm "><i class="nc-icon nc-alert-circle-i"></i></a>
+                        <a href="' . route('checkrequest.edit', $row->id) . '" class="edit btn btn-info btn-sm "><i class="nc-icon nc-alert-circle-i"></i></a>
 
 
             <a class="denies btn btn-outline-danger btn-sm"
-                data-remote="/cardrequest/reject/' . $row->id . '" data-toggle="modal" data-target="#modelreject"><i class="nc-icon nc-simple-remove"
+                data-remote="/checkrequest/reject/' . $row->id . '" data-toggle="modal" data-target="#modelreject"><i class="nc-icon nc-simple-remove"
                     aria-hidden="true" style="color: black"></i></a></td>  ';
                     return $actionBtn;;
                     return $actionBtn;
@@ -156,7 +140,7 @@ class CheckRequestController extends Controller
                 ->make(true);
         }
         elseif (auth()->user()->department == 'dso') {
-            $data = CheckRequest::where('confirmed', 1)->where('request_type', 'renew_card')->get();
+            $data = CheckRequest::where('confirmed', 1)->where('in_production', 1)->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($data) {
@@ -168,9 +152,6 @@ class CheckRequestController extends Controller
                 })
                 ->editColumn('checks', function ($data) {
                     return $data->cardtype->name;
-                })
-                ->editColumn('request_type', function ($data) {
-                    return $data->requesttype->name;
                 })
                 ->addColumn('action', function ($row) {
 
@@ -183,15 +164,16 @@ class CheckRequestController extends Controller
         }
     }
 
-    public function approves()
+
+    public function production()
     {
-        return view('cardrequest.approves');
+        return view('checkrequest.production');
     }
 
-    public function approves1()
+    public function production1()
     {
         if (auth()->user()->department == 'cards') {
-            $data = CheckRequest::where('rejected', '0')->where('confirmed', '0')->where('approved', '1')->get();
+            $data = CheckRequest::where('rejected', '0')->where('confirmed', '1')->where('approved', '1')->where('in_production', '1')->whereBetween('updated_at',[Carbon::now()->startOfMonth(),Carbon::now()->endOfMonth()])->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($data) {
@@ -204,27 +186,18 @@ class CheckRequestController extends Controller
                 ->editColumn('checks', function ($data) {
                     return $data->cardtype->name;
                 })
-                ->editColumn('request_type', function ($data) {
-                    return $data->requesttype->name;
+                ->editColumn('account_type', function ($data) {
+                    if ($data->account_type=='moral') {
+                        return 'Moral Entity';
+                    }
+                    else {
+                        return 'Individual Account';
+                    }
                 })
-                ->addColumn('action', function ($row) {
-
-                    $actionBtn =
-                        '
-                <td><a class="validates btn btn-outline-primary btn-sm"
-                     data-remote="/cardrequest/confirm/' . $row->id . '"><i class="nc-icon nc-check-2"
-                         aria-hidden="true" style="color: black"></i></a></td>
-                <a class="denies btn btn-outline-danger btn-sm"
-                    data-remote="/cardrequest/reject/' . $row->id . '" data-toggle="modal" data-target="#modelreject"><i class="nc-icon nc-simple-remove"
-                        aria-hidden="true" style="color: black"></i></a></td>  ';
-                    return $actionBtn;
-                })
-                ->rawColumns(['action'])
-                ->editColumn('id', 'ID: {{$id}}')
                 ->make(true);
         }
         else{
-            $data = CheckRequest::where('branch_id', auth()->user()->branch_id)->where('rejected', '0')->where('confirmed', '0')->where('approved', '1')->get();
+            $data = CheckRequest::where('branch_id', auth()->user()->branch_id)->where('confirmed', '1')->where('approved', '1')->where('in_production', '1')->get();
         return DataTables::of($data)
             ->addIndexColumn()
             ->editColumn('created_at', function ($data) {
@@ -237,56 +210,32 @@ class CheckRequestController extends Controller
             ->editColumn('checks', function ($data) {
                 return $data->cardtype->name;
             })
-            ->editColumn('request_type', function ($data) {
-                return $data->requesttype->name;
+            ->editColumn('accountname', function ($data) {
+                return $data->branchcode.' '.$data->accountname.' '.$data->RIB;
             })
-            ->addColumn('action', function ($row) {
+            ->editColumn('account_type', function ($data) {
+                if ($data->account_type=='moral') {
+                    return 'Moral Entity';
+                }
+                else {
+                    return 'Individual Account';
+                }
+            })
 
-                $actionBtn =
-                    '<td class=" "><i class="nc-icon nc-check-2 alert-success btn-outline-success" aria-hidden="true" style="color: limegreen;" ></i></td>  ';
-                return $actionBtn;
-            })
-            ->rawColumns(['action'])
-            ->editColumn('id', 'ID: {{$id}}')
             ->make(true);
         }
 
     }
 
+
     public function validated()
     {
-        return view('cardrequest.validated');
+        return view('checkrequest.validated');
     }
 
     public function validated1()
     {
-        if (auth()->user()->department == 'it') {
-            $data = CheckRequest::where('confirmed', '1')->where('request_type', 'new_card')->get();
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->editColumn('created_at', function ($data) {
-                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
-                })
-                ->editColumn('branch_id', function ($data) {
-
-                    return $data->branch->name;
-                })
-                ->editColumn('checks', function ($data) {
-                    return $data->cardtype->name;
-                })
-                ->editColumn('request_type', function ($data) {
-                    return $data->requesttype->name;
-                })
-                ->addColumn('action', function ($row) {
-
-                    $actionBtn =
-                        '<td class=" "><i class="nc-icon nc-check-2 alert-success btn-outline-success" aria-hidden="true" style="color: limegreen;" ></i></td>  ';
-                    return $actionBtn;
-                })
-                ->rawColumns(['action'])
-                ->editColumn('id', 'ID: {{$id}}')
-                ->make(true);
-        } elseif (auth()->user()->department == 'cards') {
+       if (auth()->user()->department == 'cards') {
             $data = CheckRequest::where('confirmed', '1')->where('approved', '1')->get();
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -299,9 +248,6 @@ class CheckRequestController extends Controller
                 })
                 ->editColumn('checks', function ($data) {
                     return $data->cardtype->name;
-                })
-                ->editColumn('request_type', function ($data) {
-                    return $data->requesttype->name;
                 })
                 ->addColumn('action', function ($row) {
 
@@ -326,9 +272,7 @@ class CheckRequestController extends Controller
                 ->editColumn('checks', function ($data) {
                     return $data->cardtype->name;
                 })
-                ->editColumn('request_type', function ($data) {
-                    return $data->requesttype->name;
-                })
+
                 ->addColumn('action', function ($row) {
 
                     $actionBtn =
@@ -343,7 +287,7 @@ class CheckRequestController extends Controller
 
     public function rejected()
     {
-        return view('cardrequest.rejected');
+        return view('checkrequest.rejected');
     }
 
     public function rejected1()
@@ -362,9 +306,16 @@ class CheckRequestController extends Controller
                 ->editColumn('checks', function ($data) {
                     return $data->cardtype->name;
                 })
-                ->editColumn('request_type', function ($data) {
-                    return $data->requesttype->name;
+                ->editColumn('account_type', function ($data) {
+                    if ($data->account_type=='moral') {
+                        return 'Moral Entity';
+                    }
+                    else {
+                        return 'Individual Account';
+                    }
+
                 })
+
                 ->make(true);
         } else {
             $data = CheckRequest::where('rejected', '1')->where('branch_id', auth()->user()->branch_id)->get();
@@ -380,9 +331,6 @@ class CheckRequestController extends Controller
                 ->editColumn('checks', function ($data) {
                     return $data->cardtype->name;
                 })
-                ->editColumn('request_type', function ($data) {
-                    return $data->requesttype->name;
-                })
                 ->make(true);
         }
     }
@@ -394,7 +342,7 @@ class CheckRequestController extends Controller
      */
     public function create()
     {
-        return view('cardrequest.create');
+        return view('checkrequest.create');
     }
 
     /**
@@ -416,27 +364,27 @@ class CheckRequestController extends Controller
             'branchcode' => 'required',
             'bankcode' => 'required',
             'RIB' => 'required',
-            'account_name' => 'required',
-            'request_type' => 'required',
+            'accountname' => 'required',
+            'number' => 'required',
             'requested_by' => 'required',
             'done_by' => 'required',
             'email' => 'required',
             'tel' => 'required'
 
         ]);
-
         try {
-            CheckRequest::create($data);
-            $users = User::where('branch_id', auth()->user()->branch_id)->where('department', 'css')->get();
-            $request = CheckRequest::where('account_name', $request->account_name)->where('account_number', $request->account_number)->where('branch_id', $request->branch_id)->where('checks', $request->checks)->get()->first();
-            foreach ($users as $user) {
-                $user->notify(new NewRequestNotification($request));
-            }
-            return redirect()->route('cardrequest.index')->with('success', 'New Entry created succesfully');
+
+                    CheckRequest::create($data);
+                    $users = User::where('branch_id', auth()->user()->branch_id)->where('department', 'css')->get();
+                    $request = CheckRequest::where('accountname', $request->accountname)->where('account_number', $request->account_number)->where('branch_id', $request->branch_id)->where('checks', $request->checks)->get()->first();
+                    foreach ($users as $user) {
+                        $user->notify(new NewRequestNotification($request));
+                    }
+                    return redirect()->route('checkrequest.index')->with('success', 'New Entry created succesfully');
         } catch (\Throwable $th) {
 
             Alert::alert('Error', 'There is a problem with this entry ', 'error');
-            return redirect()->route('cardrequest.create');
+            return redirect()->route('checkrequest.create');
         }
     }
 
@@ -461,7 +409,7 @@ class CheckRequestController extends Controller
     public function edit($id)
     {
         $request = CheckRequest::find($id);
-        return view('cardrequest.edit', compact('request', 'id'));
+        return view('checkrequest.edit', compact('request', 'id'));
     }
 
     /**
@@ -476,12 +424,16 @@ class CheckRequestController extends Controller
 
         $data = $request->validate([
 
-            'account_type' => 'required|string',
+
+            'account_type' => 'required',
             'branch_id' => 'required',
             'checks' => 'required',
-            'account_number' => 'required|max:15',
-            'account_name' => 'required|string',
-            'request_type' => 'required|string',
+            'account_number' => 'required',
+            'branchcode' => 'required',
+            'bankcode' => 'required',
+            'RIB' => 'required',
+            'accountname' => 'required',
+            'number' => 'required',
             'requested_by' => 'required',
             'done_by' => 'required',
             'email' => 'required',
@@ -498,7 +450,7 @@ class CheckRequestController extends Controller
             return redirect('/create');
         }
 
-        return redirect('/cardrequest')->with('success', 'Request Updated!!');
+        return redirect('/checkrequest')->with('success', 'Request Updated!!');
     }
 
     /**
@@ -560,21 +512,73 @@ class CheckRequestController extends Controller
 
     // these are the count functions that display the count of the dataon the dashboard for request
 // /week
+
+    public function selectSearch(Request $request)
+    {
+        $query = [];
+
+        if($request->has('q')){
+            $search = $request->q;
+            $query =CheckRequest::selectRaw('account_number,id, accountname,requested_by, checks, DATE_FORMAT(created_at, "%M %d %Y") as date')->where('account_number', 'LIKE', "%$search%")
+                    ->get();
+        }
+        return response()->json($query);
+    }
+
+    public function track($id)
+    {
+        $req = CheckRequest::findorFail($id);
+       if( $req->approved == 1 && $req->confirmed == 1 && $req->rejected == 0 && $req->in_production == 1 && $req->distrubuted==0){
+           $state = 'In The Production File';
+           return response()->json($state);
+       }
+       if( $req->approved == 1 && $req->confirmed == 1 && $req->rejected == 0  && $req->in_production == 1 && $req->distrubuted == 1 ){
+           $state = 'Your Request Has Been Completed';
+           return response()->json($state);
+       }
+       else  if( $req->approved == 0 && $req->confirmed == 0 && $req->rejected == 0){
+        $state = 'Pending Approval From Branch';
+        return response()->json($state);
+        }
+        else  if( $req->approved == 0 && $req->confirmed == 0 && $req->rejected == 1){
+            $state = 'Rejected At From Branch';
+            return response()->json($state);
+        }
+        else  if( $req->approved == 1 && $req->confirmed == 0 && $req->rejected == 0){
+            $state = 'Pending Approval from Cards & Checks Office';
+            return response()->json($state);
+        }
+        else  if( $req->approved == 1 && $req->confirmed == 0 && $req->rejected == 1){
+            $state = 'Rejected at Cards & Checks Office';
+            return response()->json($state);
+        }
+        else  if( $req->approved == 1 && $req->confirmed == 0 && $req->rejected == 1&& $req->ditrubuted == 1){
+            $state = 'Distrubuted at The Branch';
+            return response()->json($state);
+        }
+        else  {
+            $state = 'This Account does not exist in our system';
+            return response()->json($state);
+        }
+
+
+    }
+
     public function newcardcount()
     {
-        $data = CheckRequest::get()->where('request_type', 'new_card')->where('confirmed', 0)->where('rejected', 0)->count();
+        $data = CheckRequest::get()->where('confirmed', 0)->where('rejected', 0)->count();
         // return $data;
         return response($data, 200);
     }
     public function newcardbranch()
     {
-        $data = CheckRequest::get()->where('request_type', 'new_card')->where('branch_id', auth()->user()->branch_id)->where('confirmed', 1)->where('rejected', 0)->count();
+        $data = CheckRequest::get()->where('branch_id', auth()->user()->branch_id)->where('confirmed', 1)->where('rejected', 0)->count();
         // return $data;
         return response($data, 200);
     }
     public function renew()
     {
-        $data = CheckRequest::get()->where('request_type', 'renew_card')->where('confirmed', 1)->where('rejected', 0)->count();
+        $data = CheckRequest::get()->where('confirmed', 1)->where('rejected', 0)->count();
         // return $data;
         return response($data, 200);
     }
@@ -614,7 +618,7 @@ class CheckRequestController extends Controller
 
     public function pendingcount()
     {
-        $data = CardRequest::get()->where('branch_id', auth()->user()->branch_id)->where('confirmed', 0)->where('rejected', 0)->count();
+        $data = CHECKRequest::get()->where('branch_id', auth()->user()->branch_id)->where('confirmed', 0)->where('rejected', 0)->count();
         return response($data, 200);
     }
 
@@ -669,13 +673,12 @@ class CheckRequestController extends Controller
         return (new RejectedExports($startdate, $enddate))->download($title . '.csv');
     }
 
-    public function exportapproved(Request $request)
+    public function exportchecks(Request $request)
     {
 
         $startdate = $request->start_date;
         $enddate = $request->end_date;
-        $title = "Approved Request from " . $startdate . " to " . $enddate;
-        $ittitle =  "New Card Request from " . $startdate . " to " . $enddate;
+        $title = "Checks from " . $startdate . " to " . $enddate;
 
         // Save details on the user who dowloaded
         $doneby = new Downloads();
@@ -687,10 +690,7 @@ class CheckRequestController extends Controller
         ob_end_clean();
         ob_start();
 
-        if (auth()->user()->department == 'it') {
-            return (new ApprovedNewExports($startdate, $enddate))->download($ittitle . '.csv');
-        } else {
-            return (new ApprovedExports($startdate, $enddate))->download($title . '.csv');
-        }
+            return (new ChecksExport($startdate, $enddate))->download($title . '.csv');
     }
 }
+        

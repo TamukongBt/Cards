@@ -30,7 +30,9 @@ Route::group(['middleware' => ['auth']], function () {
 
 // Custom Views
 Route::get('/cardvalidated', 'CardRequestController@validated')->name('request.approved');
-Route::get('/cardapproves', 'CardRequestController@approves')->name('request.approves');
+Route::get('/check_subscriptions', 'CheckRequestController@production')->name('checkrequest.production');
+Route::get('/subscriptions', 'CardRequestController@sproduction')->name('cardrequest.sproduction');
+Route::get('/renewals', 'CardRequestController@rproduction')->name('cardrequest.rproduction');
 Route::get('/cardrejected', 'CardRequestController@rejected')->name('request.rejected');
 Route::get('/checkvalidated', 'CheckRequestController@validated')->name('crequest.approved');
 Route::get('/checkapproves', 'CheckRequestController@approves')->name('crequest.approves');
@@ -53,7 +55,9 @@ Route::get('/change', 'ProfileController@change');
     Route::get('/checkajax', 'CheckRequestController@index1');
     Route::get('/validated_ajax', 'CardRequestController@validated1');
     Route::get('/rejected_ajax', 'CardRequestController@rejected1');
-    Route::get('/approves_ajax', 'CardRequestController@approves1');
+    Route::get('/production_ajax', 'CheckRequestController@production1');
+    Route::get('/sproduction_ajax', 'CardRequestController@sproduction1');
+    Route::get('/rproduction_ajax', 'CardRequestController@rproduction1');
     Route::get('/checkvalidated_ajax', 'CheckRequestController@validated1');
     Route::get('/checkrejected_ajax', 'CheckRequestController@rejected1');
     Route::get('/checkapproves_ajax', 'CheckRequestController@approves1');
@@ -64,8 +68,8 @@ Route::get('/change', 'ProfileController@change');
     Route::get('/ajax_pin', 'TransmissionsController@pinindex1');
     Route::get('/ajax_collectedpin', 'TransmissionsController@pin1');
     Route::get('/ccollect_ajax', 'ChequeTransmissionsController@collected1');
-    Route::get('/autosearch', 'BatchController@selectSearch');
-
+    Route::get('/autosearch', 'CardRequestController@selectSearch');
+    Route::get('/autosearch2', 'CheckRequestController@selectSearch');
 
 
 
@@ -78,6 +82,7 @@ Route::get('/change', 'ProfileController@change');
     Route::get('request/approve/{id}', 'CardRequestController@approved');
     Route::post('cardrequest/reject/{id}', 'CardRequestController@denied');
     Route::get('card/track/{id}', 'CardRequestController@track');
+    Route::get('check/track/{id}', 'CheckRequestController@track');
     Route::get('checkrequest/approve/{id}', 'CheckRequestController@approved');
     Route::post('checkrequest/reject/{id}', 'CheckRequestController@denied');
     Route::post('/transmissions/collected/{id}', 'TransmissionsController@collect');
@@ -122,25 +127,27 @@ Route::get('/change', 'ProfileController@change');
     Route::post('export', 'CardRequestController@export')->name('export');
     Route::post('export', 'CardRequestController@export')->name('export');
     Route::post('exportrejects', 'CardRequestController@exportrejected')->name('export.rejects');
-    Route::post('exportapproved', 'CardRequestController@exportapproved')->name('export.approved');
+    Route::post('exportsubs', 'CardRequestController@exportsubs')->name('export.subs');
+    Route::post('exportrenewals', 'CardRequestController@exportrenewals')->name('export.renewals');
+    Route::post('exportchecks', 'CheckRequestController@exportchecks')->name('export.checks');
     Route::post('exportcollected', 'TransmissionsController@exportcollected')->name('export.collected');
     Route::get('request/data/', 'CardRequestController@sortbranch');
     Route::post('export', 'CardRequestController@export')->name('export');
     Route::post('export', 'CardRequestController@export')->name('export');
     Route::post('exportrejects', 'CardRequestController@exportrejected')->name('export.rejects');
-    Route::post('exportapproved', 'CardRequestController@exportapproved')->name('export.approved');
+    Route::post('exportsubs', 'CardRequestController@exportsubs')->name('export.subs');
 
     Route::get('checkrequest/data/', 'CheckRequestController@sortbranch');
     Route::post('checkexport', 'CheckRequestController@export')->name('export');
     Route::post('checkexport', 'CheckRequestController@export')->name('export');
     Route::post('checkexportrejects', 'CheckRequestController@exportrejected')->name('cexport.rejects');
-    Route::post('checkexportapproved', 'CheckRequestController@exportapproved')->name('cexport.approved');
+    Route::post('checkexportsubs', 'CheckRequestController@exportsubs')->name('cexport.subs');
     Route::post('exportcollected', 'TransmissionsController@exportcollected')->name('cexport.collected');
     Route::get('checkrequest/data/', 'CheckRequestController@sortbranch');
     Route::post('checkexport', 'CheckRequestController@export')->name('export');
     Route::post('checkexport', 'CheckRequestController@export')->name('export');
     Route::post('checkexportrejects', 'CheckRequestController@exportrejected')->name('cexport.rejects');
-    Route::post('checkexportapproved', 'CheckRequestController@exportapproved')->name('cexport.approved');
+    Route::post('checkexportsubs', 'CheckRequestController@exportsubs')->name('cexport.subs');
 
     Route::post('exportcollected', 'TransmissionsController@exportcollected')->name('export.collected');
     Route::post('exportccollected', 'ChequeTransmissionsController@exportccollected')->name('export.ccollected');

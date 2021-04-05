@@ -75,7 +75,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
             </div>
-        <form action="{{route('export.approved')}}" method="post">
+        <form action="{{route('export.subs')}}" method="post">
             @csrf
             <div class="modal-body">
                 <div class="row">
@@ -131,7 +131,7 @@
 
             "columns": [
                 { "data": "account_number", name: 'Account Number', orderable: true, searchable: true },
-                { "data": "account_name", name: 'Account Name', orderable: true, searchable: true },
+                { "data": "accountname", name: 'Account Name', orderable: true, searchable: true },
                 { "data": "request_type", name: 'Request Type' , orderable: true, searchable: true},
                 { "data": "cards", name: 'Cards Requested', orderable: true, searchable: true },
                 { "data": "created_at", name: 'Requested Date', orderable: true, searchable: true },

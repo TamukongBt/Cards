@@ -16,7 +16,7 @@ class CreateRequestedsTable extends Migration
         Schema::create('requesteds', function (Blueprint $table) {
             $table->id();
             $table->string('account_number');
-            $table->string('account_name');
+            $table->string('accountname');
             $table->string('account_type');
             $table->string('branch_id');
             $table->string('cards');

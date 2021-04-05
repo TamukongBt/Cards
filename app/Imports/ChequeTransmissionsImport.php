@@ -8,15 +8,22 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
+use Maatwebsite\Excel\Concerns\WithUpserts;
 
-
-class ChequeTransmissionsImport implements WithEvents, ToModel, WithHeadingRow
+class ChequeTransmissionsImport implements ToModel, WithUpserts
 {
     use  RegistersEventListeners;
 
 
+    /**
+     * @return string|array
+     */
+    public function uniqueBy()
+    {
+        return 'email';
+    }
 
-  
+
     /**
     * @param array $row
     *

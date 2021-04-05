@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Requested;
+use App\CardRequest;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\Exportable;
@@ -13,7 +13,7 @@ use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
 
-class ApprovedExports implements FromQuery, WithColumnFormatting, WithMapping, WithHeadings
+class SubscriptionExports implements FromQuery, WithColumnFormatting, WithMapping, WithHeadings
 {
     use Exportable;
 
@@ -28,53 +28,65 @@ class ApprovedExports implements FromQuery, WithColumnFormatting, WithMapping, W
         public function headings(): array
     {
         return [
+            'Requested Date',
             'Branch',
+            'Bank Code',
+            'Branch Code',
             'Account Number',
+            'RIB',
             'Account Name',
             'Card Type',
-            'Type Of Request',
+            'Telephone',
+            'Email',
             'Type Of Account',
             'Keyer ID',
             'Requested By',
-            'Requested Date'
         ];
     }
 
         public function map($requested): array
                 {
                     return [
+                        Date::dateTimeToExcel($requested->created_at),
                         $requested->branch_id,
+                        $requested->bankcode,
+                        $requested->branchcode,
                         $requested->account_number,
-                        $requested->account_name,
+                        $requested->RIB,
+                        $requested->accountname,
                         $requested->cards,
-                        $requested->request_type,
+                        $requested->tel,
+                        $requested->email,
                         $requested->account_type,
                         $requested->done_by,
                         $requested->requested_by,
-                        Date::dateTimeToExcel($requested->created_at),
                     ];
                 }
 
                 public function columnFormats(): array
                 {
                     return [
-                        'A' => NumberFormat::FORMAT_NUMBER,
+                        'A' => NumberFormat::FORMAT_DATE_DDMMYYYY,
                         'B' => NumberFormat::FORMAT_NUMBER,
-                        'C' => NumberFormat::FORMAT_TEXT,
-                        'D' => NumberFormat::FORMAT_TEXT,
-                        'E' => NumberFormat::FORMAT_TEXT,
+                        'C' => NumberFormat::FORMAT_NUMBER,
+                        'D' => NumberFormat::FORMAT_NUMBER,
+                        'E' => NumberFormat::FORMAT_NUMBER,
                         'F' => NumberFormat::FORMAT_TEXT,
                         'G' => NumberFormat::FORMAT_TEXT,
                         'H' => NumberFormat::FORMAT_TEXT,
-                        'I' => NumberFormat::FORMAT_DATE_DDMMYYYY,
+                        'I' => NumberFormat::FORMAT_TEXT,
+                        'J' => NumberFormat::FORMAT_TEXT,
+                        'K' => NumberFormat::FORMAT_TEXT,
+                        'L' => NumberFormat::FORMAT_TEXT,
                     ];
                 }
 
 
         public function query()
         {
-            ob_end_clean();
+
              ob_start();
-            return Requested::query()->select('branch_id','account_number','account_name','cards','request_type','account_type','done_by','requested_by','created_at')->wherebetween('created_at', [$this->startdate, $this->enddate])->where('confirmed',1);
+             return CardRequest::query()->select('created_at','branch_id','bankcode','branchcode','account_number','RIB','accountname','cards','tel','email','account_type','done_by','requested_by')->wherebetween('created_at', [$this->startdate, $this->enddate])->where('confirmed',1)->where('in_production',1)->where('request_type','new_card');
+             ob_end_clean();
         }
-}
+    }

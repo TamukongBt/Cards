@@ -11,8 +11,7 @@ class CheckRequest extends Model
             'created_at' => 'date'
     ];
 
-    protected $fillable = ['employee_id','branch_id','account_number','bankcode','branchcode','RIB','chequetype','account_type',
-    'request_type','done_by','account_name','requested_by','email','tel'];
+    protected $fillable = ['employee_id','branch_id','account_number','bankcode','branchcode','RIB','checks','number','account_type','done_by','accountname','requested_by','email','tel'];
 
     public function branch()
     {
@@ -26,6 +25,6 @@ class CheckRequest extends Model
 
     public function cardtype()
     {
-        return $this->belongsTo('App\Cards', 'chequetype', 'card_type');
+        return $this->belongsTo('App\Cards', 'checks', 'card_type');
     }
 }
