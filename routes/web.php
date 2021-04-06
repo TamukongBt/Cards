@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Auth::routes();
 
 Route::get('/', function () {
     return view('pages/dashboard');
@@ -32,6 +33,13 @@ Route::group(['middleware' => ['auth']], function () {
 Route::get('/cardvalidated', 'CardRequestController@validated')->name('request.approved');
 Route::get('/check_subscriptions', 'CheckRequestController@production')->name('checkrequest.production');
 Route::get('/subscriptions', 'CardRequestController@sproduction')->name('cardrequest.sproduction');
+Route::get('/renewals', 'CardRequestController@rproduction')->name('cardrequest.rproduction');
+Route::get('/check_distribution', 'CheckRequestController@distributionindex')->name('checkrequest.distribution');
+Route::get('/subscriptions_distribution', 'CardRequestController@distributionsindex')->name('cardrequest.sdistribution');
+Route::get('/renewal_distribution', 'CardRequestController@distributionrindex')->name('cardrequest.rdistribution');
+Route::get('/check_collected', 'CheckRequestController@distributioncollected')->name('checkrequest.collected');
+Route::get('/subscriptions_collected', 'CardRequestController@distributionscollected')->name('cardrequest.scollected');
+Route::get('/renewal_collected', 'CardRequestController@distributionscollected')->name('cardrequest.rcollected');
 Route::get('/renewals', 'CardRequestController@rproduction')->name('cardrequest.rproduction');
 Route::get('/cardrejected', 'CardRequestController@rejected')->name('request.rejected');
 Route::get('/checkvalidated', 'CheckRequestController@validated')->name('crequest.approved');
@@ -58,13 +66,16 @@ Route::get('/change', 'ProfileController@change');
     Route::get('/production_ajax', 'CheckRequestController@production1');
     Route::get('/sproduction_ajax', 'CardRequestController@sproduction1');
     Route::get('/rproduction_ajax', 'CardRequestController@rproduction1');
-    Route::get('/checkvalidated_ajax', 'CheckRequestController@validated1');
     Route::get('/checkrejected_ajax', 'CheckRequestController@rejected1');
     Route::get('/checkapproves_ajax', 'CheckRequestController@approves1');
-    Route::get('/view_ajax', 'BatchController@view1');
+    Route::get('/distribution_ajax', 'CheckRequestController@distributionindex1');
+    Route::get('/rdistribution_ajax', 'CardRequestController@distributionrindex1');
+    Route::get('/sdistribution_ajax', 'CardRequestController@distributionsindex1');
+    Route::get('/collected_ajax', 'CheckRequestController@distributioncollected1');
+    Route::get('/rcollected_ajax', 'CardRequestController@distributionrcollected1');
+    Route::get('/scollected_ajax', 'CardRequestController@distributionscollected1');
     Route::get('/read_ajax', 'CardRequestController@markread');
     Route::get('/checkread_ajax', 'CheckRequestController@markread');
-    Route::get('/collect_ajax', 'TransmissionsController@collected1');
     Route::get('/ajax_pin', 'TransmissionsController@pinindex1');
     Route::get('/ajax_collectedpin', 'TransmissionsController@pin1');
     Route::get('/ccollect_ajax', 'ChequeTransmissionsController@collected1');
@@ -85,36 +96,52 @@ Route::get('/change', 'ProfileController@change');
     Route::get('check/track/{id}', 'CheckRequestController@track');
     Route::get('checkrequest/approve/{id}', 'CheckRequestController@approved');
     Route::post('checkrequest/reject/{id}', 'CheckRequestController@denied');
-    Route::post('/transmissions/collected/{id}', 'TransmissionsController@collect');
-    Route::post('/transmissions/collectpin/{id}', 'TransmissionsController@collectpin');
+    Route::post('/cardrequest/collected/{id}', 'CardRequestController@collect');
+    Route::post('/checkrequest/collected/{id}', 'CheckRequestController@collected');
     Route::post('/cheque/collected/{id}', 'ChequeTransmissionsController@collect');
+
+    // Upload Card request
+    Route::post('/card/supload', 'CardRequestController@distribute')->name('cs.store');
+    Route::post('/card/rupload', 'CardRequestController@rdistribute')->name('cr.store');
+    Route::post('/check/notify', 'CheckRequestController@distribute')->name('check.store');
+
     // Slots
     Route::get('slots/confirm/{id}', 'SlotsController@fulfilled');
     Route::get('slots/reject/{id}', 'SlotsController@denied');
 
     // dashboard ajax data
 
-    Route::get('/week', 'CardRequestController@newcardcount');
-    Route::get('/week', 'CheckRequestController@newcardcount');
-    Route::get('/stock', 'TransmissionsController@count');
-    Route::get('/overdue', 'TransmissionsController@overdue');
-    Route::get('/newcards', 'CardRequestController@newcards');
+    Route::get('/ca', 'CardRequestController@ca');
+    Route::get('/cp', 'CardRequestController@cp');
+    Route::get('/cd', 'CardRequestController@cd');
+    Route::get('/cha', 'CardRequestController@cha');
+    Route::get('/chp', 'CardRequestController@chp');
+    Route::get('/chd', 'CardRequestController@chd');
+
+    //cards
+    Route::get('/caa', 'CardRequestController@caa');
+    Route::get('/cpa', 'CardRequestController@cpa');
+    Route::get('/cda', 'CardRequestController@cda');
+    Route::get('/chaa', 'CardRequestController@chaa');
+    Route::get('/chpa', 'CardRequestController@chpa');
+    Route::get('/chda', 'CardRequestController@chda');
+    Route::get('/tcc', 'CardRequestController@tcc');
+    Route::get('/tcca', 'CardRequestController@tcca');
+
+    Route::get('/newc', 'CardRequestController@newc');
+    Route::get('/newch', 'CardRequestController@newch');
+    Route::get('/rc', 'CardRequestController@rc');
+    Route::get('/newca', 'CardRequestController@newca');
+    Route::get('/newcha', 'CardRequestController@newcha');
+    Route::get('/rca', 'CardRequestController@rca');
     Route::get('/renew', 'CardRequestController@renew');
-    Route::get('/newcardbranch', 'CardRequestController@newcardbranch');
     Route::get('/other_ajax', 'CardRequestController@other');
     Route::get('/checknewcards', 'CheckRequestController@newcards');
     Route::get('/checkrenew', 'CheckRequestController@renew');
     Route::get('/checknewcardbranch', 'CheckRequestController@newcardbranch');
     Route::get('/checkother_ajax', 'CheckRequestController@other');
-    Route::get('/slotso', 'SlotsController@slotso');
-    Route::get('/slotsed', 'SlotsController@slotsed');
-    Route::get('/batch1', 'BatchController@batch1');
     Route::get('/validatedcount', 'CardRequestController@validatedcount');
 
-    Route::get('/validatedcountit', 'CardRequestController@validatedcountit');
-    Route::get('/groupcount', 'CardRequestController@groupvalidated');
-    Route::get('/rejectedcount', 'CardRequestController@rejectedcount');
-    Route::get('/pendingcount', 'CardRequestController@pendingcount');
     Route::get('/checkvalidatedcount', 'CheckRequestController@validatedcount');
     Route::get('/checkvalidatedcountit', 'CheckRequestController@validatedcountit');
     Route::get('/checkgroupcount', 'CheckRequestController@groupvalidated');
@@ -163,7 +190,7 @@ Route::get('alerts', 'TransmissionsController@alerts');
 Route::get('permissions', 'RoleController@permissions')->name('permissions');
 
 Route::get('/home', 'HomeController@index')->name('home');
-Auth::routes();
+
 
 Route::group(['middleware' => 'auth'], function () {
 	Route::resource('user', 'UserController', ['except' => ['show']]);

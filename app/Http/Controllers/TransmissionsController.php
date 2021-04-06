@@ -8,7 +8,6 @@ use App\Notifications\CardCollected;
 use App\Exports\CollectedExports;
 use DataTables;
 use App\Downloads;
-use App\Imports\CardRequestImports;
 use App\Mail\Cardmail;
 use Carbon\Carbon;
 use App\Upload;
@@ -281,10 +280,18 @@ class TransmissionsController extends Controller
 
 
 
-        Excel::import(new CardRequestImports , $path);
-
-    return redirect()->route('transmissions.index')->with( 'success','New Entries added');
         try {
+            Excel::import(new TransmissionsImport, $path);
+            $transmissions = Transmissions::where('notified',0)->get();
+
+            foreach($transmissions as $transmission) {
+                Mail::to($transmission->email)->send(new Cardmail($transmission));
+
+               $transmission->notified=1;
+               $transmission->notified_on=now();
+               $transmission->save();}
+
+        return redirect()->route('transmissions.index')->with( 'success','New Entries added');
 
         } catch (\Throwable $th) {
             Alert::alert('Error', 'There is a problem with the file', 'error');

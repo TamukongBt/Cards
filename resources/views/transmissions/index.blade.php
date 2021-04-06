@@ -75,32 +75,16 @@
         <form action="{{route('export.collected')}}" method="post">
             @csrf
             <div class="modal-body">
-                <div class="row">
-                    <label class="col-md-3 col-form-label">{{ __('Start Date') }}</label>
-                    <div class="col-md-9">
-                        <div class="form-group">
-                            <input type="date" name="start_date" class="form-control" placeholder="Start Date"  required>
-                        </div>
-                        @if ($errors->has('start_date'))
-                            <span class="invalid-feedback" style="display: block;" role="alert">
-                                <strong>{{ $errors->first('start_date') }}</strong>
-                            </span>
-                        @endif
+                <div class="class="form-group"">
+                    <div class="col-md">
+                        <input type="file" name="file" class="form-control-file">
                     </div>
-                </div>
 
-                <div class="row">
-                    <label class="col-md-3 col-form-label">{{ __('End Date') }}</label>
-                    <div class="col-md-9">
-                        <div class="form-group">
-                            <input type="date" name="end_date" class="form-control" placeholder="End Date"  required>
-                        </div>
-                        @if ($errors->has('end_date'))
-                            <span class="invalid-feedback" style="display: block;" role="alert">
-                                <strong>{{ $errors->first('end_date') }}</strong>
-                            </span>
-                        @endif
-                    </div>
+                    @if ($errors->has('file'))
+                        <span class="invalid-feedback" style="display: block;" role="alert">
+                            <strong>{{ $errors->first('file') }}</strong>
+                        </span>
+                    @endif
                 </div>
             </div>
             <div class="modal-footer">

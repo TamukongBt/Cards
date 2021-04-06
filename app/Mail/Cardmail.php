@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Transmissions;
+use App\CardRequest;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -19,7 +19,7 @@ class Cardmail extends Mailable
      */
     public $transmissions;
 
-    public function __construct(Transmissions $transmissions)
+    public function __construct(CardRequest $transmissions)
     {
          $this->transmissions = $transmissions;
     }

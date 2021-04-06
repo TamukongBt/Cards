@@ -14,9 +14,12 @@ use App\Exports\RequestExports;
 use App\Exports\RejectedExports;
 use App\Exports\RenewalsExport;
 use App\Exports\SubscriptionExports;
+use App\Mail\Cheque;
+use App\Notifications\CardCollected;
 use DataTables;
 use RealRashid\SweetAlert\Facades\Alert;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 class CheckRequestController extends Controller
 {
@@ -29,7 +32,7 @@ class CheckRequestController extends Controller
     {
 
         if (auth()->user()->department == 'css') {
-            $data = CheckRequest::where('approved', 0)->where('branch_id',auth()->user()->branch_id)->get();
+            $data = CheckRequest::where('approved', 0)->where('branch_id', auth()->user()->branch_id)->get();
 
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -43,10 +46,9 @@ class CheckRequestController extends Controller
                     return $data->cardtype->name;
                 })
                 ->editColumn('account_type', function ($data) {
-                    if ($data->account_type=='moral') {
+                    if ($data->account_type == 'moral') {
                         return 'Moral Entity';
-                    }
-                    else {
+                    } else {
                         return 'Individual Account';
                     }
                 })
@@ -84,10 +86,9 @@ class CheckRequestController extends Controller
                     return $data->cardtype->name;
                 })
                 ->editColumn('account_type', function ($data) {
-                    if ($data->account_type=='moral') {
+                    if ($data->account_type == 'moral') {
                         return 'Moral Entity';
-                    }
-                    else {
+                    } else {
                         return 'Individual Account';
                     }
                 })
@@ -138,8 +139,7 @@ class CheckRequestController extends Controller
                 ->rawColumns(['action'])
                 ->editColumn('id', 'ID: {{$id}}')
                 ->make(true);
-        }
-        elseif (auth()->user()->department == 'dso') {
+        } elseif (auth()->user()->department == 'dso') {
             $data = CheckRequest::where('confirmed', 1)->where('in_production', 1)->get();
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -173,7 +173,7 @@ class CheckRequestController extends Controller
     public function production1()
     {
         if (auth()->user()->department == 'cards') {
-            $data = CheckRequest::where('rejected', '0')->where('confirmed', '1')->where('approved', '1')->where('in_production', '1')->whereBetween('updated_at',[Carbon::now()->startOfMonth(),Carbon::now()->endOfMonth()])->get();
+            $data = CheckRequest::where('rejected', '0')->where('confirmed', '1')->where('approved', '1')->where('in_production', '1')->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($data) {
@@ -187,44 +187,40 @@ class CheckRequestController extends Controller
                     return $data->cardtype->name;
                 })
                 ->editColumn('account_type', function ($data) {
-                    if ($data->account_type=='moral') {
+                    if ($data->account_type == 'moral') {
                         return 'Moral Entity';
-                    }
-                    else {
+                    } else {
                         return 'Individual Account';
                     }
                 })
                 ->make(true);
-        }
-        else{
+        } else {
             $data = CheckRequest::where('branch_id', auth()->user()->branch_id)->where('confirmed', '1')->where('approved', '1')->where('in_production', '1')->get();
-        return DataTables::of($data)
-            ->addIndexColumn()
-            ->editColumn('created_at', function ($data) {
-                return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
-            })
-            ->editColumn('branch_id', function ($data) {
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->editColumn('branch_id', function ($data) {
 
-                return $data->branch->name;
-            })
-            ->editColumn('checks', function ($data) {
-                return $data->cardtype->name;
-            })
-            ->editColumn('accountname', function ($data) {
-                return $data->branchcode.' '.$data->accountname.' '.$data->RIB;
-            })
-            ->editColumn('account_type', function ($data) {
-                if ($data->account_type=='moral') {
-                    return 'Moral Entity';
-                }
-                else {
-                    return 'Individual Account';
-                }
-            })
+                    return $data->branch->name;
+                })
+                ->editColumn('checks', function ($data) {
+                    return $data->cardtype->name;
+                })
+                ->editColumn('accountname', function ($data) {
+                    return $data->branchcode . ' ' . $data->accountname . ' ' . $data->RIB;
+                })
+                ->editColumn('account_type', function ($data) {
+                    if ($data->account_type == 'moral') {
+                        return 'Moral Entity';
+                    } else {
+                        return 'Individual Account';
+                    }
+                })
 
-            ->make(true);
+                ->make(true);
         }
-
     }
 
 
@@ -235,7 +231,7 @@ class CheckRequestController extends Controller
 
     public function validated1()
     {
-       if (auth()->user()->department == 'cards') {
+        if (auth()->user()->department == 'cards') {
             $data = CheckRequest::where('confirmed', '1')->where('approved', '1')->get();
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -307,13 +303,11 @@ class CheckRequestController extends Controller
                     return $data->cardtype->name;
                 })
                 ->editColumn('account_type', function ($data) {
-                    if ($data->account_type=='moral') {
+                    if ($data->account_type == 'moral') {
                         return 'Moral Entity';
-                    }
-                    else {
+                    } else {
                         return 'Individual Account';
                     }
-
                 })
 
                 ->make(true);
@@ -374,13 +368,13 @@ class CheckRequestController extends Controller
         ]);
         try {
 
-                    CheckRequest::create($data);
-                    $users = User::where('branch_id', auth()->user()->branch_id)->where('department', 'css')->get();
-                    $request = CheckRequest::where('accountname', $request->accountname)->where('account_number', $request->account_number)->where('branch_id', $request->branch_id)->where('checks', $request->checks)->get()->first();
-                    foreach ($users as $user) {
-                        $user->notify(new NewRequestNotification($request));
-                    }
-                    return redirect()->route('checkrequest.index')->with('success', 'New Entry created succesfully');
+            CheckRequest::create($data);
+            $users = User::where('branch_id', auth()->user()->branch_id)->where('department', 'css')->get();
+            $request = CheckRequest::where('accountname', $request->accountname)->where('account_number', $request->account_number)->where('branch_id', $request->branch_id)->where('checks', $request->checks)->get()->first();
+            foreach ($users as $user) {
+                $user->notify(new NewRequestNotification($request));
+            }
+            return redirect()->route('checkrequest.index')->with('success', 'New Entry created succesfully');
         } catch (\Throwable $th) {
 
             Alert::alert('Error', 'There is a problem with this entry ', 'error');
@@ -511,16 +505,16 @@ class CheckRequestController extends Controller
     }
 
     // these are the count functions that display the count of the dataon the dashboard for request
-// /week
+    // /week
 
     public function selectSearch(Request $request)
     {
         $query = [];
 
-        if($request->has('q')){
+        if ($request->has('q')) {
             $search = $request->q;
-            $query =CheckRequest::selectRaw('account_number,id, accountname,requested_by, checks, DATE_FORMAT(created_at, "%M %d %Y") as date')->where('account_number', 'LIKE', "%$search%")
-                    ->get();
+            $query = CheckRequest::selectRaw('account_number,id, accountname,requested_by, checks, DATE_FORMAT(created_at, "%M %d %Y") as date')->where('account_number', 'LIKE', "%$search%")
+                ->get();
         }
         return response()->json($query);
     }
@@ -528,40 +522,35 @@ class CheckRequestController extends Controller
     public function track($id)
     {
         $req = CheckRequest::findorFail($id);
-       if( $req->approved == 1 && $req->confirmed == 1 && $req->rejected == 0 && $req->in_production == 1 && $req->distrubuted==0){
-           $state = 'In The Production File';
-           return response()->json($state);
-       }
-       if( $req->approved == 1 && $req->confirmed == 1 && $req->rejected == 0  && $req->in_production == 1 && $req->distrubuted == 1 ){
-           $state = 'Your Request Has Been Completed';
-           return response()->json($state);
-       }
-       else  if( $req->approved == 0 && $req->confirmed == 0 && $req->rejected == 0){
-        $state = 'Pending Approval From Branch';
-        return response()->json($state);
-        }
-        else  if( $req->approved == 0 && $req->confirmed == 0 && $req->rejected == 1){
-            $state = 'Rejected At From Branch';
+        if ($req->approved == 1 && $req->confirmed == 1 && $req->rejected == 0 && $req->in_production == 1 && $req->distrubuted == 0) {
+            $state = 'In The Production File';
             return response()->json($state);
         }
-        else  if( $req->approved == 1 && $req->confirmed == 0 && $req->rejected == 0){
+        if ($req->approved == 1 && $req->confirmed == 1 && $req->rejected == 0  && $req->in_production == 0) {
+            $state = 'Your Request Has Been Completed';
+            return response()->json($state);
+        } else  if ($req->approved == 0 && $req->confirmed == 0 && $req->rejected == 0) {
+            $state = 'Pending Approval From Branch';
+            return response()->json($state);
+        } else  if ($req->approved == 0 && $req->confirmed == 0 && $req->rejected == 1) {
+            $state = 'Rejected At  Branch';
+            return response()->json($state);
+        } else  if ($req->approved == 1 && $req->confirmed == 0 && $req->rejected == 0) {
             $state = 'Pending Approval from Cards & Checks Office';
             return response()->json($state);
-        }
-        else  if( $req->approved == 1 && $req->confirmed == 0 && $req->rejected == 1){
+        } else  if ($req->approved == 1 && $req->confirmed == 0 && $req->rejected == 1) {
             $state = 'Rejected at Cards & Checks Office';
             return response()->json($state);
-        }
-        else  if( $req->approved == 1 && $req->confirmed == 0 && $req->rejected == 1&& $req->ditrubuted == 1){
-            $state = 'Distrubuted at The Branch';
+        } else  if ($req->approved == 1 && $req->confirmed == 0 && $req->rejected == 1 && $req->distrubuted == 1) {
+            $state = 'At  ' . $req->branch->name . ' Branch';
             return response()->json($state);
-        }
-        else  {
+        } else  if ($req->approved == 1 && $req->confirmed == 0 && $req->rejected == 1 && $req->distrubuted == 1 && $req->collected == 1) {
+            $state = 'Given to  Customer at ' . $req->branch->name . ' Branch';
+            return response()->json($state);
+        } else {
             $state = 'This Account does not exist in our system';
             return response()->json($state);
         }
-
-
     }
 
     public function newcardcount()
@@ -690,7 +679,166 @@ class CheckRequestController extends Controller
         ob_end_clean();
         ob_start();
 
-            return (new ChecksExport($startdate, $enddate))->download($title . '.csv');
+        return (new ChecksExport($startdate, $enddate))->download($title . '.csv');
+    }
+
+    //  Distribution Pending
+
+    public function collected($id)
+    {
+        $req = CheckRequest::findorFail($id);
+        $req->collected = 1;
+        $req->updated_at = now();
+        $req->save();
+
+        return response()->json(200);
+    }
+
+    public function distributionindex()
+    {
+        return view('distribution.check');
+    }
+
+    public function distributionindex1()
+    {
+        if (auth()->user()->department == 'cards') {
+            $data = CheckRequest::where('collected', 0)->where('in_production', 1)->where('distrubuted', 1)->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->addColumn('action', function ($row) {
+
+                    $actionBtn =
+
+                        '<td>
+                 <a class="dropdown-item btn btn-danger-outline btn-delete  text-white" data-remote="' . route('checkrequest.destroy', $row->id) . '">
+                                Delete </a>
+                 </td>
+                 ';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        } elseif (auth()->user()->department == 'csa' || auth()->user()->department == 'branchadmin') {
+            $data = CheckRequest::where('collected', 0)->where('in_production', 1)->where('distrubuted', 1)->where('branch_id', auth()->user()->branch_id)->get();
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->addColumn('action', function ($row) {
+
+                    $actionBtn =
+                        '
+                         <td><a class="validates btn btn-outline-primary btn-sm"
+                         data-remote="/checkrequest/collect/' . $row->id . '">Collect<i class="nc-icon nc-check-2"
+                             aria-hidden="true" style="color: black"></i></a></td>
+                         ';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->editColumn('id', 'ID: {{$id}}')
+                ->make(true);
+        } elseif (auth()->user()->department == 'dso') {
+            $data = CheckRequest::where('collected', 0)->where('in_production', 1)->where('distrubuted', 1)->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->addColumn('age', function ($item) {
+                    return $item->updated_at > now()->subMonth(3) ? 10 : 100;
+                })
+                ->make(true);
+        }
+    }
+
+
+    // Distribution Collected
+    // uplaod distrubutions and notify
+    public function distribute(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'start_date' => 'required',
+                'end_date' => 'required',
+            ]);
+            $distrubutions =  CheckRequest::where('notified', 0)->where('distrubuted', 0)->where('in_production', 1)->where('approved', 1)->where('confirmed', 1)->where('rejected', 0)->wherebetween('created_at', [$request->start_date, $request->end_date])->get();
+            foreach ($distrubutions as $transmission) {
+                // Mail::to($transmission->email)->send(new Cheque($transmission));
+                $transmission->distrubuted = 1;
+                $transmission->notified = 1;
+                $transmission->save();
+            }
+            return redirect()->route('checkrequest.distribution')->with('success', 'Clients Notified');
+        } catch (\Throwable $th) {
+            Alert::alert('Error', 'There is a problem with the file', 'error');
+            return redirect()->back();
+        }
+    }
+
+    public function distributioncollected()
+    {
+        return view('distribution.ccheck');
+    }
+
+    public function distributioncollected1()
+    {
+        if (auth()->user()->department == 'cards') {
+            $data = CheckRequest::where('collected', 1)->where('in_production', 1)->where('distrubuted', 1)->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->addColumn('action', function ($row) {
+
+                    $actionBtn =
+
+                        '<td>
+                 <a class="dropdown-item btn btn-danger-outline btn-delete  text-white" data-remote="' . route('checkrequest.destroy', $row->id) . '">
+                                Delete </a>
+                 </td>
+                 ';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        } elseif (auth()->user()->department == 'csa' || auth()->user()->department == 'branchadmin') {
+            $data = CheckRequest::where('collected', 1)->where('in_production', 1)->where('distrubuted', 1)->where('branch_id', auth()->user()->branch_id)->get();
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->addColumn('action', function ($row) {
+
+                    $actionBtn =
+                        '
+                         <td><a class="validates btn btn-outline-primary btn-sm"
+                         data-remote="/cardrequest/collect/' . $row->id . '">Collect<i class="nc-icon nc-check-2"
+                             aria-hidden="true" style="color: black"></i></a></td>
+                         ';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->editColumn('id', 'ID: {{$id}}')
+                ->make(true);
+        } elseif (auth()->user()->department == 'dso') {
+            $data = CheckRequest::where('collected', 1)->where('in_production', 1)->where('distrubuted', 1)->where('request_type', 'renew_card')->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->addColumn('age', function ($item) {
+                    return $item->updated_at > now()->subMonth(3) ? 10 : 100;
+                })
+                ->make(true);
+        }
     }
 }
-        

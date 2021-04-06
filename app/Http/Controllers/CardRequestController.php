@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\CardRequest;
+use App\CheckRequest;
 use Illuminate\Http\Request;
 use App\User;
 use App\Notifications\RejectRequest;
@@ -14,10 +15,13 @@ use App\Exports\RenewalsExport;
 use App\Exports\SubscriptionExports;
 use App\Imports\CardRequestImports;
 use App\Imports\CardSRequestImports;
+use App\Mail\Cardmail;
+use App\Notifications\CardCollected;
 use App\Upload;
 use DataTables;
 use RealRashid\SweetAlert\Facades\Alert;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 
 class CardRequestController extends Controller
@@ -27,6 +31,9 @@ class CardRequestController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    //  Creation and continuation section
+
     public function index()
     {
         $request = CardRequest::all();
@@ -36,7 +43,7 @@ class CardRequestController extends Controller
     {
 
         if (auth()->user()->department == 'branchadmin') {
-            $data = CardRequest::where('approved', 0)->where('branch_id',auth()->user()->branch_id)->get();
+            $data = CardRequest::where('approved', 0)->where('branch_id', auth()->user()->branch_id)->get();
 
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -113,7 +120,7 @@ class CardRequestController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         } elseif (auth()->user()->department == 'csa') {
-            $data = CardRequest::where('approved', 0)->where('rejected', 0)->where('confirmed', 0)->where('branch_id',auth()->user()->branch_id)->get();
+            $data = CardRequest::where('approved', 0)->where('rejected', 0)->where('confirmed', 0)->where('branch_id', auth()->user()->branch_id)->get();
 
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -157,8 +164,7 @@ class CardRequestController extends Controller
                 ->rawColumns(['action'])
                 ->editColumn('id', 'ID: {{$id}}')
                 ->make(true);
-        }
-        elseif (auth()->user()->department == 'dso') {
+        } elseif (auth()->user()->department == 'dso') {
             $data = CardRequest::where('confirmed', 1)->where('request_type', 'renew_card')->get();
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -186,138 +192,6 @@ class CardRequestController extends Controller
         }
     }
 
-    public function rproduction()
-    {
-        return view('cardrequest.rproduction');
-    }
-
-    public function rproduction1()
-    {
-        if (auth()->user()->department == 'cards') {
-            $data = CardRequest::where('rejected', '0')->where('request_type', 'renew_card')->where('confirmed', '1')->where('approved', '1')->where('in_production', '1')->whereBetween('updated_at',[Carbon::now()->startOfMonth(),Carbon::now()->endOfMonth()])->get();
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->editColumn('created_at', function ($data) {
-                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
-                })
-                ->editColumn('branch_id', function ($data) {
-
-                    return $data->branch->name;
-                })
-                ->editColumn('cards', function ($data) {
-                    return $data->cardtype->name;
-                })
-                ->editColumn('request_type', function ($data) {
-                    return $data->requesttype->name;
-                })
-                ->editColumn('account_type', function ($data) {
-                    if ($data->account_type=='moral') {
-                        return 'Moral Entity';
-                    }
-                    else {
-                        return 'Individual Account';
-                    }
-                })
-                ->make(true);
-        }
-        else{
-            $data = CardRequest::where('branch_id', auth()->user()->branch_id)->where('rejected', '0')->where('confirmed', '0')->where('approved', '1')->where('in_production', '1')->whereBetween('updated_at',[Carbon::now()->startOfMonth(),Carbon::now()->endOfMonth()])->get();
-        return DataTables::of($data)
-            ->addIndexColumn()
-            ->editColumn('created_at', function ($data) {
-                return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
-            })
-            ->editColumn('branch_id', function ($data) {
-
-                return $data->branch->name;
-            })
-            ->editColumn('cards', function ($data) {
-                return $data->cardtype->name;
-            })
-            ->editColumn('accountname', function ($data) {
-                return $data->branchcode.' '.$data->accountname.' '.$data->RIB;
-            })
-            ->editColumn('account_type', function ($data) {
-                if ($data->account_type=='moral') {
-                    return 'Moral Entity';
-                }
-                else {
-                    return 'Individual Account';
-                }
-            })
-
-            ->rawColumns(['action'])
-            ->editColumn('id', 'ID: {{$id}}')
-            ->make(true);
-        }
-
-    }
-
-    public function sproduction()
-    {
-        return view('cardrequest.sproduction');
-    }
-
-    public function sproduction1()
-    {
-        if (auth()->user()->department == 'cards') {
-            $data = CardRequest::where('rejected', '0')->where('request_type', 'new_card')->where('confirmed', '1')->where('approved', '1')->where('in_production', '1')->whereBetween('updated_at',[Carbon::now()->startOfMonth(),Carbon::now()->endOfMonth()])->get();
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->editColumn('created_at', function ($data) {
-                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
-                })
-                ->editColumn('branch_id', function ($data) {
-
-                    return $data->branch->name;
-                })
-                ->editColumn('cards', function ($data) {
-                    return $data->cardtype->name;
-                })
-                ->editColumn('request_type', function ($data) {
-                    return $data->requesttype->name;
-                })
-                ->editColumn('account_type', function ($data) {
-                    if ($data->account_type=='moral') {
-                        return 'Moral Entity';
-                    }
-                    else {
-                        return 'Individual Account';
-                    }
-                })
-                ->make(true);
-        }
-        else{
-            $data = CardRequest::where('branch_id', auth()->user()->branch_id)->where('confirmed', '1')->where('approved', '1')->where('in_production', '1')->whereBetween('updated_at',[Carbon::now()->startOfMonth(),Carbon::now()->endOfMonth()])->get();
-        return DataTables::of($data)
-            ->addIndexColumn()
-            ->editColumn('created_at', function ($data) {
-                return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
-            })
-            ->editColumn('branch_id', function ($data) {
-
-                return $data->branch->name;
-            })
-            ->editColumn('cards', function ($data) {
-                return $data->cardtype->name;
-            })
-            ->editColumn('accountname', function ($data) {
-                return $data->branchcode.' '.$data->accountname.' '.$data->RIB;
-            })
-            ->editColumn('account_type', function ($data) {
-                if ($data->account_type=='moral') {
-                    return 'Moral Entity';
-                }
-                else {
-                    return 'Individual Account';
-                }
-            })
-
-            ->make(true);
-        }
-
-    }
-
     public function validated()
     {
         return view('cardrequest.validated');
@@ -325,7 +199,7 @@ class CardRequestController extends Controller
 
     public function validated1()
     {
-       if (auth()->user()->department == 'cards') {
+        if (auth()->user()->department == 'cards') {
             $data = CardRequest::where('confirmed', '1')->where('approved', '1')->get();
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -462,10 +336,10 @@ class CardRequestController extends Controller
             'email' => 'required',
             'tel' => 'required'
 
-            ]);
-            try {
+        ]);
+        try {
             CardRequest::create($data);
-            $users = User::where('branch_id',$request->branch_id)->where('department', 'css')->get();
+            $users = User::where('branch_id', $request->branch_id)->where('department', 'css')->get();
             $request = CardRequest::where('accountname', $request->accountname)->where('account_number', $request->account_number)->where('branch_id', $request->branch_id)->where('cards', $request->cards)->get()->first();
 
             foreach ($users as $user) {
@@ -485,11 +359,7 @@ class CardRequestController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    // public function show($id)
-    // {
-    //     $request = CardRequest::find($id);
-    //     return view('request.view')->with('request', $request);
-    // }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -529,13 +399,12 @@ class CardRequestController extends Controller
             'email' => 'required',
             'tel' => 'required'
 
-            ]);
-            try {
-        $req = CardRequest::findorFail($id);
-        $req->rejected = 0;
-        $req->save();
-        CardRequest::whereId($id)->update($data);
-
+        ]);
+        try {
+            $req = CardRequest::findorFail($id);
+            $req->rejected = 0;
+            $req->save();
+            CardRequest::whereId($id)->update($data);
         } catch (\Throwable $th) {
             Alert::alert('Error', 'There is a problem with this entry ', 'error');
             return redirect('/create');
@@ -558,12 +427,15 @@ class CardRequestController extends Controller
         return response(200);
     }
 
+
+    // Non Functional small small things
+
     // this function validates when the request has been confirmed by cards and checks
     public function fulfilled($id)
     {
         $req = CardRequest::findorFail($id);
         $req->confirmed = 1;
-        if ($req->request_type=='new_card'||$req->request_type=='renew_card') {
+        if ($req->request_type == 'new_card' || $req->request_type == 'renew_card') {
             $req->in_production = 1;
         }
 
@@ -584,39 +456,35 @@ class CardRequestController extends Controller
     public function track($id)
     {
         $req = CardRequest::findorFail($id);
-       if( $req->approved == 1 && $req->confirmed == 1 && $req->rejected == 0 && $req->in_production == 1){
-           $state = 'In The Production File';
-           return response()->json($state);
-       }
-       if( $req->approved == 1 && $req->confirmed == 1 && $req->rejected == 0  ){
-           $state = 'Your Request Has Been Completed';
-           return response()->json($state);
-       }
-       else  if( $req->approved == 0 && $req->confirmed == 0 && $req->rejected == 0){
-        $state = 'Pending Approval From Branch';
-        return response()->json($state);
-        }
-        else  if( $req->approved == 0 && $req->confirmed == 0 && $req->rejected == 1){
-            $state = 'Rejected At From Branch';
+        if ($req->approved == 1 && $req->confirmed == 1 && $req->rejected == 0 && $req->in_production == 1 && $req->distrubuted==0) {
+            $state = 'In The Production File';
             return response()->json($state);
         }
-        else  if( $req->approved == 1 && $req->confirmed == 0 && $req->rejected == 0){
+        if ($req->approved == 1 && $req->confirmed == 1 && $req->rejected == 0 && $req->in_production == 0 && ($req->request_type != 'new_card' || $req->request_type != 'renew_card') ) {
+            $state = 'Your Request Has Been Completed';
+            return response()->json($state);
+        } else  if ($req->approved == 0 && $req->confirmed == 0 && $req->rejected == 0) {
+            $state = 'Pending Approval From Branch';
+            return response()->json($state);
+        } else  if ($req->approved == 0 && $req->confirmed == 0 && $req->rejected == 1) {
+            $state = 'Rejected At  Branch';
+            return response()->json($state);
+        } else  if ($req->approved == 1 && $req->confirmed == 0 && $req->rejected == 0) {
             $state = 'Pending Approval from Cards & Checks Office';
             return response()->json($state);
-        }
-        else  if( $req->approved == 1 && $req->confirmed == 0 && $req->rejected == 1){
+        } else  if ($req->approved == 1 && $req->confirmed == 0 && $req->rejected == 1) {
             $state = 'Rejected at Cards & Checks Office';
             return response()->json($state);
-        }
-        else  if( $req->approved == 1 && $req->confirmed == 0 && $req->rejected == 1&& $req->ditrubuted == 1){
-            $state = 'Distrubuted at The Branch';
+        } else  if ($req->approved == 1 && $req->confirmed == 0 && $req->rejected == 1 && $req->distrubuted == 1) {
+            $state = 'At Your ' . $req->branch->name . ' Branch';
             return response()->json($state);
-        }
-        else  {
+        } else  if ($req->approved == 1 && $req->confirmed == 0 && $req->rejected == 1 && $req->distrubuted == 1 && $req->collected == 1) {
+            $state = 'Given to  Customer at ' . $req->branch->name . ' Branch';
+            return response()->json($state);
+        } else {
             $state = 'This Account does not exist in our system';
             return response()->json($state);
         }
-
     }
 
 
@@ -629,7 +497,9 @@ class CardRequestController extends Controller
         return response()->json(200);
     }
 
-    // this function validates when the request has been rejected by cards and checks
+
+
+    // this function validates when the request has been rejec_ted b_y cards and checks
     public function denied(Request $request, $id)
     {
         $req = CardRequest::findorFail($id);
@@ -645,57 +515,216 @@ class CardRequestController extends Controller
     }
 
     // these are the count functions that display the count of the dataon the dashboard for request
-// /week
-    public function newcardcount()
+    // /week
+    public function newc()
     {
-        $data = CardRequest::get()->where('request_type', 'new_card')->where('confirmed', 0)->where('rejected', 0)->count();
+        $data = CardRequest::where('confirmed', 0)->where('rejected', 0)->where('branch_id', auth()->user()->branch_id)->count();
         // return $data;
         return response($data, 200);
     }
-    public function newcardbranch()
+    public function newch()
     {
-        $data = CardRequest::get()->where('request_type', 'new_card')->where('branch_id', auth()->user()->branch_id)->where('confirmed', 1)->where('rejected', 0)->count();
+        $data = CheckRequest::where('confirmed', 0)->where('rejected', 0)->where('branch_id', auth()->user()->branch_id)->where('rejected', 0)->count();
         // return $data;
         return response($data, 200);
     }
-    public function renew()
+    public function rc()
     {
-        $data = CardRequest::get()->where('request_type', 'renew_card')->where('confirmed', 1)->where('rejected', 0)->count();
-        // return $data;
+        $dat = CheckRequest::where('confirmed', 0)->where('rejected', 1)->where('branch_id', auth()->user()->branch_id)->where('rejected', 0)->count();
+        $data1 = CardRequest::where('confirmed', 0)->where('rejected', 1)->where('branch_id', auth()->user()->branch_id)->where('rejected', 0)->count();
+        $data = $dat+$data1;
         return response($data, 200);
     }
-
-    public function validatedcount()
-    {
-        $data = CardRequest::get()->where('branch_id', auth()->user()->branch_id)->where('confirmed', 1)->where('rejected', 0)->count();
-        return response($data, 200);
-    }
-
-
-
-    public function groupvalidated()
+    public function tcc()
     {
         $start = new Carbon('first day of this month');
         $end = new Carbon('last day of this month');
-        $data = CardRequest::get()->wherebetween('created_at', [$start, $end])->where('confirmed', 0)->where('rejected', 0)->groupBy(function ($date) {
-            return Carbon::parse($date->created_at)->format('d-m-Y'); // grouping by months
-        })->map->count();
-        $result = $data->ToArray();;
-        return response($result, 200);
-    }
-
-
-
-    public function rejectedcount()
-    {
-        $data = CardRequest::get()->where('branch_id', auth()->user()->branch_id)->where('confirmed', 0)->where('rejected', 1)->count();
+        $dat = CheckRequest::wherebetween('created_at', [$start, $end])->where('branch_id', auth()->user()->branch_id)->count();
+        $data1 = CardRequest::wherebetween('created_at', [$start, $end])->where('branch_id', auth()->user()->branch_id)->count();
+        $data = $dat+$data1;
         return response($data, 200);
     }
+
+    // cards fetch
+    public function newca()
+    {
+        $data = CardRequest::where('confirmed', 0)->where('rejected', 0)->count();
+        // return $data;
+        return response($data, 200);
+    }
+    public function newcha()
+    {
+        $data = CheckRequest::where('confirmed', 0)->where('rejected', 0)->where('rejected', 0)->count();
+        // return $data;
+        return response($data, 200);
+    }
+    public function rca()
+    {
+        $dat = CheckRequest::where('confirmed', 0)->where('rejected', 1)->where('rejected', 0)->count();
+        $data1 = CardRequest::where('confirmed', 0)->where('rejected', 1)->where('rejected', 0)->count();
+        $data = $dat+$data1;
+        return response($data, 200);
+    }
+
+    public function tcca()
+    {
+        $start = new Carbon('first day of this month');
+        $end = new Carbon('last day of this month');
+        $dat = CheckRequest::wherebetween('created_at', [$start, $end])->count();
+        $data1 = CardRequest::wherebetween('created_at', [$start, $end])->count();
+        $data = $dat+$data1;
+        return response($data, 200);
+    }
+
+
+    public function cp()
+    {
+        $start = new Carbon('first day of this month');
+        $end = new Carbon('last day of this month');
+        $data = CardRequest::get()->wherebetween('created_at', [$start, $end])->where('confirmed', 1)->where('in_production', 1)->where('distrubuted', 0)->where('approved', 1)->where('branch_id', auth()->user()->branch_id)->where('rejected', 0)->groupBy(function ($date) {
+            return Carbon::parse($date->created_at)->format('d-m-Y'); // grouping by months
+        })->count();
+        return response($data, 200);
+    }
+
+
+
+    public function ca()
+    {
+        $start = new Carbon('first day of this month');
+        $end = new Carbon('last day of this month');
+        $data = CardRequest::get()->wherebetween('created_at', [$start, $end])->where('in_production', 0)->where('distrubuted', 0)->where('approved', 1)->where('branch_id', auth()->user()->branch_id)->where('rejected', 0)->groupBy(function ($date) {
+            return Carbon::parse($date->created_at)->format('d-m-Y'); // grouping by months
+        })->count();
+        return response($data, 200);
+    }
+
+
+
+    public function chd()
+    {
+        $start = new Carbon('first day of this month');
+        $end = new Carbon('last day of this month');
+        $data = CheckRequest::get()->wherebetween('created_at', [$start, $end])->where('in_production', 1)->where('approved', 1)->where('distrubuted', 1)->where('branch_id', auth()->user()->branch_id)->where('rejected', 0)->groupBy(function ($date) {
+            return Carbon::parse($date->created_at)->format('d-m-Y'); // grouping by months
+        })->count();
+        return response($data, 200);
+    }
+
+    public function chp()
+    {
+        $start = new Carbon('first day of this month');
+        $end = new Carbon('last day of this month');
+        $data = CheckRequest::get()->wherebetween('created_at', [$start, $end])->where('in_production', 1)->where('distrubuted', 0)->where('approved', 1)->where('confirmed', 1)->where('branch_id', auth()->user()->branch_id)->where('rejected', 0)->groupBy(function ($date) {
+            return Carbon::parse($date->created_at)->format('d-m-Y'); // grouping by months
+        })->count();
+        return response($data, 200);
+    }
+
+
+
+    public function cha()
+    {
+        $start = new Carbon('first day of this month');
+        $end = new Carbon('last day of this month');
+        $data = CheckRequest::get()->wherebetween('created_at', [$start, $end])->where('in_production', 0)->where('distrubuted', 0)->where('approved', 1)->where('branch_id', auth()->user()->branch_id)->where('rejected', 0)->groupBy(function ($date) {
+            return Carbon::parse($date->created_at)->format('d-m-Y'); // grouping by months
+        })->count();
+        return response($data, 200);
+    }
+
+
+
+    public function cd()
+    {
+        $start = new Carbon('first day of this month');
+        $end = new Carbon('last day of this month');
+        $data = CardRequest::get()->wherebetween('created_at', [$start, $end])->where('distrubuted', 1)->where('in_production', 1)->where('approved', 1)->where('branch_id', auth()->user()->branch_id)->where('rejected', 0)->groupBy(function ($date) {
+            return Carbon::parse($date->created_at)->format('d-m-Y'); // grouping by months
+        })->count();
+        return response($data, 200);
+    }
+
+    // cards statistics cards4
+    public function cpa()
+    {
+        $start = new Carbon('first day of this month');
+        $end = new Carbon('last day of this month');
+        $data = CardRequest::get()->wherebetween('created_at', [$start, $end])->where('confirmed', 1)->where('in_production', 1)->where('distrubuted', 0)->where('approved', 1)->where('rejected', 0)->groupBy(function ($date) {
+            return Carbon::parse($date->created_at)->format('d-m-Y'); // grouping by months
+        })->count();
+        return response($data, 200);
+    }
+
+
+
+    public function caa()
+    {
+        $start = new Carbon('first day of this month');
+        $end = new Carbon('last day of this month');
+        $data = CardRequest::get()->wherebetween('created_at', [$start, $end])->where('distrubuted', 0)->where('approved', 1)->where('in_production', 0)->where('rejected', 0)->groupBy(function ($date) {
+            return Carbon::parse($date->created_at)->format('d-m-Y'); // grouping by months
+        })->count();
+        return response($data, 200);
+    }
+
+
+
+    public function chda()
+    {
+        $start = new Carbon('first day of this month');
+        $end = new Carbon('last day of this month');
+        $data = CheckRequest::get()->wherebetween('created_at', [$start, $end])->where('in_production', 0)->where('distrubuted', 1)->where('approved', 1)->where('distrubuted', 1)->where('rejected', 0)->groupBy(function ($date) {
+            return Carbon::parse($date->created_at)->format('d-m-Y'); // grouping by months
+        })->count();
+        return response($data, 200);
+    }
+
+    public function chpa()
+    {
+        $start = new Carbon('first day of this month');
+        $end = new Carbon('last day of this month');
+        $data = CheckRequest::get()->wherebetween('created_at', [$start, $end])->where('in_production', 1)->where('distrubuted', 0)->where('approved', 1)->where('confirmed', 1)->where('rejected', 0)->groupBy(function ($date) {
+            return Carbon::parse($date->created_at)->format('d-m-Y'); // grouping by months
+        })->count();
+        return response($data, 200);
+    }
+
+
+
+    public function chaa()
+    {
+        $start = new Carbon('first day of this month');
+        $end = new Carbon('last day of this month');
+        $data = CheckRequest::get()->wherebetween('created_at', [$start, $end])->where('in_production', 0)->where('distrubuted', 0)->where('approved', 1)->where('rejected', 0)->groupBy(function ($date) {
+            return Carbon::parse($date->created_at)->format('d-m-Y'); // grouping by months
+        })->count();
+        return response($data, 200);
+    }
+
+
+
+    public function cda()
+    {
+        $start = new Carbon('first day of this month');
+        $end = new Carbon('last day of this month');
+        $data = CardRequest::get()->wherebetween('created_at', [$start, $end])->where('in_production', 1)->where('distrubuted', 1)->where('approved', 1)->where('rejected', 0)->groupBy(function ($date) {
+            return Carbon::parse($date->created_at)->format('d-m-Y'); // grouping by months
+        })->count();
+        return response($data, 200);
+    }
+
+    //end
 
     public function pendingcount()
     {
-        $data = CardRequest::get()->where('branch_id', auth()->user()->branch_id)->where('confirmed', 0)->where('rejected', 0)->count();
-        return response($data, 200);
+        $start = new Carbon('first day of this month');
+        $end = new Carbon('last day of this month');
+        $data = CardRequest::get()->wherebetween('created_at', [$start, $end])->where('distrubuted', 0)->where('rejected', 0)->groupBy(function ($date) {
+            return Carbon::parse($date->created_at)->format('d-m-Y'); // grouping by months
+        })->count();
+        $result = $data->ToArray();;
+        return response($result, 200);
     }
 
 
@@ -703,12 +732,12 @@ class CardRequestController extends Controller
 
     public function selectSearch(Request $request)
     {
-    	$query = [];
+        $query = [];
 
-        if($request->has('q')){
+        if ($request->has('q')) {
             $search = $request->q;
-            $query =CardRequest::selectRaw('account_number,id, accountname,requested_by, cards, DATE_FORMAT(created_at, "%M %d %Y") as date')->where('account_number', 'LIKE', "%$search%")
-            		->get();
+            $query = CardRequest::selectRaw('account_number,id, accountname,requested_by, cards, DATE_FORMAT(created_at, "%M %d %Y") as date')->where('account_number', 'LIKE', "%$search%")
+                ->get();
         }
         return response()->json($query);
     }
@@ -718,6 +747,132 @@ class CardRequestController extends Controller
     {
         auth()->user()->unreadNotifications->markAsRead();
         return response(200);
+    }
+
+    // Production Section
+
+    public function rproduction()
+    {
+        return view('cardrequest.rproduction');
+    }
+
+    public function rproduction1()
+    {
+        if (auth()->user()->department == 'cards') {
+            $data = CardRequest::where('rejected', '0')->where('request_type', 'renew_card')->where('confirmed', '1')->where('distrubuted', '0')->where('approved', '1')->where('in_production', '1')->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->editColumn('branch_id', function ($data) {
+
+                    return $data->branch->name;
+                })
+                ->editColumn('cards', function ($data) {
+                    return $data->cardtype->name;
+                })
+                ->editColumn('request_type', function ($data) {
+                    return $data->requesttype->name;
+                })
+                ->editColumn('account_type', function ($data) {
+                    if ($data->account_type == 'moral') {
+                        return 'Moral Entity';
+                    } else {
+                        return 'Individual Account';
+                    }
+                })
+                ->make(true);
+        } else {
+            $data = CardRequest::where('branch_id', auth()->user()->branch_id)->where('rejected', '0')->where('distrubuted', '0')->where('confirmed', '0')->where('approved', '1')->where('in_production', '1')->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->editColumn('branch_id', function ($data) {
+
+                    return $data->branch->name;
+                })
+                ->editColumn('cards', function ($data) {
+                    return $data->cardtype->name;
+                })
+                ->editColumn('accountname', function ($data) {
+                    return $data->branchcode . ' ' . $data->accountname . ' ' . $data->RIB;
+                })
+                ->editColumn('account_type', function ($data) {
+                    if ($data->account_type == 'moral') {
+                        return 'Moral Entity';
+                    } else {
+                        return 'Individual Account';
+                    }
+                })
+
+                ->rawColumns(['action'])
+                ->editColumn('id', 'ID: {{$id}}')
+                ->make(true);
+        }
+    }
+
+    public function sproduction()
+    {
+        return view('cardrequest.sproduction');
+    }
+
+    public function sproduction1()
+    {
+        if (auth()->user()->department == 'cards') {
+            $data = CardRequest::where('rejected', '0')->where('request_type', 'new_card')->where('confirmed', '1')->where('approved', '1')->where('in_production', '1')->where('distrubuted', '0')->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->editColumn('branch_id', function ($data) {
+
+                    return $data->branch->name;
+                })
+                ->editColumn('cards', function ($data) {
+                    return $data->cardtype->name;
+                })
+                ->editColumn('request_type', function ($data) {
+                    return $data->requesttype->name;
+                })
+                ->editColumn('account_type', function ($data) {
+                    if ($data->account_type == 'moral') {
+                        return 'Moral Entity';
+                    } else {
+                        return 'Individual Account';
+                    }
+                })
+                ->make(true);
+        } else {
+            $data = CardRequest::where('branch_id', auth()->user()->branch_id)->where('distrubuted', '0')->where('confirmed', '1')->where('approved', '1')->where('in_production', '1')->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->editColumn('branch_id', function ($data) {
+
+                    return $data->branch->name;
+                })
+                ->editColumn('cards', function ($data) {
+                    return $data->cardtype->name;
+                })
+                ->editColumn('accountname', function ($data) {
+                    return $data->branchcode . ' ' . $data->accountname . ' ' . $data->RIB;
+                })
+                ->editColumn('account_type', function ($data) {
+                    if ($data->account_type == 'moral') {
+                        return 'Moral Entity';
+                    } else {
+                        return 'Individual Account';
+                    }
+                })
+
+                ->make(true);
+        }
     }
 
     public function export(Request $request)
@@ -759,63 +914,6 @@ class CardRequestController extends Controller
         return (new RejectedExports($startdate, $enddate))->download($title . '.csv');
     }
 
-    public function distrubute(Request $request)
-    {
-
-        $request->validate([
-            'file' => 'required|max:2048',
-        ]);
-        $title = "Subscription Distrubution " . now()->format('d-m-Y');
-        // Save details on the user who dowloaded
-        $doneby = new Upload();
-        $doneby->user = auth()->user()->name;
-        $doneby->title=$title;
-        $doneby->employee_id = auth()->user()->employee_id;
-        $doneby->save();
-        $path1 = $request->file('file')->store('assets');
-        $path=storage_path('app').'/'.$path1;
-
-
-        try {
-
-                Excel::import(new CardRequestImports, $path);
-
-                return redirect()->route('cardrequest.rdistrubution')->with( 'success','Card Details Added');
-
-        } catch (\Throwable $th) {
-            Alert::alert('Error', 'There is a problem with the file', 'error');
-            return redirect()->back();
-        }
-    }
-
-    public function rdistrubute(Request $request)
-    {
-
-        $request->validate([
-            'file' => 'required|max:2048',
-        ]);
-        $title = "Renewals Distrubution " . now()->format('d-m-Y');
-        // Save details on the user who dowloaded
-        $doneby = new Upload();
-        $doneby->user = auth()->user()->name;
-        $doneby->title=$title;
-        $doneby->employee_id = auth()->user()->employee_id;
-        $doneby->save();
-        $path1 = $request->file('file')->store('assets');
-        $path=storage_path('app').'/'.$path1;
-
-
-        try {
-
-                Excel::import(new CardSRequestImports, $path);
-
-                return redirect()->route('cardrequest.sdistrubution')->with( 'success','Card Details Added');
-
-        } catch (\Throwable $th) {
-            Alert::alert('Error', 'There is a problem with the file', 'error');
-            return redirect()->back();
-        }
-    }
 
     public function exportsubs(Request $request)
     {
@@ -832,7 +930,7 @@ class CardRequestController extends Controller
         $doneby->save();
 
 
-            return (new SubscriptionExports($startdate, $enddate))->download($title . '.csv');
+        return (new SubscriptionExports($startdate, $enddate))->download($title . '.csv');
     }
 
     public function exportrenewals(Request $request)
@@ -850,10 +948,362 @@ class CardRequestController extends Controller
         $doneby->save();
 
 
-            return (new RenewalsExport($startdate, $enddate))->download($title . '.csv');
+        return (new RenewalsExport($startdate, $enddate))->download($title . '.csv');
     }
 
-    // Cards Distrubution Section 
+    // Cards Distribution Section
+    // upload renewal card numbers to system
+    public function distribute(Request $request)
+    {
+
+        $request->validate([
+            'file' => 'required|max:2048',
+        ]);
+
+        $title = "Subscription Distribution " . now()->format('d-m-Y');
+        // Save details on the user who dowloaded
+        $doneby = new Upload();
+        $doneby->user = auth()->user()->name;
+        $doneby->title = $title;
+        $doneby->employee_id = auth()->user()->employee_id;
+        $doneby->save();
+        $path1 = $request->file('file')->store('assets');
+        $path = storage_path('app') . '/' . $path1;
 
 
+        try {
+            Excel::import(new CardRequestImports, $path);
+            $transmissions = CardRequest::where('notified', 0)->get();
+
+            foreach ($transmissions as $transmission) {
+                Mail::to($transmission->email)->send(new Cardmail($transmission));
+                $transmission->notified = 1;
+                $transmission->save();
+            }
+            return redirect()->route('cardrequest.sdistribution')->with('success', 'Card Details Added');
+        } catch (\Throwable $th) {
+            Alert::alert('Error', 'There is a problem with the file', 'error');
+            return redirect()->back();
+        }
+    }
+
+    // upload subscription card numbers to system
+    public function rdistribute(Request $request)
+    {
+
+        $request->validate([
+            'file' => 'required|max:2048',
+        ]);
+        $title = "Renewals Distribution " . now()->format('d-m-Y');
+        // Save details on the user who dowloaded
+        $doneby = new Upload();
+        $doneby->user = auth()->user()->name;
+        $doneby->title = $title;
+        $doneby->employee_id = auth()->user()->employee_id;
+        $doneby->save();
+        $path1 = $request->file('file')->store('assets');
+        $path = storage_path('app') . '/' . $path1;
+        try {
+            Excel::import(new CardSRequestImports, $path);
+            $transmissions = CardRequest::where('notified', 0)->get();
+
+            foreach ($transmissions as $transmission) {
+                Mail::to($transmission->email)->send(new Cardmail($transmission));
+                $transmission->notified = 1;
+                $transmission->save();
+            }
+            return redirect()->route('cardrequest.rdistribution')->with('success', 'Card Details Added');
+        } catch (\Throwable $th) {
+            Alert::alert('Error', 'There is a problem with the file', 'error');
+            return redirect()->back();
+        }
+    }
+    //  Distribution Pending
+
+    public function collected($id)
+    {
+        $req = CardRequest::findorFail($id);
+        $req->collected = 1;
+        $req->updated_at = now();
+        $req->save();
+        $css = User::where('department', 'cards')->get();
+        foreach ($css as $cs) {
+            $cs->notify(new CardCollected($req));
+        }
+        return response()->json(200);
+    }
+
+    public function distributionsindex()
+    {
+        return view('distribution.subscription');
+    }
+
+    public function distributionsindex1()
+    {
+        if (auth()->user()->department == 'cards') {
+            $data = CardRequest::where('collected', 0)->where('in_production', 1)->where('distrubuted', 1)->where('request_type', 'new_card')->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->addColumn('action', function ($row) {
+
+                    $actionBtn =
+
+                        '<td>
+                <a class="dropdown-item btn btn-danger-outline btn-delete  text-white" data-remote="' . route('cardrequest.destroy', $row->id) . '">
+                               Delete </a>
+                </td>
+                ';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        } elseif (auth()->user()->department == 'csa' || auth()->user()->department == 'branchadmin') {
+            $data = CardRequest::where('collected', 0)->where('in_production', 1)->where('distrubuted', 1)->where('branch_id', auth()->user()->branch_id)->where('request_type', 'new_card')->get();
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->addColumn('action', function ($row) {
+
+                    $actionBtn =
+                        '
+                        <td><a class="validates btn btn-outline-primary btn-sm"
+                        data-remote="/cardrequest/collect/' . $row->id . '">Approve<i class="nc-icon nc-check-2"
+                            aria-hidden="true" style="color: black"></i></a></td>
+                        ';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->editColumn('id', 'ID: {{$id}}')
+                ->make(true);
+        } elseif (auth()->user()->department == 'dso') {
+            $data = CardRequest::where('collected', 0)->where('in_production', 1)->where('distrubuted', 1)->where('request_type', 'new_card')->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->addColumn('age', function ($item) {
+                    return $item->updated_at > now()->subMonth(3) ? 10 : 100;
+                })
+                ->make(true);
+        }
+    }
+
+    public function distributionrindex()
+    {
+        return view('distribution.renewal');
+    }
+
+    public function distributionrindex1()
+    {
+        if (auth()->user()->department == 'cards') {
+            $data = CardRequest::where('collected', 0)->where('in_production', 1)->where('distrubuted', 1)->where('request_type', 'renew_card')->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->editColumn('cards', function ($data) {
+                    return $data->cardtype->name;
+                })
+                ->addColumn('action', function ($row) {
+
+                    $actionBtn =
+
+                        '<td>
+                <a class="dropdown-item btn btn-danger-outline btn-delete  text-white" data-remote="' . route('cardrequest.destroy', $row->id) . '">
+                               Delete </a>
+                </td>
+                ';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        } elseif (auth()->user()->department == 'csa' || auth()->user()->department == 'branchadmin') {
+            $data = CardRequest::where('collected', 0)->where('in_production', 1)->where('distrubuted', 1)->where('branch_id', auth()->user()->branch_id)->where('request_type', 'renew_card')->get();
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->editColumn('cards', function ($data) {
+                    return $data->cardtype->name;
+                })
+                ->addColumn('action', function ($row) {
+
+                    $actionBtn =
+                        '
+                        <td><a class="validates btn btn-outline-primary btn-sm"
+                        data-remote="/cardrequest/collect/' . $row->id . '">Collect<i class="nc-icon nc-check-2"
+                            aria-hidden="true" style="color: black"></i></a></td>
+                        ';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->editColumn('id', 'ID: {{$id}}')
+                ->make(true);
+        } elseif (auth()->user()->department == 'dso') {
+            $data = CardRequest::where('collected', 0)->where('in_production', 1)->where('distrubuted', 1)->where('request_type', 'renew_card')->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->editColumn('cards', function ($data) {
+                    return $data->cardtype->name;
+                })
+                ->addColumn('age', function ($item) {
+                    return $item->updated_at > now()->subMonth(3) ? 10 : 100;
+                })
+                ->make(true);
+        }
+    }
+    // Distribution Collected
+    public function distributionscollected()
+    {
+        return view('distribution.csubscription');
+    }
+
+    public function distributionscollected1()
+    {
+        if (auth()->user()->department == 'cards') {
+            $data = CardRequest::where('collected', 1)->where('in_production', 1)->where('distrubuted', 1)->where('request_type', 'new_card')->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->editColumn('cards', function ($data) {
+                    return $data->cardtype->name;
+                })
+                ->addColumn('action', function ($row) {
+
+                    $actionBtn =
+
+                        '<td>
+                        <td><a class="validates btn btn-outline-success btn-sm"
+                        >Collected<i class="nc-icon nc-check-2"
+                             aria-hidden="true" "></i></a></td>
+                </td>
+                ';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        } elseif (auth()->user()->department == 'csa' || auth()->user()->department == 'branchadmin') {
+            $data = CardRequest::where('collected', 1)->where('in_production', 1)->where('distrubuted', 1)->where('branch_id', auth()->user()->branch_id)->where('request_type', 'new_card')->get();
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->editColumn('cards', function ($data) {
+                    return $data->cardtype->name;
+                })
+                ->addColumn('action', function ($row) {
+
+                    $actionBtn =
+                        '
+                        <td><a class="validates btn btn-outline-success btn-sm"
+                       >Collected<i class="nc-icon nc-check-2"
+                            aria-hidden="true" "></i></a></td>
+                        ';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->editColumn('id', 'ID: {{$id}}')
+                ->make(true);
+        } elseif (auth()->user()->department == 'dso') {
+            $data = CardRequest::where('collected', 1)->where('in_production', 1)->where('distrubuted', 1)->where('request_type', 'new_card')->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->editColumn('cards', function ($data) {
+                    return $data->cardtype->name;
+                })
+                ->addColumn('age', function ($item) {
+                    return $item->updated_at > now()->subMonth(3) ? 10 : 100;
+                })
+                ->make(true);
+        }
+    }
+
+    public function distributionrcollected()
+    {
+        return view('distribution.crenewal');
+    }
+
+    public function distributionrcollected1()
+    {
+        if (auth()->user()->department == 'cards') {
+            $data = CardRequest::where('collected', 1)->where('in_production', 1)->where('distrubuted', 1)->where('request_type', 'renew_card')->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->addColumn('action', function ($row) {
+
+                    $actionBtn =
+
+                        '<td>
+                        <td><a class="validates btn btn-outline-success btn-sm"
+                        >Collected<i class="nc-icon nc-check-2"
+                             aria-hidden="true" "></i></a></td>
+                </td>
+                ';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        } elseif (auth()->user()->department == 'csa' || auth()->user()->department == 'branchadmin') {
+            $data = CardRequest::where('collected', 1)->where('in_production', 1)->where('distrubuted', 1)->where('branch_id', auth()->user()->branch_id)->where('request_type', 'renew_card')->get();
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->editColumn('cards', function ($data) {
+                    return $data->cardtype->name;
+                })
+                ->addColumn('action', function ($row) {
+
+                    $actionBtn =
+                        '
+                        <td><a class="validates btn btn-outline-success btn-sm"
+                        >Collected<i class="nc-icon nc-check-2"
+                             aria-hidden="true" "></i></a></td>
+                        ';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->editColumn('id', 'ID: {{$id}}')
+                ->make(true);
+        } elseif (auth()->user()->department == 'dso') {
+            $data = CardRequest::where('collected', 1)->where('in_production', 1)->where('distrubuted', 1)->where('request_type', 'renew_card')->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->editColumn('cards', function ($data) {
+                    return $data->cardtype->name;
+                })
+                ->addColumn('age', function ($item) {
+                    return $item->updated_at > now()->subMonth(3) ? 10 : 100;
+                })
+                ->make(true);
+        }
+    }
 }

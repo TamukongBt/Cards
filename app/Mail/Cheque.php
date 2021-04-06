@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\ChequeTransmissions;
+use App\CheckRequest;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -19,7 +19,7 @@ class Cheque extends Mailable
      */
     public $transmissions;
 
-    public function __construct(ChequeTransmissions $transmissions)
+    public function __construct(CheckRequest $transmissions)
     {
          $this->transmissions = $transmissions;
     }

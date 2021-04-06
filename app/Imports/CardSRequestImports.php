@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class CardRequestImports implements ToCollection, WithHeadingRow
+class CardSRequestImports implements ToCollection, WithHeadingRow
 {
     /**
     * @param Collection $collection
@@ -16,10 +16,10 @@ class CardRequestImports implements ToCollection, WithHeadingRow
     {
        foreach ($collection as $row) {
 
-        CheckRequest::where('account_number', $row['account_number'])
+        CardRequest::where('account_number', $row['account_number'])
                     ->where('request_type','renew_card')
                     ->where('cards',$row['card_type'])
-                    ->update(['card_number' => $row['card_number'],]);
+                    ->update(['card_number' => $row['card_number'],'distrubuted'=> '1']);
        }
     }
 }

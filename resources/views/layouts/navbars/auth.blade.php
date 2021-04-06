@@ -130,16 +130,16 @@
             @hasanyrole('csa|branchadmin|cards')
             <li class="">
                 <a style="padding: 0%; margin:12px;" >
-                    <h6><p><small>DISTRUBUTION FILE</small></p></h6>
+                    <h6><p><small>DISTRIBUTION FILE</small></p></h6>
                 </a>
             </li>
 
-              {{-- dISTRUBUTION--}}
+              {{-- distribution--}}
             <li class="{{ $elementActive == 'cardpending' || $elementActive == 'cardreject' ? 'active' : '' }}">
 
                 <div class="" >
                     <ul class="nav">
-                        <li class="{{ $elementActive == 'cardpending' || $elementActive == 'cardreject' ? 'active' : '' }}">
+                        <li class="{{ $elementActive == 'cardsubscribe' || $elementActive == 'cardreject' ? 'active' : '' }}">
                             <a data-toggle="collapse" aria-expanded="true" href="#laravelExampleqs">
                                 <p>
                                     <i class="fa fa-credit-card" aria-hidden="true"></i>
@@ -149,16 +149,16 @@
                             </a>
                             <div class="collapse" id="laravelExampleqs">
                                 <ul class="nav">
-                                    <li class="{{ $elementActive == 'cardpending' ? 'active' : '' }}">
-                                        <a href="{{ route('cardrequest.index') }}">
+                                    <li class="{{ $elementActive == 'carddistribute' ? 'active' : '' }}">
+                                        <a href="{{ route('cardrequest.sdistribution') }}">
                                             <span class="sidebar-mini-icon">...</span>
-                                            <span class="sidebar-normal">{{ __('Pending Distrubution') }}</span>
+                                            <span class="sidebar-normal">{{ __('Pending Distribution') }}</span>
                                         </a>
                                     </li>
                                 </ul>
                                 <ul class="nav">
-                                    <li class="{{ $elementActive == 'cardreject' ? 'active' : '' }}">
-                                        <a href="{{ route('request.rejected') }}">
+                                    <li class="{{ $elementActive == 'cardcollect' ? 'active' : '' }}">
+                                        <a href="{{ route('cardrequest.rcollected') }}">
                                             <i class="nc-icon nc-simple-remove sidebar-mini-icon" aria-hidden="true"></i>
                                             <span class="sidebar-normal">{{ __('Distrubuted Cards') }}</span>
                                         </a>
@@ -169,7 +169,7 @@
 
                     </ul>
                     <ul class="nav">
-                        <li class="{{ $elementActive == 'cardpending' || $elementActive == 'cardreject' ? 'active' : '' }}">
+                        <li class="{{ $elementActive == 'cardrenew' || $elementActive == 'cardreject' ? 'active' : '' }}">
                             <a data-toggle="collapse" aria-expanded="true" href="#laravelExampless">
                                 <p>
                                     <i class="fa fa-credit-card" aria-hidden="true"></i>
@@ -180,15 +180,15 @@
                             <div class="collapse" id="laravelExampless">
                                 <ul class="nav">
                                     <li class="{{ $elementActive == 'cardpending' ? 'active' : '' }}">
-                                        <a href="{{ route('cardrequest.index') }}">
+                                        <a href="{{ route('cardrequest.rdistribution') }}">
                                             <span class="sidebar-mini-icon">...</span>
-                                            <span class="sidebar-normal">{{ __('Pending Distrubution') }}</span>
+                                            <span class="sidebar-normal">{{ __('Pending Distribution') }}</span>
                                         </a>
                                     </li>
                                 </ul>
                                 <ul class="nav">
                                     <li class="{{ $elementActive == 'cardreject' ? 'active' : '' }}">
-                                        <a href="{{ route('request.rejected') }}">
+                                        <a href="{{ route('cardrequest.rcollected') }}">
                                             <i class="nc-icon nc-simple-remove sidebar-mini-icon" aria-hidden="true"></i>
                                             <span class="sidebar-normal">{{ __('Distrubuted Cards') }}</span>
                                         </a>
@@ -202,22 +202,22 @@
                             <a data-toggle="collapse" aria-expanded="true" href="#laravelExample">
                                 <p>
                                     <i class="fa fa-credit-card" aria-hidden="true"></i>
-                                    {{ __('Check Production') }}
+                                    {{ __('Check Distribution') }}
                                     <b class="caret"></b>
                                 </p>
                             </a>
                             <div class="collapse" id="laravelExample">
                                 <ul class="nav">
                                     <li class="{{ $elementActive == 'cardpending' ? 'active' : '' }}">
-                                        <a href="{{ route('cardrequest.index') }}">
+                                        <a href="{{ route('checkrequest.distribution') }}">
                                             <span class="sidebar-mini-icon">...</span>
-                                            <span class="sidebar-normal">{{ __('Pending Distrubution') }}</span>
+                                            <span class="sidebar-normal">{{ __('Pending Distribution') }}</span>
                                         </a>
                                     </li>
                                 </ul>
                                 <ul class="nav">
                                     <li class="{{ $elementActive == 'cardreject' ? 'active' : '' }}">
-                                        <a href="{{ route('request.rejected') }}">
+                                        <a href="{{ route('checkrequest.collected') }}">
                                             <i class="nc-icon nc-simple-remove sidebar-mini-icon" aria-hidden="true"></i>
                                             <span class="sidebar-normal">{{ __('Distrubuted Checks') }}</span>
                                         </a>
