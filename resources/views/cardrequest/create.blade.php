@@ -52,9 +52,9 @@ New Card Request
                                 <div class="col-sm">
                                     <div class="form-group">
                                         <label class="col-sm">{{ __('Branch Code') }}</label>
-                                        <input type="text" name="branchcode" id="branchcode" class="form-control"   id="branchcode" value="0{{auth()->user()->branch_id}}0" required>
+                                        <input type="text" name="branchcode" id="branchcode" class="form-control"   id="branchcode"  required>
                                     </div>
-                                    @if ($errors->has('bbranchcode'))
+                                    @if ($errors->has('branchcode'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
                                             <strong>{{ $errors->first('branchcode') }}</strong>
                                         </span>
@@ -76,6 +76,9 @@ New Card Request
                                         <label class="col-sm">{{ __('RIB') }}</label>
                                         <input type="text" name="RIB" class="form-control"  id="RIB" required>
                                     </div>
+                                    <span class="invalid-feedback"  role="alert" id="show">
+                                        <strong>Check Account Data</strong>
+                                    </span>
                                     @if ($errors->has('account_number'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
                                             <strong>{{ $errors->first('RIB') }}</strong>
@@ -162,13 +165,12 @@ New Card Request
                                     @if ($errors->has('email'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
                                             <strong>{{ $errors->first('email') }}</strong>
-                                        </span>
                                     @endif
                                 </div>
 
                                 <div class="col-md">
                                     <div class="form-group">
-                                        <input type="tel" name="tel" class="form-control" placeholder="Telephone Number"  required>
+                                        <input type="tel" name="tel" class="form-control" placeholder="Telephone Number"  maxlength="9"  required>
                                     </div>
                                     @if ($errors->has('requested_by'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
@@ -192,9 +194,14 @@ New Card Request
             </div>
         </div>
     </div>
+
     @push('scripts')
 
     <script type="text/javascript">
+     $(document).ready(function () {
+        $('#show').hide();
+    });
+
 
 
 
@@ -204,13 +211,20 @@ New Card Request
           });
 
 
-          $('#acc_num').on('change',function(){
+          $('#RIB').on('change',function(){
         var bankcode = $('#bankcode').val();
         var branchcode = $('#branchcode').val();
         var acc_num = $('#acc_num').val();
         var rib= 97 - (((89*bankcode) + (15*branchcode) + (3*acc_num) )%97)
-        $('#RIB').val(rib);
+
+            if ($('#RIB').val()== rib) {
+                $('#show').hide();
+            } else {
+                $('#show').show();
+            }
           });
+
+          
 
 
 

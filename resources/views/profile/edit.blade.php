@@ -4,6 +4,7 @@
 ])
 @php
 $role;
+
 if(auth()->user()->department=='cards'){
     $role = "Cards and Checks Office";
 }
@@ -17,6 +18,10 @@ else if(auth()->user()->department=='branchadmin'){
     $role = "Branch / Sales Manager";
 }
 @endphp
+
+@section('title')
+Edit Profile
+@endsection
 
 @section('content')
     <div class="content">
@@ -49,7 +54,7 @@ else if(auth()->user()->department=='branchadmin'){
                         </div>
                         <p class="description text-center">
                             {{ __('Union Bank Of Cameroon ') }}
-                            <br> {{ $role }}e
+                            <br> {{ $role }}
                             <br> {{ __( auth()->user()->branch->name) }}
                         </p>
                     </div>
@@ -85,12 +90,27 @@ else if(auth()->user()->department=='branchadmin'){
                                         {{$colleague->name}}
                                         <br />
                                         <span class="text-muted">
-                                            <small>{{ $colleague->department }}</small>
+
+                                            <small><?php
+                                                $department = '';
+                                                if ($colleague->department=='branchadmin') {
+                                                    echo 'Branch/Sales Manager';
+                                                } else if($colleague->department=='cards') {
+                                                    echo  'Cards and Checks Office';
+                                                } else if($colleague->department=='csa') {
+                                                    echo 'Customer Service Assistant';
+                                                } else if($colleague->department=='dso') {
+                                                    echo 'Digital Sales Officer';
+                                                } else if($colleague->department=='css') {
+                                                    echo 'Customer Service Supervisor';}
+
+
+                                            ?></small>
                                         </span>
                                     </div>
                                     <div class="col-md-3 col-3 text-right">
-                                        <button class="btn btn-sm btn-outline-success btn-round btn-icon"><i
-                                                class="fa fa-envelope"></i></button>
+                                       <a href="mailto:{{ $colleague->email }}"> <button class="btn btn-sm btn-outline-success btn-round btn-icon"><i
+                                                class="fa fa-envelope"></i></button></a>
                                     </div>
                                 </div>
                             </li>

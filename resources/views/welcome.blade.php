@@ -3,6 +3,11 @@
     'elementActive' => ''
 ])
 
+
+@section('title')
+Welcome
+@endsection
+
 @section('content')
     <div class="content col-md-12 ml-auto mr-auto">
         <div class="header py-5 pb-7 pt-lg-9">

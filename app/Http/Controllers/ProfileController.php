@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use DataTables;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class ProfileController extends Controller
 {
@@ -62,12 +63,24 @@ class ProfileController extends Controller
 
                                ]);
 
-        $user =User::where('department','cards')->get();
+        if (auth()->user()->department == 'branchadmin') {
+            $user =User::where('department','cards')->get();
 
         foreach($user as $card){
             $card->notify(new Locationchange());
         }
-        return back()->withStatus(__('Your request has been made to the Cards And Checks Department'));
+        return back()->withStatus(__('Your request has been made to the Cards And Check Office'));
+        } else {
+            $user =User::where('department','branchadmin')->where('branch_id',$request->newbranch)->get();
+
+            foreach($user as $card){
+                $card->notify(new Locationchange());
+            }
+            return back()->withStatus(__('Your request has been made to the Branch Manager'));
+        }
+
+
+
     }
 
      // this function validates when the request has been confirmed by checks and checks
@@ -98,12 +111,22 @@ class ProfileController extends Controller
 
     public function change()
     {
-        return view('location.index');
+
+        if (auth()->user()->department == 'branchadmin'||auth()->user()->department == 'cards') {
+        return view('location.index');}
+        else{
+            Alert::alert('Warning', 'You Do Not Have Access To This Page', 'error');
+            return redirect()->back();
+        }
+
+
     }
 
     public function change1()
     {
-            $data = User::where('is_changed', '1')->get();
+
+        if (auth()->user()->department == 'branchadmin') {
+            $data = User::where('is_changed', '1')->where('newbranch',auth()->user()->branch->branch_code)->get();
 
             return DataTables::of($data)
             ->addIndexColumn()
@@ -134,6 +157,45 @@ class ProfileController extends Controller
             ->editColumn('id', 'ID: {{$id}}')
             ->make(true);
                 ;
+
+        } else  if (auth()->user()->department == 'cards') {
+            $data = User::where('is_changed', '1')->where('department','branchadmin')->get();
+
+            return DataTables::of($data)
+            ->addIndexColumn()
+
+            ->editColumn('branch_id', function ($data) {
+
+                return $data->branch->name;
+            })
+            ->editColumn('oldbranch', function ($data) {
+               $branch = Branch::where('branch_code',$data->oldbranch)->first();
+            return $branch->name;
+            })
+            ->editColumn('newbranch', function ($data) {
+                $branch = Branch::where('branch_code',$data->newbranch)->first();
+                 return $branch->name;
+             })
+
+             ->addColumn('action', function ($row) {
+
+                $actionBtn =
+                    '
+            <td><a class="validates btn btn-outline-primary btn-sm"
+                 data-remote="/location/confirm/' . $row->id . '"><i class="nc-icon nc-check-2"
+                     aria-hidden="true" style="color: black"></i>Approve</a></td>  ';
+                return $actionBtn;
+            })
+            ->rawColumns(['action'])
+            ->editColumn('id', 'ID: {{$id}}')
+            ->make(true);
+                ;
+
+        } else {
+            Alert::alert('Warning', 'You Do Not Have Access To This Page', 'error');
+            return redirect()->back();
+        }
+
 
 
     }

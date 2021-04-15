@@ -17,7 +17,7 @@
                     <h4 class="card-title"> @role('branchadmin') Unapproved @endrole Check Reqeusts </h4>
                     @endhasanyrole
                     @role('dso') <h4 class="card-title"> Check Request </h4> @endrole
-                    @hasanyrole('cards|branchadmin|csa')
+                    @hasanyrole('csa')
                     <div class="text-right" style='float:right;'>
                         <a href="checkrequest/create" class="btn  btn-primary" style="background-color: #15224c">New Request</a>
                         <!-- Button trigger modal -->

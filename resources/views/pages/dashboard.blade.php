@@ -4,7 +4,7 @@
 ])
 
 @section('title')
-Dashbo
+Dashboard
 @endsection
 
 @section('content')
@@ -198,7 +198,7 @@ Dashbo
                                 </div>
                                 <div class="col-7 col-md-8">
                                     <div class="numbers">
-                                        <p class="card-category">Pending Request <span class="text-mute badge"> Made in
+                                        <p class="card-category">Pending Card Request <span class="text-mute badge"> Made in
                                                 {{ auth()->user()->branch->name }}</span></p>
                                         <p class="card-title" id="new">
                                         <p>
@@ -209,7 +209,7 @@ Dashbo
                         <div class="card-footer ">
                             <hr>
                             <div class="stats">
-                                <i class="fa fa-refresh"></i> <a class="text-muted" href="/request/create">Add New</a>
+                                <i class="fa fa-refresh"></i> <a class="text-muted" href="/cardrequest">View Now</a>
                             </div>
                         </div>
                     </div>
@@ -225,8 +225,8 @@ Dashbo
                                 </div>
                                 <div class="col-7 col-md-8">
                                     <div class="numbers">
-                                        <p class="card-category">Approved Request<span class="text-mute badge"> for
-                                                Accounts</span>
+                                        <p class="card-category">Pending Check Request<span class="text-mute badge"> Made in
+                                            {{ auth()->user()->branch->name }}</span>
                                         </p>
                                         <p class="card-title" id="pins">
                                         <p>
@@ -237,7 +237,7 @@ Dashbo
                         <div class="card-footer ">
                             <hr>
                             <div class="stats">
-                                <i class="fa fa-calendar-o"></i><a class="text-muted" href="/validated">View All Now</a>
+                                <i class="fa fa-calendar-o"></i><a class="text-muted" href="/checkrequest">View All Now</a>
                             </div>
                         </div>
                     </div>
@@ -253,7 +253,7 @@ Dashbo
                                 </div>
                                 <div class="col-7 col-md-8">
                                     <div class="numbers">
-                                        <p class="card-category">Rejected Requests<span class="text-mute badge">for
+                                        <p class="card-category">All Rejected Requests<span class="text-mute badge">for
                                                 {{ auth()->user()->branch->name }}</span></p>
                                         <p class="card-title" id="slots">
                                         <p>
@@ -264,7 +264,7 @@ Dashbo
                         <div class="card-footer ">
                             <hr>
                             <div class="stats">
-                                <i class="fa fa-clock-o"></i> <a class="text-muted" href="/rejected">View Now</a>
+                                <i class="fa fa-clock-o"></i> <span class="text-muted">This Month</span>
                             </div>
                         </div>
                     </div>
@@ -671,7 +671,7 @@ $(document).ready(function() {
 
     });
     $.ajax({
-        url: '/chda',
+        url: '/cha',
         type: "GET",
         dataType: 'json',
         success: function(data) {
@@ -691,7 +691,7 @@ $(document).ready(function() {
         },
     });
     $.ajax({
-        url: '/chaa',
+        url: '/chda',
         type: "GET",
         dataType: 'json',
         success: function(data) {

@@ -3,6 +3,10 @@
 'elementActive' => 'tables'
 ])
 
+@section('title')
+Cards
+@endsection
+
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="content">

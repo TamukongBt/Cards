@@ -3,6 +3,11 @@
     'backgroundImagePath' => 'img/bg/fabio-mangione.jpg'
 ])
 
+
+@section('title')
+Login
+@endsection
+
 @section('content')
     <div class="content">
         <div class="container">

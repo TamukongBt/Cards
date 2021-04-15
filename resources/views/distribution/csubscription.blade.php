@@ -176,6 +176,7 @@ $('#table1').on('click', '.validates[data-remote]', function (e) {
         }
     });
     var url = $(this).data('remote');
+    console.log(url);
 
         $.ajax({
             url: url,

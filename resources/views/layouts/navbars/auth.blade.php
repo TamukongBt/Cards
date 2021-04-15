@@ -158,7 +158,7 @@
                                 </ul>
                                 <ul class="nav">
                                     <li class="{{ $elementActive == 'cardcollect' ? 'active' : '' }}">
-                                        <a href="{{ route('cardrequest.rcollected') }}">
+                                        <a href="{{ route('cardrequest.scollected') }}">
                                             <i class="nc-icon nc-simple-remove sidebar-mini-icon" aria-hidden="true"></i>
                                             <span class="sidebar-normal">{{ __('Distrubuted Cards') }}</span>
                                         </a>

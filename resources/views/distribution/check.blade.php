@@ -15,11 +15,13 @@ Checkbook Distribution | Pending Collection
             <div class="card">
                 <div class="card-header">
                     <h4 class="card-title">Checkbook Distribution <br> <small>Pending Collection</small> </h4>
+                    @hasanyrole('cards')
                     <div class="text-right" style='float:right;'>
                         <button type="button" class="btn btn-warning " data-toggle="modal" data-target="#modelId" style="background-color: #15224c">
                             Notify Clients
                         </button>
                     </div>
+                    @endhasanyrole
                     <div class="card-body">
                     </div>
                     <div class="table-responsive">
@@ -32,7 +34,7 @@ Checkbook Distribution | Pending Collection
                                     Account Number
                                 </th>
                                 <th>
-                                    Type Of Card
+                                    Type Of Check
                                 </th>
                                 <th>
                                     Requested By
@@ -117,7 +119,7 @@ Checkbook Distribution | Pending Collection
             "processing": true,
             "serverSide": false,
             "searchable": true,
-            "ajax": "/production_ajax",
+            "ajax": "/distribution_ajax",
 
 
             "columns": [
@@ -127,7 +129,7 @@ Checkbook Distribution | Pending Collection
                 { "data": "requested_by", name: 'Requested By' , orderable: true, searchable: true},
                 { "data": "tel", name: 'Telephone' , orderable: true, searchable: true},
                 {
-                    data: 'action', name: 'action', orderable: true, searchable: true
+                    data: 'action', name: 'Status', orderable: true, searchable: true
                 },
             ]
 

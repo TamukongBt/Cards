@@ -39,7 +39,7 @@ Route::get('/subscriptions_distribution', 'CardRequestController@distributionsin
 Route::get('/renewal_distribution', 'CardRequestController@distributionrindex')->name('cardrequest.rdistribution');
 Route::get('/check_collected', 'CheckRequestController@distributioncollected')->name('checkrequest.collected');
 Route::get('/subscriptions_collected', 'CardRequestController@distributionscollected')->name('cardrequest.scollected');
-Route::get('/renewal_collected', 'CardRequestController@distributionscollected')->name('cardrequest.rcollected');
+Route::get('/renewal_collected', 'CardRequestController@distributionrcollected')->name('cardrequest.rcollected');
 Route::get('/renewals', 'CardRequestController@rproduction')->name('cardrequest.rproduction');
 Route::get('/cardrejected', 'CardRequestController@rejected')->name('request.rejected');
 Route::get('/checkvalidated', 'CheckRequestController@validated')->name('crequest.approved');
@@ -86,6 +86,7 @@ Route::get('/change', 'ProfileController@change');
 
 // validate actions
     // Request
+    Route::get('cardrequest/activated/{id}', 'CardRequestController@activchaated');
     Route::get('cardrequest/confirm/{id}', 'CardRequestController@fulfilled');
     Route::get('checkrequest/confirm/{id}', 'CheckRequestController@fulfilled');
     Route::get('checkrequest/confirm/{id}', 'CheckRequestController@fulfilled');
@@ -96,8 +97,8 @@ Route::get('/change', 'ProfileController@change');
     Route::get('check/track/{id}', 'CheckRequestController@track');
     Route::get('checkrequest/approve/{id}', 'CheckRequestController@approved');
     Route::post('checkrequest/reject/{id}', 'CheckRequestController@denied');
-    Route::post('/cardrequest/collected/{id}', 'CardRequestController@collect');
-    Route::post('/checkrequest/collected/{id}', 'CheckRequestController@collected');
+    Route::get('/cardrequest/collected/{id}', 'CardRequestController@collected');
+    Route::get('/checkrequest/collected/{id}', 'CheckRequestController@collected');
     Route::post('/cheque/collected/{id}', 'ChequeTransmissionsController@collect');
 
     // Upload Card request

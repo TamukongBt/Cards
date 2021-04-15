@@ -99,8 +99,13 @@ $('#t').on('click', '.validates[data-remote]', function (e) {
             dataType: 'json',
             data:{'_method':'GET'},
         }).always(function (data) {
-            // $('#table1').DataTable().draw(false);
-            $('#t').DataTable().ajax.reload();
+            Swal.fire(
+                        'Approved!',
+                        'The Branch has been changed',
+                        'success'
+                    ),
+                    $('#t').DataTable().ajax.reload();
+
         });
 
 });

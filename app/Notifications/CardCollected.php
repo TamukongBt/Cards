@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\CardRequest;
 use App\Transmissions;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -21,7 +22,7 @@ class CardCollected extends Notification
      *
      * @return void
      */
-    public function __construct(Transmissions $transmissions)
+    public function __construct(CardRequest $transmissions)
     {
 
         $this->transmissions = $transmissions;
@@ -58,7 +59,7 @@ class CardCollected extends Notification
             'transmissions' => $this->transmissions
         ];
     }
-    
+
     public function toArray($notifiable)
     {
         return [

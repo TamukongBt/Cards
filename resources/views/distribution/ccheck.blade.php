@@ -30,7 +30,7 @@ Checkbook Production | Collected Checks
                                     Account Number
                                 </th>
                                 <th>
-                                    Type Of Card
+                                    Type Of Check
                                 </th>
                                 <th>
                                     Requested By

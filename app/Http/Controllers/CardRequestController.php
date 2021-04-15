@@ -7,7 +7,7 @@ use App\CheckRequest;
 use Illuminate\Http\Request;
 use App\User;
 use App\Notifications\RejectRequest;
-use App\Notifications\NewRequestNotification;
+use App\Notifications\RequestNotification;
 use App\Downloads;
 use App\Exports\RequestExports;
 use App\Exports\RejectedExports;
@@ -17,6 +17,7 @@ use App\Imports\CardRequestImports;
 use App\Imports\CardSRequestImports;
 use App\Mail\Cardmail;
 use App\Notifications\CardCollected;
+use App\Notifications\NewRequestCNotification;
 use App\Upload;
 use DataTables;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -337,20 +338,24 @@ class CardRequestController extends Controller
             'tel' => 'required'
 
         ]);
+        CardRequest::create($data);
+        $users = User::where('branch_id', $request->branch_id)->where('department', 'branchadmin')->get();
+        $request = CardRequest::where('accountname', $request->accountname)->where('account_number', $request->account_number)->where('branch_id', $request->branch_id)->where('cards', $request->cards)->get()->first();
+
+        foreach ($users as $user) {
+            $user->notify(new RequestNotification($request));
+        }
+        return redirect()->route('cardrequest.index')->with('success', 'New Entry created succesfully');
         try {
-            CardRequest::create($data);
-            $users = User::where('branch_id', $request->branch_id)->where('department', 'css')->get();
-            $request = CardRequest::where('accountname', $request->accountname)->where('account_number', $request->account_number)->where('branch_id', $request->branch_id)->where('cards', $request->cards)->get()->first();
-
-            foreach ($users as $user) {
-                $user->notify(new NewRequestNotification($request));
-            }
-            return redirect()->route('cardrequest.index')->with('success', 'New Entry created succesfully');
-        } catch (\Throwable $th) {
-
+        } catch (\Illuminate\Database\QueryException $th) {
+            $errorCode = $th->errorInfo[1] ;
+            if($errorCode == '1062'){
+                Alert::alert('Error', 'This Entry Already Exist In the system ', 'error');
+            return redirect()->route('cardrequest.create');
+            }else{
             Alert::alert('Error', 'There is a problem with this entry ', 'error');
             return redirect()->route('cardrequest.create');
-        }
+        }}
     }
 
     /**
@@ -475,11 +480,15 @@ class CardRequestController extends Controller
         } else  if ($req->approved == 1 && $req->confirmed == 0 && $req->rejected == 1) {
             $state = 'Rejected at Cards & Checks Office';
             return response()->json($state);
-        } else  if ($req->approved == 1 && $req->confirmed == 0 && $req->rejected == 1 && $req->distrubuted == 1) {
+        } else  if ($req->approved == 1 && $req->confirmed == 0 && $req->rejected == 0 && $req->distrubuted == 1) {
             $state = 'At Your ' . $req->branch->name . ' Branch';
             return response()->json($state);
-        } else  if ($req->approved == 1 && $req->confirmed == 0 && $req->rejected == 1 && $req->distrubuted == 1 && $req->collected == 1) {
-            $state = 'Given to  Customer at ' . $req->branch->name . ' Branch';
+        } else  if ($req->approved == 1 && $req->confirmed == 0 && $req->rejected == 0 && $req->distrubuted == 1 && $req->collected == 1) {
+            $state = 'Given to  Customer at ' . $req->branch->name . ' Branch Pending Activation' ;
+            return response()->json($state);
+
+        } else  if ($req->approved == 1 && $req->confirmed == 0 && $req->rejected == 0 && $req->distrubuted == 1 && $req->collected == 1 && $req->is_activated == 1) {
+            $state = 'Activated';
             return response()->json($state);
         } else {
             $state = 'This Account does not exist in our system';
@@ -491,9 +500,13 @@ class CardRequestController extends Controller
     public function activated($id)
     {
         $req = CardRequest::findorFail($id);
+        $users = User::where('department', 'cards')->get();
         $req->is_activated = 1;
         $req->updated_at = now();
         $req->save();
+        foreach ($users as $user) {
+            $user->notify(new CardCollected($req));
+        }
         return response()->json(200);
     }
 
@@ -518,20 +531,20 @@ class CardRequestController extends Controller
     // /week
     public function newc()
     {
-        $data = CardRequest::where('confirmed', 0)->where('rejected', 0)->where('branch_id', auth()->user()->branch_id)->count();
+        $data = CardRequest::where('approved', 0)->where('rejected', 0)->where('branch_id', auth()->user()->branch_id)->count();
         // return $data;
         return response($data, 200);
     }
     public function newch()
     {
-        $data = CheckRequest::where('confirmed', 0)->where('rejected', 0)->where('branch_id', auth()->user()->branch_id)->where('rejected', 0)->count();
+        $data = CheckRequest::where('approved', 0)->where('rejected', 0)->where('branch_id', auth()->user()->branch_id)->where('rejected', 0)->count();
         // return $data;
         return response($data, 200);
     }
     public function rc()
     {
-        $dat = CheckRequest::where('confirmed', 0)->where('rejected', 1)->where('branch_id', auth()->user()->branch_id)->where('rejected', 0)->count();
-        $data1 = CardRequest::where('confirmed', 0)->where('rejected', 1)->where('branch_id', auth()->user()->branch_id)->where('rejected', 0)->count();
+        $dat = CheckRequest::where('rejected', 1)->where('branch_id', auth()->user()->branch_id)->count();
+        $data1 = CardRequest::where('rejected', 1)->where('branch_id', auth()->user()->branch_id)->count();
         $data = $dat+$data1;
         return response($data, 200);
     }
@@ -548,20 +561,20 @@ class CardRequestController extends Controller
     // cards fetch
     public function newca()
     {
-        $data = CardRequest::where('confirmed', 0)->where('rejected', 0)->count();
+        $data = CardRequest::where('confirmed', 0)->where('rejected', 0)->where('approved', 0)->count();
         // return $data;
         return response($data, 200);
     }
     public function newcha()
     {
-        $data = CheckRequest::where('confirmed', 0)->where('rejected', 0)->where('rejected', 0)->count();
+        $data = CheckRequest::where('confirmed', 0)->where('rejected', 0)->where('approved', 0)->count();
         // return $data;
         return response($data, 200);
     }
     public function rca()
     {
-        $dat = CheckRequest::where('confirmed', 0)->where('rejected', 1)->where('rejected', 0)->count();
-        $data1 = CardRequest::where('confirmed', 0)->where('rejected', 1)->where('rejected', 0)->count();
+        $dat = CheckRequest::where('rejected', 1)->count();
+        $data1 = CardRequest::where('rejected', 1)->count();
         $data = $dat+$data1;
         return response($data, 200);
     }
@@ -1073,7 +1086,7 @@ class CardRequestController extends Controller
                     $actionBtn =
                         '
                         <td><a class="validates btn btn-outline-primary btn-sm"
-                        data-remote="/cardrequest/collect/' . $row->id . '">Approve<i class="nc-icon nc-check-2"
+                        data-remote="/cardrequest/collected/' . $row->id . '">Approve<i class="nc-icon nc-check-2"
                             aria-hidden="true" style="color: black"></i></a></td>
                         ';
                     return $actionBtn;
@@ -1139,17 +1152,18 @@ class CardRequestController extends Controller
                 ->addColumn('action', function ($row) {
 
                     $actionBtn =
-                        '
-                        <td><a class="validates btn btn-outline-primary btn-sm"
-                        data-remote="/cardrequest/collect/' . $row->id . '">Collect<i class="nc-icon nc-check-2"
-                            aria-hidden="true" style="color: black"></i></a></td>
-                        ';
-                    return $actionBtn;
+                    '
+                    <td><a class="validates btn btn-outline-primary btn-sm"
+                    data-remote="/cardrequest/collected/' . $row->id . '">Approve<i class="nc-icon nc-check-2"
+                        aria-hidden="true" style="color: black"></i></a></td>
+                    ';
+                return $actionBtn;
                 })
                 ->rawColumns(['action'])
                 ->editColumn('id', 'ID: {{$id}}')
                 ->make(true);
-        } elseif (auth()->user()->department == 'dso') {
+        }
+        elseif (auth()->user()->department == 'dso') {
             $data = CardRequest::where('collected', 0)->where('in_production', 1)->where('distrubuted', 1)->where('request_type', 'renew_card')->get();
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -1185,15 +1199,31 @@ class CardRequestController extends Controller
                 })
                 ->addColumn('action', function ($row) {
 
-                    $actionBtn =
 
-                        '<td>
-                        <td><a class="validates btn btn-outline-success btn-sm"
-                        >Collected<i class="nc-icon nc-check-2"
-                             aria-hidden="true" "></i></a></td>
-                </td>
-                ';
-                    return $actionBtn;
+
+                        if ($row->is_activated== '1') {
+                            $actionBtn =
+                            '<td>
+                            <td><a class=" btn btn-success btn-sm"
+                            >Activated<i class="nc-icon nc-check-2"
+                                 aria-hidden="true" "></i></a></td>
+                            </td>
+                            ';
+                            return $actionBtn;
+                        }
+                        else{
+                            $actionBtn =
+                            '  <td> <a class="validates btn btn-outline-primary btn-sm"
+                            data-remote="/cardrequest/activated/' . $row->id . '">Activate<i class="nc-icon nc-check-2"
+                                aria-hidden="true" style="color: black"></i></a></td>
+                            ';
+                            return $actionBtn;
+                        }
+
+
+
+
+
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -1210,13 +1240,30 @@ class CardRequestController extends Controller
                 })
                 ->addColumn('action', function ($row) {
 
-                    $actionBtn =
-                        '
-                        <td><a class="validates btn btn-outline-success btn-sm"
-                       >Collected<i class="nc-icon nc-check-2"
-                            aria-hidden="true" "></i></a></td>
-                        ';
-                    return $actionBtn;
+                    if($row->is_activated == '1'){
+                        $actionBtn =
+                            '<td>
+                            <td><a class=" btn btn-outline-success btn-sm"
+                            >Activated<i class="nc-icon nc-check-2"
+                                 aria-hidden="true" "></i></a></td>
+                            </td>
+                            ';
+                            return $actionBtn;
+                        }
+                        else{
+
+                            $actionBtn =
+                            '<td>
+                            <td><a class=" btn btn-mute btn-sm"
+                            >Unactivated.<i class="nc-icon nc-check-2"
+                                 aria-hidden="true" "></i></a></td>
+                            </td>
+                            ';
+                            return $actionBtn;
+
+                        };
+
+
                 })
                 ->rawColumns(['action'])
                 ->editColumn('id', 'ID: {{$id}}')
@@ -1254,15 +1301,45 @@ class CardRequestController extends Controller
                 })
                 ->addColumn('action', function ($row) {
 
-                    $actionBtn =
+                    if( $row->collected  == '1'){
 
-                        '<td>
-                        <td><a class="validates btn btn-outline-success btn-sm"
-                        >Collected<i class="nc-icon nc-check-2"
-                             aria-hidden="true" "></i></a></td>
-                </td>
-                ';
-                    return $actionBtn;
+                        if ($row->is_activated== '1') {
+                            $actionBtn =
+                            '<td>
+                            <td><a class=" btn btn-success btn-sm"
+                            >Activated<i class="nc-icon nc-check-2"
+                                 aria-hidden="true" "></i></a></td>
+                            </td>
+                            ';
+                            return $actionBtn;
+                        }
+                        else{
+                            $actionBtn =
+                            '  <td> <a class="validates btn btn-outline-primary btn-sm"
+                            data-remote="/cardrequest/activated/' . $row->id . '">Activate<i class="nc-icon nc-check-2"
+                                aria-hidden="true" style="color: black"></i></a></td>
+                            ';
+                            return $actionBtn;
+                        }
+
+                        }
+                        else{
+
+                            $actionBtn =
+                            '<td>
+                            <td><a class=" btn btn-mute btn-sm"
+                            >Pending<i class="nc-icon nc-check-2"
+                                 aria-hidden="true" "></i></a></td>
+                            </td>
+                            ';
+                            return $actionBtn;
+
+                        };
+
+
+
+
+
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -1278,14 +1355,29 @@ class CardRequestController extends Controller
                     return $data->cardtype->name;
                 })
                 ->addColumn('action', function ($row) {
+                    if($row->is_activated == '1'){
+                        $actionBtn =
+                            '<td>
+                            <td><a class=" btn btn-outline-success btn-sm"
+                            >Activated<i class="nc-icon nc-check-2"
+                                 aria-hidden="true" "></i></a></td>
+                            </td>
+                            ';
+                            return $actionBtn;
+                        }
+                        else{
 
-                    $actionBtn =
-                        '
-                        <td><a class="validates btn btn-outline-success btn-sm"
-                        >Collected<i class="nc-icon nc-check-2"
-                             aria-hidden="true" "></i></a></td>
-                        ';
-                    return $actionBtn;
+                            $actionBtn =
+                            '<td>
+                            <td><a class=" btn btn-mute btn-sm"
+                            >Unactivated.<i class="nc-icon nc-check-2"
+                                 aria-hidden="true" "></i></a></td>
+                            </td>
+                            ';
+                            return $actionBtn;
+
+                        };
+
                 })
                 ->rawColumns(['action'])
                 ->editColumn('id', 'ID: {{$id}}')

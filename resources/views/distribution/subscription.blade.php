@@ -15,12 +15,14 @@
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Card Subscriptions Distributions<br> <small>Pending Collection</small> </h4>
+                        @hasanyrole('cards')
                         <div class="text-right" style='float:right;'>
                             <button type="button" class="btn btn-warning " data-toggle="modal" data-target="#modelId"
                                 style="background-color: #15224c">
                                 Upload Card Number
                             </button>
                         </div>
+                        @endhasanyrole
                         <div class="card-body">
                         </div>
                         <div class="table-responsive">
@@ -100,7 +102,7 @@
                     "processing": true,
                     "serverSide": false,
                     "searchable": true,
-                    "ajax": "/sproduction_ajax",
+                    "ajax": "/sdistribution_ajax",
 
 
                     "columns": [{

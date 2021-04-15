@@ -15,6 +15,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title"> Cards Renewals Distrubution <br> <small>Pending Collection</small></h4>
+                        @hasanyrole('cards')
                         <div class="text-right" style='float:right;'>
                             <!-- Button trigger modal -->
                             <button type="button" class="btn btn-warning " data-toggle="modal" data-target="#modelId"
@@ -22,6 +23,7 @@
                                 Upload Card Number
                             </button>
                         </div>
+                        @endhasanyrole
                         <div class="card-body">
                         </div>
                         <div class="table-responsive">
@@ -67,7 +69,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title">Upload New Card Number</h5>
                 </div>
-                <form action="{{ route('cr.store') }}"  enctype="multipart/form-data" method="post">
+                <form action="{{ route('cr.store') }}" enctype="multipart/form-data" method="post">
                     @csrf
                     <div class="modal-body">
                         <div class="row">

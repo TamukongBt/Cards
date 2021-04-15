@@ -7,7 +7,7 @@ use App\CheckRequest;
 use Illuminate\Http\Request;
 use App\User;
 use App\Notifications\RejectRequest;
-use App\Notifications\NewRequestNotification;
+use App\Notifications\RequestNotification;
 use App\Downloads;
 use App\Exports\ChecksExport;
 use App\Exports\RequestExports;
@@ -16,6 +16,7 @@ use App\Exports\RenewalsExport;
 use App\Exports\SubscriptionExports;
 use App\Mail\Cheque;
 use App\Notifications\CardCollected;
+use App\Notifications\NewRequestCNotification;
 use DataTables;
 use RealRashid\SweetAlert\Facades\Alert;
 use Carbon\Carbon;
@@ -31,7 +32,7 @@ class CheckRequestController extends Controller
     public function index1()
     {
 
-        if (auth()->user()->department == 'css') {
+        if (auth()->user()->department == 'branchadmin') {
             $data = CheckRequest::where('approved', 0)->where('branch_id', auth()->user()->branch_id)->get();
 
             return DataTables::of($data)
@@ -56,13 +57,21 @@ class CheckRequestController extends Controller
 
                     $actionBtn =
 
-                        '<td><a class="validates btn btn-outline-primary btn-sm"
-                data-remote="checkrequest/approve/' . $row->id . '"><i class="nc-icon nc-check-2"
-                    aria-hidden="true" style="color: black"></i></a></td>
+                        '<td>
+                        <div class="dropdown dropleft ">
+                            <button class="btn btn-sm" type="button" id="triggerId" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
 
-                <button id="deletebutton" class="btn btn-sm btn-danger btn-delete" data-remote="' . route('checkrequest.destroy', $row->id) . '">
-                <i class="nc-icon nc-simple-remove" aria-hidden="true"
-                         style="color: black"></i></button>
+                                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                    </button>
+                            <div class="dropdown-menu aria-labelledby="triggerId" style="width: 20px; padding: 2px 10px;">
+                                <a class="dropdown-item  btn-delete" data-remote="/checkrequest/reject/' . $row->id . '">
+                                Rejects </a>
+                                <a class="validates dropdown-item "
+                                data-remote="checkrequest/approve/' . $row->id . '">Approves</a>
+                                <a class="track dropdown-item "  data-remote="check/track/' . $row->id . '">Track Account</a>
+                            </div>
+
 
                  </td>
              ';
@@ -97,11 +106,12 @@ class CheckRequestController extends Controller
                     $actionBtn =
                         '
                 <td><a class="validates btn btn-outline-primary btn-sm"
-                     data-remote="/checkrequest/confirm/' . $row->id . '"><i class="nc-icon nc-check-2"
-                     aria-hidden="true" style="color: black"></i>Confirm</a></td>
+                     data-remote="/checkrequest/confirm/' . $row->id . '">Approve<i class="nc-icon nc-check-2"
+                         aria-hidden="true" style="color: black"></i></a></td>
                 <a class="denies btn btn-outline-danger btn-sm"
-                    data-remote="/checkrequest/reject/' . $row->id . '" data-toggle="modal" data-target="#modelreject"><i class="nc-icon nc-simple-remove"
-                    aria-hidden="true" style="color: black"></i>Reject</a></td>  ';
+                    data-remote="/checkrequest/reject/' . $row->id . '" data-toggle="modal" data-target="#modelreject">Reject<i class="nc-icon nc-simple-remove"
+                        aria-hidden="true" style="color: black"></i></a></td>
+              ';
                     return $actionBtn;
                 })
                 ->rawColumns(['action'])
@@ -120,20 +130,35 @@ class CheckRequestController extends Controller
                 ->editColumn('checks', function ($data) {
                     return $data->cardtype->name;
                 })
+                ->editColumn('account_type', function ($data) {
+                    if ($data->account_type == 'moral') {
+                        return 'Moral Entity';
+                    } else {
+                        return 'Individual Account';
+                    }
+                })
 
                 ->addColumn('action', function ($row) {
 
                     $actionBtn =
 
-                        $actionBtn =
-                        '<td>
-                        <a href="' . route('checkrequest.edit', $row->id) . '" class="edit btn btn-info btn-sm "><i class="nc-icon nc-alert-circle-i"></i></a>
+                        '
+                        <td>
+                        <div class="dropdown dropleft ">
+                            <button class="btn btn-sm" type="button" id="triggerId" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
 
-
-            <a class="denies btn btn-outline-danger btn-sm"
-                data-remote="/checkrequest/reject/' . $row->id . '" data-toggle="modal" data-target="#modelreject"><i class="nc-icon nc-simple-remove"
-                    aria-hidden="true" style="color: black"></i></a></td>  ';
-                    return $actionBtn;;
+                                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                    </button>
+                            <div class="dropdown-menu aria-labelledby="triggerId" style="width: 20px; padding: 2px 10px;">
+                                <a class="dropdown-item " href="' . route('checkrequest.edit', $row->id) . '" >
+                                Edit</a>
+                                <a class="dropdown-item " href="' . route('checkrequest.destroy', $row->id) . '" >
+                                Delete</a>
+                                <a class="track dropdown-item "  data-remote="check/track/' . $row->id . '">Track Account</a>
+                            </div>
+                        </div>
+                ';
                     return $actionBtn;
                 })
                 ->rawColumns(['action'])
@@ -367,18 +392,22 @@ class CheckRequestController extends Controller
 
         ]);
         try {
-
             CheckRequest::create($data);
-            $users = User::where('branch_id', auth()->user()->branch_id)->where('department', 'css')->get();
+            $users = User::where('branch_id', auth()->user()->branch_id)->where('department', 'branchadmin')->get();
             $request = CheckRequest::where('accountname', $request->accountname)->where('account_number', $request->account_number)->where('branch_id', $request->branch_id)->where('checks', $request->checks)->get()->first();
             foreach ($users as $user) {
-                $user->notify(new NewRequestNotification($request));
+                $user->notify(new RequestNotification($request));
             }
             return redirect()->route('checkrequest.index')->with('success', 'New Entry created succesfully');
         } catch (\Throwable $th) {
-
-            Alert::alert('Error', 'There is a problem with this entry ', 'error');
-            return redirect()->route('checkrequest.create');
+            $errorCode = $th->errorInfo[1];
+            if ($errorCode == '1062') {
+                Alert::alert('Error', 'This Entry Already Exist In the system ', 'error');
+                return redirect()->route('checkrequest.create');
+            } else {
+                Alert::alert('Error', 'There is a problem with this entry ', 'error');
+                return redirect()->route('checkrequest.create');
+            }
         }
     }
 
@@ -441,7 +470,14 @@ class CheckRequestController extends Controller
             $req->save();
             CheckRequest::whereId($id)->update($data);
         } catch (\Throwable $th) {
-            return redirect('/create');
+            $errorCode = $th->errorInfo[1];
+            if ($errorCode == '1062') {
+                Alert::alert('Error', 'This Entry Already Exist In the system ', 'error');
+                return redirect()->back();
+            } else {
+                Alert::alert('Error', 'There is a problem with this entry ', 'error');
+                return redirect()->back();
+            }
         }
 
         return redirect('/checkrequest')->with('success', 'Request Updated!!');
@@ -466,6 +502,7 @@ class CheckRequestController extends Controller
     {
         $req = CheckRequest::findorFail($id);
         $req->confirmed = 1;
+        $req->in_production = 1;
         $req->updated_at = now();
         $req->save();
         return response()->json(200);
@@ -708,13 +745,16 @@ class CheckRequestController extends Controller
                 ->editColumn('created_at', function ($data) {
                     return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
                 })
+                ->editColumn('checks', function ($data) {
+                    return $data->cardtype->name;
+                })
                 ->addColumn('action', function ($row) {
 
                     $actionBtn =
 
                         '<td>
                  <a class="dropdown-item btn btn-danger-outline btn-delete  text-white" data-remote="' . route('checkrequest.destroy', $row->id) . '">
-                                Delete </a>
+                        Delete </a>
                  </td>
                  ';
                     return $actionBtn;
@@ -729,12 +769,15 @@ class CheckRequestController extends Controller
                 ->editColumn('created_at', function ($data) {
                     return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
                 })
+                ->editColumn('checks', function ($data) {
+                    return $data->cardtype->name;
+                })
                 ->addColumn('action', function ($row) {
 
                     $actionBtn =
                         '
                          <td><a class="validates btn btn-outline-primary btn-sm"
-                         data-remote="/checkrequest/collect/' . $row->id . '">Collect<i class="nc-icon nc-check-2"
+                         data-remote="/checkrequest/collected/' . $row->id . '">Collect<i class="nc-icon nc-check-2"
                              aria-hidden="true" style="color: black"></i></a></td>
                          ';
                     return $actionBtn;
@@ -748,6 +791,9 @@ class CheckRequestController extends Controller
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($data) {
                     return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->editColumn('checks', function ($data) {
+                    return $data->cardtype->name;
                 })
                 ->addColumn('age', function ($item) {
                     return $item->updated_at > now()->subMonth(3) ? 10 : 100;
@@ -805,6 +851,9 @@ class CheckRequestController extends Controller
                  ';
                     return $actionBtn;
                 })
+                ->editColumn('checks', function ($data) {
+                    return $data->cardtype->name;
+                })
                 ->rawColumns(['action'])
                 ->make(true);
         } elseif (auth()->user()->department == 'csa' || auth()->user()->department == 'branchadmin') {
@@ -815,12 +864,15 @@ class CheckRequestController extends Controller
                 ->editColumn('created_at', function ($data) {
                     return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
                 })
+                ->editColumn('checks', function ($data) {
+                    return $data->cardtype->name;
+                })
                 ->addColumn('action', function ($row) {
 
                     $actionBtn =
                         '
                          <td><a class="validates btn btn-outline-primary btn-sm"
-                         data-remote="/cardrequest/collect/' . $row->id . '">Collect<i class="nc-icon nc-check-2"
+                         data-remote="/cardrequest/collected/' . $row->id . '">Collect<i class="nc-icon nc-check-2"
                              aria-hidden="true" style="color: black"></i></a></td>
                          ';
                     return $actionBtn;
@@ -834,6 +886,9 @@ class CheckRequestController extends Controller
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($data) {
                     return $data->created_at ? with(new Carbon($data->created_at))->format('m/d/Y') : '';
+                })
+                ->editColumn('checks', function ($data) {
+                    return $data->cardtype->name;
                 })
                 ->addColumn('age', function ($item) {
                     return $item->updated_at > now()->subMonth(3) ? 10 : 100;

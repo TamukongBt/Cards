@@ -17,7 +17,7 @@
                     <h4 class="card-title"> @role('branchadmin') Unapproved @endrole Card Reqeusts </h4>
                     @endhasanyrole
                     @role('dso') <h4 class="card-title"> Card Renewal Request </h4> @endrole
-                    @hasanyrole('cards|css|csa')
+                    @hasanyrole('csa')
                     <div class="text-right" style='float:right;'>
                         <a href="cardrequest/create" class="btn  btn-warning" style="background-color: #15224c">New Request</a>
                     </div>

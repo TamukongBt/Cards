@@ -8,7 +8,7 @@ use App\Requested;
 use App\User;
 use Illuminate\Http\Request;
 use App\Notifications\RejectRequest;
-use App\Notifications\NewRequestNotification;
+use App\Notifications\RequestNotification;
 use App\Downloads;
 use App\Exports\RequestExports;
 use App\Exports\RejectedExports;
@@ -445,7 +445,7 @@ class RequestedController extends Controller
             $users = User::where('branch_id', auth()->user()->branch_id)->where('department', 'css')->get();
             $request = Requested::where('accountname', $request->accountname)->where('account_number', $request->account_number)->where('branch_id', $request->branch_id)->where('cards', $request->cards)->get()->first();
             foreach ($users as $user) {
-                $user->notify(new NewRequestNotification($request));
+                $user->notify(new RequestNotification($request));
             }
             return redirect()->route('request.index')->with('success', 'New Entry created succesfully');
         } catch (\Throwable $th) {
