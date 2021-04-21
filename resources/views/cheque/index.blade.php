@@ -231,10 +231,8 @@ $('#table1').on('click', '.denies[data-remote]', function (e) {
     var url = $(this).data('remote');
     var form = $('#denied');
     var send = $('#send');
-    console.log(url);
 
     send.click(function (e){
-        console.log(form.serialize());
 
         $.ajax({
             url: url,

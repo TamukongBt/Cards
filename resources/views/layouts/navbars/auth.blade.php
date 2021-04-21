@@ -10,6 +10,7 @@
         </a>
     </div>
     <div class="sidebar-wrapper">
+
         <ul class="nav">
             <li class="{{ $elementActive == 'dashboard' ? 'active' : '' }}">
                 <a href="{{ route('page.index', 'dashboard') }}">
@@ -17,6 +18,61 @@
                     <p>{{ __('Dashboard') }}</p>
                 </a>
             </li>
+        @role('superadmin')
+            <li class="">
+                <li class="">
+                    <a style="padding: 0%; margin:12px;" >
+                        <h6><p><small>USERS</small></p></h6>
+                    </a>
+                </li>
+
+                <div class="" id="check">
+                    <ul class="nav">
+                        <li class="">
+                            <a href="{{ route('user.index') }}">
+                                <i class="nc-icon nc-simple-remove sidebar-mini-icon" aria-hidden="true"></i>
+                                <span class="sidebar-normal">{{ __('All Users') }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav">
+                        <li class="">
+                            <a href="{{ route('users.inactive') }}">
+                                <i class="nc-icon nc-simple-remove sidebar-mini-icon" aria-hidden="true"></i>
+                                <span class="sidebar-normal">{{ __('Inactive Users') }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="">
+                <li class="">
+                    <a style="padding: 0%; margin:12px;" >
+                        <h6><p><small>OTHERS</small></p></h6>
+                    </a>
+                </li>
+
+                <div class="" id="check">
+                    <ul class="nav">
+                        <li class="">
+                            <a href="{{ route('cards.index') }}">
+                                <i class="nc-icon nc-simple-remove sidebar-mini-icon" aria-hidden="true"></i>
+                                <span class="sidebar-normal">{{ __('Cards') }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav">
+                        <li class="">
+                            <a href="{{ route('branch.index') }}">
+                                <i class="nc-icon nc-simple-remove sidebar-mini-icon" aria-hidden="true"></i>
+                                <span class="sidebar-normal">{{ __('Branches') }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            @endrole
+
             @hasanyrole('csa|branchadmin|cards')
             <li class="">
                 <a style="padding: 0%; margin:12px;" >
@@ -293,6 +349,8 @@
             @endrole
 
 
+
         </ul>
     </div>
 </div>
+

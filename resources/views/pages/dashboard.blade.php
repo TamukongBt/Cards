@@ -504,8 +504,6 @@ Dashboard
             var form = $('#start');
             var id = form.val();
             var url = 'card/track/' + id;
-            console.log(url);
-
 
 
             $.ajax({

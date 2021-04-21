@@ -1,6 +1,6 @@
 @extends('layouts.app', [
 'class' => '',
-'elementActive' => 'profile'
+'elementActive' => 'checkcreate'
 ])
 
 @section('title')
@@ -191,7 +191,7 @@
                         <div class="card-footer ">
                             <div class="form-row">
                                 <div class="col">
-                                    <button type="submit" class="btn btn-info btn-round"
+                                    <button type="submit" class="btn btn-warning btn-round"
                                         style="background-color: #15224c">{{ __('Create Request') }}</button>
                                 </div>
 

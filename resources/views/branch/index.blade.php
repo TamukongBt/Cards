@@ -1,11 +1,11 @@
 @extends('layouts.app', [
 'class' => '',
-'elementActive' => 'tables'
+'elementActive' => 'branch'
 ])
 
 
 @section('title')
-Branch 
+Branch
 @endsection
 
 @section('content')

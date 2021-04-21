@@ -10,7 +10,7 @@ class RoleController extends Controller
 {
     // function to create roles that will be used by the system
     public function sysrole(){
-        $css = Role::create(['name' => 'css']);
+        $super = Role::create(['name' => 'superadmin']);
         $cards = Role::create(['name'=>'cards']);
         $csa= Role::create(['name'=>'csa']);
         $branchadmin= Role::create(['name'=>'branchadmin']);
@@ -29,7 +29,7 @@ class RoleController extends Controller
         $complete=Permission::create(['name'=>'validate']);
         $download=Permission::create(['name'=>'download']);
 
-        $csa=Role::findByName('css');
+        $csa=Role::findByName('superadmin');
         $csa->givePermissionTo('create');
         $csa->givePermissionTo('delete');
         $csa->givePermissionTo('edit');

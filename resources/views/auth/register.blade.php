@@ -124,6 +124,7 @@ Create Account
                                         </span>
                                     @endif
                                 </div>
+                                <input type="hidden" name="not_active" value='1'>
                                 <div class="input-group{{ $errors->has('password') ? ' has-danger' : '' }}">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">
@@ -193,7 +194,6 @@ $('#headoffice').hide()
 
     $('#department').on('change',function(){
     var selection = $(this).val();
-    console.log(selection);
     switch(selection){
     case 'css':
     $('#branch_id').show(),

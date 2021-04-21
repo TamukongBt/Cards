@@ -1,6 +1,6 @@
 @extends('layouts.app', [
     'class' => '',
-    'elementActive' => 'profile'
+    'elementActive' => 'cardcreate'
 ])
 
 @section('title')
@@ -224,7 +224,7 @@ New Card Request
             }
           });
 
-          
+
 
 
 

@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class LoginController extends Controller
 {
@@ -33,6 +36,18 @@ class LoginController extends Controller
      *
      * @return void
      */
+    protected function validateLogin(Request $request)
+    {
+        $this->validate($request, [
+            $this->username() => Rule ::exists('users')->where(function ($query) {
+                $query->where('not_active', 0);
+            }),
+            'password' => 'required|string'
+        ],[
+            $this->username() . '.exists' => 'This User is Inactive or the account has been disabled.'
+        ]);
+    }
+
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
@@ -40,7 +55,7 @@ class LoginController extends Controller
     }
 
     public function username()
-        {
-            return 'employee_id';
-        }
+    {
+        return 'employee_id';
+    }
 }

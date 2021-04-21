@@ -4,12 +4,14 @@
         $role;
         if (auth()->user()->department == 'cards') {
             $role = 'Cards and Checks Office';
-        } elseif (auth()->user()->department == 'css') {
-            $role = 'Customer Service Supervisor' . ' ' . auth()->user()->branch->name;
+        } elseif (auth()->user()->department == 'dso') {
+            $role = 'Digital Sales Officer' . ' ' . auth()->user()->branch->name;
         } elseif (auth()->user()->department == 'csa') {
             $role = 'Customer Service Assistant' . ' ' . auth()->user()->branch->name;
         } elseif (auth()->user()->department == 'branchadmin') {
             $role = 'Branch / Sales Manager' . ' ' . auth()->user()->branch->name;
+        } elseif (auth()->user()->department == 'superadmin') {
+            $role = 'Super Admin' . ' ' . auth()->user()->branch->name;
         }
     @endphp
     <div class="container-fluid">
@@ -173,6 +175,31 @@
                                         @endif
                                         @endrole
 
+                                        {{-- if its a Validate User --}}
+                                        @if ($notification->type == 'App\Notifications\ValidateUser')
+                                            @if (count(auth()->user()->unreadNotifications) == 0)
+                                                <a href="#"> <span class="dropdown-item list-group text-mute">No New
+                                                        Notifications</span></a>
+                                            @else
+                                                @foreach ($notification->data as $data_item)
+                                                    <a href="/inactive"> <span class="dropdown-item list-group">New User Request made by {{ $data_item['name'] }}&nbsp;&nbsp; <br><small
+                                                                class="text-right text-mute">
+                                                                {{ \Carbon\Carbon::parse($data_item['updated_at'])->diffForHumans() }}</small></span></a>
+                                                @endforeach
+                                            @endif
+                                        @endif
+                                        {{-- if its a Validated--}}
+                                        @if ($notification->type == 'App\Notifications\Validated')
+                                            @if (count(auth()->user()->unreadNotifications) == 0)
+                                                <a href="#"> <span class="dropdown-item list-group text-mute">No New
+                                                        Notifications</span></a>
+                                            @else
+                                                    <a href="/"> <span class="dropdown-item list-group">Your Account Has Been Validated You Can Begin Work &nbsp;&nbsp; <br><small
+                                                                class="text-right text-mute">
+                                                                {{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}</small></span></a>
+                                            @endif
+                                        @endif
+
 
 
                                         {{-- if it is a new request for an account --}}
@@ -245,7 +272,6 @@
                 type: "GET",
                 dataType: 'json',
                 success: function(data) {
-                    console.log('na me dis ');
                     $('#badge').hide();
                 },
 

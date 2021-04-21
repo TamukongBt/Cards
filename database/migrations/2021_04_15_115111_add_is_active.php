@@ -13,9 +13,9 @@ class AddIsActive extends Migration
      */
     public function up()
     {
-        Schema::table('user', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             $table->softDeletes();
-            $table->boolean('is_active')->default(0);
+            $table->boolean('not_active')->default(0);
         });
     }
 
@@ -26,7 +26,7 @@ class AddIsActive extends Migration
      */
     public function down()
     {
-        Schema::table('user', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             //
         });
     }

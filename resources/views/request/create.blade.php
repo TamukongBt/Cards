@@ -199,7 +199,6 @@ $(document).ready(function () {
 
         $('#request_type').on('change',function(){
         var selection = $(this).val();
-        console.log(selection);
         switch(selection){
         case 'cheque':
         $('#cheques').show(),

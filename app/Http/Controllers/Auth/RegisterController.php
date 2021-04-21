@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
@@ -28,7 +30,8 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/dashboard';
+
+    protected $redirectTo = '/login';
 
     /**
      * Create a new controller instance.
@@ -38,6 +41,15 @@ class RegisterController extends Controller
     public function __construct()
     {
         $this->middleware('guest');
+    }
+
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+
+        event(new Registered ( $this->create($request->all())));
+
+        return redirect($this->redirectPath());
     }
 
     /**
@@ -52,8 +64,9 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'employee_id' => ['required', 'string', 'max:255', 'unique:users'],
-            'branch_id' => ['required', 'string', ],
+            'branch_id' => ['required', 'string',],
             'department' => ['required', 'string',],
+            'not_active' => ['required',],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'agree_terms_and_conditions' => ['required'],
         ]);
@@ -73,6 +86,7 @@ class RegisterController extends Controller
             'branch_id' => $data['branch_id'],
             'department' => $data['department'],
             'email' => $data['email'],
+            'not_active' => $data['not_active'],
             'password' => Hash::make($data['password']),
         ]);
     }

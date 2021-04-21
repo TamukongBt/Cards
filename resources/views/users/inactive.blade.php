@@ -1,9 +1,10 @@
-@extends ('layouts.app', [
-    'class' => '',
-    'elementActive' => 'cardindex'
+@extends('layouts.app', [
+'class' => '',
+'elementActive' => 'userindex'
 ])
+
 @section('title')
-@role('branchadmin') Unapproved @endrole    Card Request
+Users
 @endsection
 
 @section('content')
@@ -13,43 +14,29 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                        @hasanyrole('cards|css|csa')
-                    <h4 class="card-title"> @role('branchadmin') Unapproved @endrole Card Reqeusts </h4>
-                    @endhasanyrole
-                    @role('dso') <h4 class="card-title"> Card Renewal Request </h4> @endrole
-                    @hasanyrole('csa')
-                    <div class="text-right" style='float:right;'>
-                        <a href="cardrequest/create" class="btn  btn-warning" style="background-color: #15224c">New Request</a>
-                    </div>
-                    @endhasanyrole
+                    <h4 class="card-title"> Inactive Users Table </h4>
                     <div class="card-body">
                     </div>
                     <div class="table-responsive">
-                        <table id="table1" class="table table-bordered">
+                        <table id="table1" class="table table-bordered table-hover">
                             <thead>
-
                                 <th style="font-size: 0.938em;">
-                                    Request Date
+                                   Name
                                 </th>
                                 <th style="font-size: 0.95em;">
-                                    Card Holder
+                                   Employee ID
                                  </th>
                                 <th>
-                                    Account No
-                                </th>
-                                <th>
-                                    Type Of Card
-                                </th>
-                                <th>
-                                    Request Type
+                                    Department
                                 </th>
                                 <th>
                                     Branch
                                 </th>
-
+                                <th>
+                                   Email Address
+                                </th>
                                 <th>
                                 </th>
-
                             </thead>
                         </table>
                     </div>
@@ -73,7 +60,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form class="col-md-12" action="{{ route('cardrequest.store') }}" method="POST" id="denied">
+                            <form class="col-md-12" action="{{ route('checkrequest.store') }}" method="POST" id="denied">
                                 @csrf
                         <div class="col">
                                     <label class=" col-form-label">{{ __('Reason For Rejection') }}</label>
@@ -104,18 +91,15 @@
                         "serverSide": false,
                         "searchable": true,
                         "responsive": true,
-                        "ajax": "/ajax",
+                        "ajax": "/inactive_ajax",
 
 
                         "columns": [
-                            { "data": "created_at", name: 'Requested Date' },
-                            { "data": "accountname", name: 'Account Name' },
-                            { "data": "account_number", name: 'Account Number' },
-                            { "data": "cards", name: 'Cards Requested' },
-                            { "data": "request_type", name: 'Request Type' },
-                            { "data": "branch_id", name: 'bRANCH' },
-
-                            // { "data": undefined, "defaultContent": '<input type="text" value="0" size="10"/>'},
+                            { "data": "name", name: 'Name' },
+                            { "data": "employee_id", name: 'Employee Id' },
+                            { "data": "department", name: 'Department' },
+                            { "data": "branch_id", name: 'Branch' },
+                            { "data": "email", name: 'Email Address' },
                             {
                                 data: 'action', name: 'action', orderable: true, searchable: true
                             },
@@ -202,7 +186,7 @@ $('#table1').on('click', '.validates[data-remote]', function (e) {
 
                     Swal.fire(
                         'Approved!',
-                        'The request has been completed',
+                        'The Account Has Been Activated',
                         'success'
                     ),
                     $('#table1').DataTable().ajax.reload();
@@ -223,8 +207,10 @@ $('#table1').on('click', '.denies[data-remote]', function (e) {
     var url = $(this).data('remote');
     var form = $('#denied');
     var send = $('#send');
+    //;
 
     send.click(function (e){
+        //ze());
 
         $.ajax({
             url: url,
@@ -303,6 +289,7 @@ $('#table1').on('click', '.track[data-remote]', function (e) {
     });
     var url = $(this).data('remote');
 
+    //;
 
         $.ajax({
             url: url,
@@ -311,8 +298,8 @@ $('#table1').on('click', '.track[data-remote]', function (e) {
             data:{'_method':'GET'},
             success: function (data) {
                 Swal.fire(
-                        'Request Tracked',
-                        data,
+                         'Approved!',
+                        'The Account Has Been Activated',
                         'success'
                     )
             },

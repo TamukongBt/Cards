@@ -153,7 +153,7 @@ class CardRequestController extends Controller
                         <div class="dropdown-menu aria-labelledby="triggerId" style="width: 20px; padding: 2px 10px;">
                             <a class="dropdown-item btn btn-info text-white" href="' . route('cardrequest.edit', $row->id) . '">
                            Edit </a>
-                            <a class="dropdown-item btn btn-danger btn-delete  text-white" data-remote="' . route('cardrequest.destroy', $row->id) . '">
+                            <a class="dropdown-item btn btn-danger btn-delete text-white" data-remote="' . route('cardrequest.destroy', $row->id) . '">
                                Delete </a>
                             <a class="track dropdown-item "  data-remote="card/track/' . $row->id . '">Track Account</a>
                         </div>

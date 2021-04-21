@@ -1,6 +1,6 @@
 @extends ('layouts.app', [
     'class' => '',
-    'elementActive' => 'tables'
+    'elementActive' => 'checkindex'
 ])
 @section('title')
 @role('branchadmin') Unapproved @endrole    Check Request
@@ -230,10 +230,8 @@ $('#table1').on('click', '.denies[data-remote]', function (e) {
     var url = $(this).data('remote');
     var form = $('#denied');
     var send = $('#send');
-    console.log(url);
 
     send.click(function (e){
-        console.log(form.serialize());
 
         $.ajax({
             url: url,
@@ -312,7 +310,6 @@ $('#table1').on('click', '.track[data-remote]', function (e) {
     });
     var url = $(this).data('remote');
 
-    console.log(url);
 
         $.ajax({
             url: url,

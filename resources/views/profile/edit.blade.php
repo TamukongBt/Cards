@@ -1,26 +1,25 @@
 @extends('layouts.app', [
-    'class' => '',
-    'elementActive' => 'profile'
+'class' => '',
+'elementActive' => 'profile'
 ])
 @php
 $role;
 
-if(auth()->user()->department=='cards'){
-    $role = "Cards and Checks Office";
-}
-else if(auth()->user()->department=='css'){
-    $role = "Customer Service Supervisor";
-}
-else if(auth()->user()->department=='csa'){
-    $role = "Customer Service Assistant";
-}
-else if(auth()->user()->department=='branchadmin'){
-    $role = "Branch / Sales Manager";
+if (auth()->user()->department == 'cards') {
+    $role = 'Cards and Checks Office';
+} elseif (auth()->user()->department == 'css') {
+    $role = 'Customer Service Supervisor';
+} elseif (auth()->user()->department == 'csa') {
+    $role = 'Customer Service Assistant';
+} elseif (auth()->user()->department == 'branchadmin') {
+    $role = 'Branch / Sales Manager';
+} elseif (auth()->user()->department == 'superadmin') {
+    $role = 'Super Admin';
 }
 @endphp
 
 @section('title')
-Edit Profile
+    Edit Profile
 @endsection
 
 @section('content')
@@ -46,16 +45,16 @@ Edit Profile
                             <a href="#">
                                 <img class="avatar border-gray" src="{{ asset('paper/img/mike.jpg') }}" alt="...">
 
-                                <h5 class="title">{{ __(auth()->user()->name)}}</h5>
+                                <h5 class="title">{{ __(auth()->user()->name) }}</h5>
                             </a>
                             <p class="description">
-                            Employee ID:  {{ __(auth()->user()->employee_id)}}
+                                Employee ID: {{ __(auth()->user()->employee_id) }}
                             </p>
                         </div>
                         <p class="description text-center">
                             {{ __('Union Bank Of Cameroon ') }}
                             <br> {{ $role }}
-                            <br> {{ __( auth()->user()->branch->name) }}
+                            <br> {{ __(auth()->user()->branch->name) }}
                         </p>
                     </div>
 
@@ -66,55 +65,57 @@ Edit Profile
                     </div>
                     <div class="card-body">
                         <ul class="list-unstyled team-members">
-                            @if (count($colleagues)==0)
-                            <li>
-                                <div class="row">
+                            @if (count($colleagues) == 0)
+                                <li>
+                                    <div class="row">
 
-                                    <div class="col-md-7 col-7 text-muted">
-                                        {{ __( 'You have No friends, Shame.... ')}}
-                                        <br />
+                                        <div class="col-md-7 col-7 text-muted">
+                                            {{ __('You have No friends, Shame.... ') }}
+                                            <br />
 
-                                    </div>
-
-                                </div>
-                            </li>
-                            @else
-                            @foreach ($colleagues as $colleague)
-                            <li>
-                                <div class="row">
-                                    <div class="col-md-2 col-2">
-                                        <div class="avatar">
                                         </div>
-                                    </div>
-                                    <div class="col-md-7 col-7">
-                                        {{$colleague->name}}
-                                        <br />
-                                        <span class="text-muted">
 
-                                            <small><?php
-                                                $department = '';
-                                                if ($colleague->department=='branchadmin') {
-                                                    echo 'Branch/Sales Manager';
-                                                } else if($colleague->department=='cards') {
-                                                    echo  'Cards and Checks Office';
-                                                } else if($colleague->department=='csa') {
-                                                    echo 'Customer Service Assistant';
-                                                } else if($colleague->department=='dso') {
-                                                    echo 'Digital Sales Officer';
-                                                } else if($colleague->department=='css') {
-                                                    echo 'Customer Service Supervisor';}
-
-
-                                            ?></small>
-                                        </span>
                                     </div>
-                                    <div class="col-md-3 col-3 text-right">
-                                       <a href="mailto:{{ $colleague->email }}"> <button class="btn btn-sm btn-outline-success btn-round btn-icon"><i
-                                                class="fa fa-envelope"></i></button></a>
-                                    </div>
-                                </div>
-                            </li>
-                            @endforeach
+                                </li>
+                            @else
+                                @foreach ($colleagues as $colleague)
+                                    <li>
+                                        <div class="row">
+                                            <div class="col-md-2 col-2">
+                                                <div class="avatar">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-7 col-7">
+                                                {{ $colleague->name }}
+                                                <br />
+                                                <span class="text-muted">
+
+                                                    <small><?php
+                                                        $department = '';
+                                                        if ($colleague->department == 'branchadmin') {
+                                                        echo 'Branch/Sales Manager';
+                                                        } elseif ($colleague->department == 'cards') {
+                                                        echo 'Cards and Checks Office';
+                                                        } elseif ($colleague->department == 'csa') {
+                                                        echo 'Customer Service Assistant';
+                                                        } elseif ($colleague->department == 'dso') {
+                                                        echo 'Digital Sales Officer';
+                                                        } elseif ($colleague->department == 'css') {
+                                                        echo 'Customer Service Supervisor';
+                                                        } elseif (auth()->user()->department == 'superadmin') {
+                                                        $role = 'Super Admin';
+                                                        }
+                                                        ?></small>
+                                                </span>
+                                            </div>
+                                            <div class="col-md-3 col-3 text-right">
+                                                <a href="mailto:{{ $colleague->email }}"> <button
+                                                        class="btn btn-sm btn-outline-success btn-round btn-icon"><i
+                                                            class="fa fa-envelope"></i></button></a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                @endforeach
                             @endif
 
                         </ul>
@@ -122,7 +123,8 @@ Edit Profile
                 </div>
             </div>
             <div class="col-md-8 text-center">
-                <form class="col-md-12" action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+                <form class="col-md-12" action="{{ route('profile.update') }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="card">
@@ -134,7 +136,8 @@ Edit Profile
                                 <label class="col-md-3 col-form-label">{{ __('Name') }}</label>
                                 <div class="col-md-9">
                                     <div class="form-group">
-                                        <input type="text" name="name" class="form-control" placeholder="Name" value="{{ auth()->user()->name }}" required>
+                                        <input type="text" name="name" class="form-control" placeholder="Name"
+                                            value="{{ auth()->user()->name }}" required>
                                     </div>
                                     @if ($errors->has('name'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
@@ -147,7 +150,8 @@ Edit Profile
                                 <label class="col-md-3 col-form-label">{{ __('Email') }}</label>
                                 <div class="col-md-9">
                                     <div class="form-group">
-                                        <input type="email" name="email" class="form-control" placeholder="Email" value="{{ auth()->user()->email }}" required>
+                                        <input type="email" name="email" class="form-control" placeholder="Email"
+                                            value="{{ auth()->user()->email }}" required>
                                     </div>
                                     @if ($errors->has('email'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
@@ -160,7 +164,8 @@ Edit Profile
                         <div class="card-footer ">
                             <div class="row">
                                 <div class="col-md-12 text-center">
-                                    <button type="submit" class="btn btn-info btn-round">{{ __('Save Changes') }}</button>
+                                    <button type="submit"
+                                        class="btn btn-info btn-round">{{ __('Save Changes') }}</button>
                                 </div>
                             </div>
                         </div>
@@ -178,7 +183,8 @@ Edit Profile
                                 <label class="col-md-3 col-form-label">{{ __('Old Password') }}</label>
                                 <div class="col-md-9">
                                     <div class="form-group">
-                                        <input type="password" name="old_password" class="form-control" placeholder="Old password" required>
+                                        <input type="password" name="old_password" class="form-control"
+                                            placeholder="Old password" required>
                                     </div>
                                     @if ($errors->has('old_password'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
@@ -191,7 +197,8 @@ Edit Profile
                                 <label class="col-md-3 col-form-label">{{ __('New Password') }}</label>
                                 <div class="col-md-9">
                                     <div class="form-group">
-                                        <input type="password" name="password" class="form-control" placeholder="Password" required>
+                                        <input type="password" name="password" class="form-control" placeholder="Password"
+                                            required>
                                     </div>
                                     @if ($errors->has('password'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
@@ -204,7 +211,8 @@ Edit Profile
                                 <label class="col-md-3 col-form-label">{{ __('Password Confirmation') }}</label>
                                 <div class="col-md-9">
                                     <div class="form-group">
-                                        <input type="password" name="password_confirmation" class="form-control" placeholder="Password Confirmation" required>
+                                        <input type="password" name="password_confirmation" class="form-control"
+                                            placeholder="Password Confirmation" required>
                                     </div>
                                     @if ($errors->has('password_confirmation'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
@@ -217,7 +225,8 @@ Edit Profile
                         <div class="card-footer ">
                             <div class="row">
                                 <div class="col-md-12 text-center">
-                                    <button type="submit" class="btn btn-info btn-round">{{ __('Save Changes') }}</button>
+                                    <button type="submit"
+                                        class="btn btn-info btn-round">{{ __('Save Changes') }}</button>
                                 </div>
                             </div>
                         </div>
@@ -235,9 +244,11 @@ Edit Profile
                                 <label class="col-md-3 col-form-label">{{ __('Old Branch') }}</label>
                                 <div class="col-md-9">
                                     <div class="form-group">
-                                        <select name="oldbranch"  class="form-control @error('oldbranch') is-invalid @enderror" required autofocus>
-                                            <option  selected="true" disabled="disabled">Choose Your Old Branch</option>
-                                            <option value="001" >Bamenda</option>
+                                        <select name="oldbranch"
+                                            class="form-control @error('oldbranch') is-invalid @enderror" required
+                                            autofocus>
+                                            <option selected="true" disabled="disabled">Choose Your Old Branch</option>
+                                            <option value="001">Bamenda</option>
                                             <option value="002">Akwa</option>
                                             <option value="003">Limbe</option>
                                             <option value="004">Yaounde</option>
@@ -258,8 +269,9 @@ Edit Profile
                             <div class="row">
                                 <label class="col-md-3 col-form-label">{{ __('New Branch') }}</label>
                                 <div class="form-group col-md" id="branch_id">
-                                    <select name="newbranch"  class="form-control @error('branch_id') is-invalid @enderror" required autofocus>
-                                        <option  selected="true" disabled="disabled">Choose Your Branch</option>
+                                    <select name="newbranch" class="form-control @error('branch_id') is-invalid @enderror"
+                                        required autofocus>
+                                        <option selected="true" disabled="disabled">Choose Your Branch</option>
                                         <option idvalue="001">Bamenda</option>
                                         <option value="002">Akwa</option>
                                         <option value="003">Limbe</option>
@@ -270,9 +282,9 @@ Edit Profile
                                         <option value="012">Mboppi</option>
                                     </select>
                                     @if ($errors->has('branch_id'))
-                                    <span class="invalid-feedback" style="display: block;" role="alert">
-                                        <strong>{{ $errors->first('branch_id') }}</strong>
-                                    </span>
+                                        <span class="invalid-feedback" style="display: block;" role="alert">
+                                            <strong>{{ $errors->first('branch_id') }}</strong>
+                                        </span>
                                     @endif
                                 </div>
 
@@ -282,7 +294,8 @@ Edit Profile
                         <div class="card-footer ">
                             <div class="row">
                                 <div class="col-md-12 text-center">
-                                    <button type="submit" class="btn btn-info btn-round">{{ __('Save Changes') }}</button>
+                                    <button type="submit"
+                                        class="btn btn-info btn-round">{{ __('Save Changes') }}</button>
                                 </div>
                             </div>
                         </div>
